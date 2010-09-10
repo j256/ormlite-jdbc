@@ -161,10 +161,11 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	private void statementSetArgs(PreparedStatement stmt, Object[] args, SqlType[] argFieldTypes) throws SQLException {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
+			int typeVal = TypeValMapper.getTypeValForSqlType(argFieldTypes[i]);
 			if (arg == null) {
-				stmt.setNull(i + 1, argFieldTypes[i].getTypeVal());
+				stmt.setNull(i + 1, typeVal);
 			} else {
-				stmt.setObject(i + 1, arg, argFieldTypes[i].getTypeVal());
+				stmt.setObject(i + 1, arg, typeVal);
 			}
 		}
 	}

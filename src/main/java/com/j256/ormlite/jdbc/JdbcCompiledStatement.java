@@ -53,11 +53,11 @@ public class JdbcCompiledStatement implements CompiledStatement {
 	}
 
 	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException {
-		preparedStatement.setNull(parameterIndex, sqlType.getTypeVal());
+		preparedStatement.setNull(parameterIndex, TypeValMapper.getTypeValForSqlType(sqlType));
 	}
 
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
-		preparedStatement.setObject(parameterIndex, obj, sqlType.getTypeVal());
+		preparedStatement.setObject(parameterIndex, obj, TypeValMapper.getTypeValForSqlType(sqlType));
 	}
 
 	public void setMaxRows(int max) throws SQLException {

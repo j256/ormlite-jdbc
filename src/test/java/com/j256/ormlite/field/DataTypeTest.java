@@ -261,11 +261,6 @@ public class DataTypeTest extends BaseOrmLiteTest {
 		assertEquals(DataType.UNKNOWN, DataType.lookupClass(getClass()));
 	}
 
-	@Test
-	public void testUnknownTypeVal() {
-		assertEquals(DataType.UNKNOWN, DataType.lookupIdTypeVal(10120));
-	}
-
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalString {
 		@DatabaseField(id = true, columnName = STRING_COLUMN)

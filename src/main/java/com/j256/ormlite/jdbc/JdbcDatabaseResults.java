@@ -52,7 +52,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 			metaData = resultSet.getMetaData();
 		}
 		int typeVal = metaData.getColumnType(column);
-		return DataType.lookupIdTypeVal(typeVal);
+		return TypeValMapper.getDataTypeForIdTypeVal(typeVal);
 	}
 
 	public int findColumn(String columnName) throws SQLException {
