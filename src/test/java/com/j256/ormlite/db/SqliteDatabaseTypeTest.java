@@ -32,7 +32,7 @@ public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
 		assertEquals("org.sqlite.JDBC", databaseType.getDriverClassName());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
 				new TableInfo<GeneratedIdSequence>(databaseType, GeneratedIdSequence.class);

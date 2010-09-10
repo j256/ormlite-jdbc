@@ -112,7 +112,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void testGeneratedIdSequence() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
 				new TableInfo<GeneratedIdSequence>(databaseType, GeneratedIdSequence.class);
