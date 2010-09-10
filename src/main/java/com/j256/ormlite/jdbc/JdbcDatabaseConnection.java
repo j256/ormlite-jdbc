@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.CompiledStatement;
@@ -103,16 +102,9 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		int colN = results.getColumnCount();
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
-				// get the data-type so we can extract the id directly
-				DataType dataType = results.getColumnDataType(colC);
-				Number id = dataType.resultToId(results, colC);
-				if (id == null) {
-					// may never happen but let's be careful
-					String colName = results.getColumnName(colC);
-					throw new SQLException("Generated column " + colName + " is invalid type " + dataType);
-				} else {
-					keyHolder.addKey(id);
-				}
+				// get the id column data so we can pass it back to the caller thru the keyHolder
+				Number id = results.getIdColumnData(colC);
+				keyHolder.addKey(id);
 			}
 		}
 		return rowN;

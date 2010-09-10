@@ -36,23 +36,38 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		return metaData.getColumnCount();
 	}
 
-	public String getColumnName(int column) throws SQLException {
+	public String getColumnName(int columnIndex) throws SQLException {
 		if (metaData == null) {
 			metaData = resultSet.getMetaData();
 		}
-		return metaData.getColumnName(column);
+		return metaData.getColumnName(columnIndex);
 	}
 
 	/**
-	 * Return the data type of the column. This is called from
+	 * Return the id associated with the column. This is called from
 	 * {@link JdbcDatabaseConnection#insert(String, Object[], SqlType[], GeneratedKeyHolder)}
 	 */
-	DataType getColumnDataType(int column) throws SQLException {
+	Number getIdColumnData(int columnIndex) throws SQLException {
 		if (metaData == null) {
 			metaData = resultSet.getMetaData();
 		}
-		int typeVal = metaData.getColumnType(column);
-		return TypeValMapper.getDataTypeForIdTypeVal(typeVal);
+		int typeVal = metaData.getColumnType(columnIndex);
+		DataType dataType = TypeValMapper.getDataTypeForIdTypeVal(typeVal);
+		if (dataType == null) {
+			throw new SQLException("Unknown DataType for typeVal " + typeVal + " in column " + columnIndex);
+		}
+		Number id = dataType.resultToId(this, columnIndex);
+		if (id == null) {
+			// may never happen but let's be careful
+			String colName = "unknown";
+			try {
+				colName = getColumnName(columnIndex);
+			} catch (SQLException e) {
+				// ignore it
+			}
+			throw new SQLException("Id column " + colName + " (#" + columnIndex + ") is invalid type " + dataType);
+		}
+		return id;
 	}
 
 	public int findColumn(String columnName) throws SQLException {
