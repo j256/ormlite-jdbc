@@ -99,7 +99,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 		StatementBuilder<Foo, String> qb = new StatementBuilder<Foo, String>(databaseType, tableInfo);
 		int limit = 1232;
 		qb.limit(limit);
-		String query = qb.prepareQueryString();
+		String query = qb.prepareStatementString();
 		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + limit + " "));
 	}
 

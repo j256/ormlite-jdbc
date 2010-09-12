@@ -58,7 +58,7 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 		StatementBuilder<Foo, String> qb = dao.statementBuilder();
 		int limit = 1232;
 		qb.limit(limit);
-		String query = qb.prepareQueryString();
+		String query = qb.prepareStatementString();
 		assertTrue(query + " should start with stuff", query.startsWith("SELECT TOP " + limit + " "));
 	}
 
