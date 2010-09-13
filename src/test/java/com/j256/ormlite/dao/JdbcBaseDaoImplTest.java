@@ -36,7 +36,7 @@ import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
-public class BaseDaoImplTest extends BaseOrmLiteTest {
+public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 	private final static String STUFF_FIELD_NAME = "stuff";
 	private final static String DEFAULT_VALUE_STRING = "1314199";
