@@ -11,18 +11,9 @@ import org.junit.Test;
 import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.StatementExecutor;
 import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableInfo;
 
 public class MappedQueryForIdTest extends BaseOrmLiteTest {
-
-	@Test(expected = SQLException.class)
-	public void testQueryNoId() throws Exception {
-		StatementExecutor<NoId, String> se =
-				new StatementExecutor<NoId, String>(databaseType, new TableInfo<NoId>(databaseType, NoId.class));
-		se.queryForId(null, "1");
-	}
 
 	@Test
 	public void testCreateReserverdFields() throws Exception {
@@ -63,16 +54,6 @@ public class MappedQueryForIdTest extends BaseOrmLiteTest {
 		assertNull(whereDao.queryForId(id));
 	}
 
-	@Test
-	public void testNoIdBuildUpdater() throws Exception {
-		assertNull(MappedUpdate.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class)));
-	}
-
-	@Test
-	public void testNoIdBuildQueryForId() throws Exception {
-		assertNull(MappedQueryForId.build(databaseType, new TableInfo<NoId>(databaseType, NoId.class)));
-	}
-
 	@Test(expected = SQLException.class)
 	public void testTooManyFooId() throws Exception {
 		Dao<Foo, String> fooDao = createDao(Foo.class, true);
@@ -92,11 +73,6 @@ public class MappedQueryForIdTest extends BaseOrmLiteTest {
 		Dao<FakeFoo, String> fakeFooDao = createDao(FakeFoo.class, false);
 		// this fails because >1 item is returned from an id search -- baaaaad
 		fakeFooDao.queryForId(stuff);
-	}
-
-	protected static class NoId {
-		@DatabaseField
-		String id;
 	}
 
 	// for testing reserved words as field names
