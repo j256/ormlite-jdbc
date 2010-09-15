@@ -68,4 +68,8 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	public void close() throws SQLException {
 		// unfortunately, you will need to close the DataSource directly since there is no close on the interface
 	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 }
