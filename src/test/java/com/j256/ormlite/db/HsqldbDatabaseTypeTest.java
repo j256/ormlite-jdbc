@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.StatementBuilder;
@@ -55,7 +56,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 		Field field = GeneratedId.class.getField("id");
 		DatabaseType mockDb = createMock(DatabaseType.class);
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
-		expect(mockDb.getFieldConverter(isA(FieldType.class))).andReturn(null);
+		expect(mockDb.getFieldConverter(isA(DataType.class))).andReturn(null);
 		expect(mockDb.convertColumnName(isA(String.class))).andReturn("id");
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(true);
 		replay(mockDb);

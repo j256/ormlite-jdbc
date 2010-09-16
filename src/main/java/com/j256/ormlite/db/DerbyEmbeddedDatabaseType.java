@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -36,16 +37,16 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(FieldType fieldType) {
+	public FieldConverter getFieldConverter(DataType dataType) {
 		// we are only overriding certain types
-		switch (fieldType.getDataType()) {
+		switch (dataType) {
 			case BOOLEAN :
 			case BOOLEAN_OBJ :
 				return booleanConverter;
 			case SERIALIZABLE :
 				return objectConverter;
 			default :
-				return super.getFieldConverter(fieldType);
+				return super.getFieldConverter(dataType);
 		}
 	}
 

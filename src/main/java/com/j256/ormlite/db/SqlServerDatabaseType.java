@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -33,16 +34,16 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(FieldType fieldType) {
+	public FieldConverter getFieldConverter(DataType dataType) {
 		// we are only overriding certain types
-		switch (fieldType.getDataType()) {
+		switch (dataType) {
 			case BOOLEAN :
 			case BOOLEAN_OBJ :
 				return booleanConverter;
 			case BYTE :
 				return byteConverter;
 			default :
-				return super.getFieldConverter(fieldType);
+				return super.getFieldConverter(dataType);
 		}
 	}
 

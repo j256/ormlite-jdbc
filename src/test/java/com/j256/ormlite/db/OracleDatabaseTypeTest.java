@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.table.TableInfo;
 
@@ -44,7 +45,7 @@ public class OracleDatabaseTypeTest extends BaseDatabaseTest {
 		Field field = GeneratedId.class.getField("id");
 		DatabaseType mockDb = createMock(DatabaseType.class);
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
-		expect(mockDb.getFieldConverter(isA(FieldType.class))).andReturn(null);
+		expect(mockDb.getFieldConverter(isA(DataType.class))).andReturn(null);
 		expect(mockDb.convertColumnName(isA(String.class))).andReturn("id");
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(mockDb);
