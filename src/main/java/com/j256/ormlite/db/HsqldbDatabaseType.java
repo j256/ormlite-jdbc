@@ -98,4 +98,15 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	public boolean isEntityNamesMustBeUpCase() {
 		return true;
 	}
+
+	@Override
+	protected void appendUnique(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
+		StringBuilder alterSb = new StringBuilder();
+		alterSb.append("ALTER TABLE ");
+		appendEscapedEntityName(alterSb, fieldType.getTableName());
+		alterSb.append(" ADD UNIQUE (");
+		appendEscapedEntityName(alterSb, fieldType.getDbColumnName());
+		alterSb.append(");");
+		statementsAfter.add(alterSb.toString());
+	}
 }
