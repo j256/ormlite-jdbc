@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -120,7 +121,6 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = SQLException.class)
 	public void testSelectArgsNotSet() throws Exception {
 
 		Dao<Foo, String> fooDao = createTestData();
@@ -128,7 +128,12 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 
 		SelectArg idSelectArg = new SelectArg();
 		qb.where().eq(Foo.ID_COLUMN_NAME, idSelectArg);
-		fooDao.query(qb.prepareStatement());
+		try {
+			fooDao.query(qb.prepareStatement());
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -178,22 +183,29 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
 	public void testNotBad() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		StatementBuilder<Foo, String> qb = fooDao.statementBuilder();
 		qb.where().not();
-		fooDao.query(qb.prepareStatement());
+		try {
+			fooDao.query(qb.prepareStatement());
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
 	public void testNotNotComparison() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		StatementBuilder<Foo, String> qb = fooDao.statementBuilder();
 		Where where = qb.where();
-		where.not(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo1.id)));
-		fooDao.query(qb.prepareStatement());
+		try {
+			where.not(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo1.id)));
+			fail("expected exception");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -208,29 +220,41 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalStateException.class)
 	public void testNoWhereOperations() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		StatementBuilder<Foo, String> qb = fooDao.statementBuilder();
 		qb.where();
-		fooDao.query(qb.prepareStatement());
+		try {
+			fooDao.query(qb.prepareStatement());
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalStateException.class)
 	public void testMissingAnd() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		StatementBuilder<Foo, String> qb = fooDao.statementBuilder();
 		qb.where().eq(Foo.ID_COLUMN_NAME, foo1.id).eq(Foo.ID_COLUMN_NAME, foo1.id);
-		fooDao.query(qb.prepareStatement());
+		try {
+			fooDao.query(qb.prepareStatement());
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalStateException.class)
 	public void testMissingAndArg() throws Exception {
 		Dao<Foo, String> fooDao = createDao(Foo.class, false);
 		StatementBuilder<Foo, String> qb = fooDao.statementBuilder();
-		qb.where().and();
+		try {
+			qb.where().and();
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -469,11 +493,15 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = IllegalArgumentException.class)
 	public void testUnknownColumn() throws Exception {
 		Dao<Foo, String> fooDao = createDao(Foo.class, false);
 		StatementBuilder<Foo, String> qb = fooDao.statementBuilder();
-		qb.columns("unknown column");
+		try {
+			qb.columns("unknown column");
+			fail("expected exception");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
 	}
 
 	@Test

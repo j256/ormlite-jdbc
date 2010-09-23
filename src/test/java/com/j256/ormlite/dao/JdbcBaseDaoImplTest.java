@@ -19,12 +19,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -76,6 +70,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(Foo.class, ((BaseDaoImpl<Foo, Integer>) fooDao).getDataClass());
 	}
 
+	/* ======================================================================================== */
+
 	@Test
 	public void testCreateDaoStatic() throws Exception {
 		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(databaseType, connectionSource, Foo.class);
@@ -124,14 +120,18 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = SQLException.class)
 	public void doubleCreate() throws Exception {
 		Dao<DoubleCreate, Object> doubleDao = createDao(DoubleCreate.class, true);
 		int id = 313413123;
 		DoubleCreate foo = new DoubleCreate();
 		foo.id = id;
 		assertEquals(1, doubleDao.create(foo));
-		doubleDao.create(foo);
+		try {
+			doubleDao.create(foo);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -227,59 +227,84 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(0, fooDao.delete((Foo) null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void closeInIterator() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
 		Iterator<Foo> iterator = fooDao.iterator();
-		while (iterator.hasNext()) {
-			iterator.next();
-			closeConnection();
+		try {
+			while (iterator.hasNext()) {
+				iterator.next();
+				closeConnection();
+			}
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void closeIteratorFirst() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
 		closeConnection();
-		fooDao.iterator();
+		try {
+			fooDao.iterator();
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void closeIteratorBeforeNext() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
 		Iterator<Foo> iterator = fooDao.iterator();
-		while (iterator.hasNext()) {
-			closeConnection();
-			iterator.next();
+		try {
+			while (iterator.hasNext()) {
+				closeConnection();
+				iterator.next();
+			}
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void closeIteratorBeforeRemove() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
 		Iterator<Foo> iterator = fooDao.iterator();
-		while (iterator.hasNext()) {
-			iterator.next();
-			closeConnection();
-			iterator.remove();
+		try {
+			while (iterator.hasNext()) {
+				iterator.next();
+				closeConnection();
+				iterator.remove();
+			}
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void noNextBeforeRemove() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
 		Iterator<Foo> iterator = fooDao.iterator();
-		iterator.remove();
+		try {
+			iterator.remove();
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -345,17 +370,27 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertFalse(iterator.hasNext());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void nextWithoutHasNext() throws Exception {
 		Iterator<Foo> iterator = fooDao.iterator();
-		iterator.next();
+		try {
+			iterator.next();
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void removeAfterDone() throws Exception {
 		Iterator<Foo> iterator = fooDao.iterator();
 		assertFalse(iterator.hasNext());
-		iterator.remove();
+		try {
+			iterator.remove();
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -444,8 +479,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		};
 		try {
 			fooDao.create(new Foo());
-			fail("Should have thrown a npe because of missing dataSource stuff");
-		} catch (NullPointerException e) {
+			fail("expected exception");
+		} catch (IllegalStateException e) {
 			// expected
 		}
 		fooDao.setConnectionSource(connectionSource);
@@ -736,13 +771,17 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = SQLException.class)
 	public void testMultiplePrimaryKey() throws Exception {
 		Dao<Basic, String> fooDao = createDao(Basic.class, true);
 		Basic foo1 = new Basic();
 		foo1.id = "dup";
 		assertEquals(1, fooDao.create(foo1));
-		fooDao.create(foo1);
+		try {
+			fooDao.create(foo1);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -757,11 +796,15 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = SQLException.class)
 	public void testNotNull() throws Exception {
 		Dao<NotNull, Object> defValDao = createDao(NotNull.class, true);
 		NotNull notNull = new NotNull();
-		defValDao.create(notNull);
+		try {
+			defValDao.create(notNull);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -884,10 +927,9 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	@ExpectedBehavior(expected = SQLException.class)
 	public void testStringWidthTooLong() throws Exception {
 		if (!databaseType.isVarcharFieldWidthSupported()) {
-			throw new SQLException("Oh well.  This database does not support field widths");
+			return;
 		}
 		Dao<StringWidth, Object> stringWidthDao = createDao(StringWidth.class, true);
 		StringWidth stringWidth = new StringWidth();
@@ -898,7 +940,12 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		String string = sb.toString();
 		assertTrue(string.length() > ALL_TYPES_STRING_WIDTH);
 		stringWidth.stringField = string;
-		stringWidthDao.create(stringWidth);
+		try {
+			stringWidthDao.create(stringWidth);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -978,75 +1025,6 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void testJavaxPersistenceAnnotations() throws Exception {
-		Dao<Javax, Integer> javaxDao = createDao(Javax.class, true);
-		Javax foo = new Javax();
-		String stuff = "dqdqwdqwd";
-		foo.stuff = stuff;
-		assertEquals(1, javaxDao.create(foo));
-		assertTrue(foo.id != 0);
-		Javax foo2 = javaxDao.queryForId(foo.id);
-		assertNotNull(foo2);
-		assertEquals(foo.id, foo2.id);
-		assertEquals(stuff, foo2.stuff);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testJavaxUnknownType() throws Exception {
-		createDao(JavaxUnknownType.class, true);
-	}
-
-	@Test
-	public void testJavaxSerializable() throws Exception {
-		Dao<JavaxSerialization, Object> dao = createDao(JavaxSerialization.class, true);
-		JavaxSerialization serial = new JavaxSerialization();
-		serial.obj = new SerialField();
-		String stuff = "wpfjewpfjewpf";
-		serial.obj.stuff = stuff;
-		assertEquals(1, dao.create(serial));
-
-		JavaxSerialization serial2 = dao.queryForId(serial.id);
-		assertEquals(serial.id, serial2.id);
-		assertEquals(serial.obj.stuff, serial2.obj.stuff);
-	}
-
-	@Test
-	public void testJavaxForeign() throws Exception {
-		Dao<JavaxForeign, Integer> wrapperDao = createDao(JavaxForeign.class, true);
-
-		Foreign foreign = new Foreign();
-		int foreignId = 35345435;
-		foreign.id = foreignId;
-
-		JavaxForeign javax = new JavaxForeign();
-		javax.foreign = foreign;
-		// this sets the wrapper id
-		assertEquals(1, wrapperDao.create(javax));
-
-		JavaxForeign javax2 = wrapperDao.queryForId(javax.id);
-		assertEquals(javax.id, javax2.id);
-		assertEquals(javax.foreign.id, javax2.foreign.id);
-	}
-
-	@Test
-	public void testJavaxForeignOneToOne() throws Exception {
-		Dao<JavaxForeignOneToOne, Integer> wrapperDao = createDao(JavaxForeignOneToOne.class, true);
-
-		Foreign foreign = new Foreign();
-		int foreignId = 35345435;
-		foreign.id = foreignId;
-
-		JavaxForeignOneToOne javax = new JavaxForeignOneToOne();
-		javax.foreign = foreign;
-		// this sets the wrapper id
-		assertEquals(1, wrapperDao.create(javax));
-
-		JavaxForeignOneToOne javax2 = wrapperDao.queryForId(javax.id);
-		assertEquals(javax.id, javax2.id);
-		assertEquals(javax.foreign.id, javax2.foreign.id);
-	}
-
-	@Test
 	public void testGeneratedIdCapital() throws Exception {
 		createDao(GeneratedColumnCapital.class, true);
 	}
@@ -1067,9 +1045,15 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertTrue(objDao.objectsEqual(foo1, foo2));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNotSerializable() throws Exception {
-		createDao(NotSerializable.class, true);
+		try {
+			createDao(NotSerializable.class, true);
+			fail("expected exception");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+
 	}
 
 	@Test
@@ -1085,7 +1069,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(ourEnum, fooList.get(0).ourEnum);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUnknownStringEnum() throws Exception {
 		Dao<LocalEnumString, Object> fooDao = createDao(LocalEnumString.class, true);
 		OurEnum ourEnum = OurEnum.SECOND;
@@ -1094,7 +1078,12 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		Dao<LocalEnumString2, Object> foo2Dao = createDao(LocalEnumString2.class, false);
-		foo2Dao.queryForAll();
+		try {
+			foo2Dao.queryForAll();
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -1110,7 +1099,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(ourEnum, fooList.get(0).ourEnum);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testUnknownIntEnum() throws Exception {
 		Dao<LocalEnumInt, Object> fooDao = createDao(LocalEnumInt.class, true);
 		OurEnum ourEnum = OurEnum.SECOND;
@@ -1119,7 +1108,12 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(1, fooDao.create(foo));
 
 		Dao<LocalEnumInt2, Object> foo2Dao = createDao(LocalEnumInt2.class, false);
-		foo2Dao.queryForAll();
+		try {
+			foo2Dao.queryForAll();
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -1209,22 +1203,34 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertFalse(allDao.objectsEqual(all, allList.get(0)));
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNullUnPersistToBooleanPrimitive() throws Exception {
 		Dao<NullBoolean1, Object> null1Dao = createDao(NullBoolean1.class, true);
 		NullBoolean1 nullThing = new NullBoolean1();
 		assertEquals(1, null1Dao.create(nullThing));
 		Dao<NullBoolean2, Object> null2Dao = createDao(NullBoolean2.class, false);
-		null2Dao.queryForAll();
+		try {
+			null2Dao.queryForAll();
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
+
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testNullUnPersistToIntPrimitive() throws Exception {
 		Dao<NullInt1, Object> null1Dao = createDao(NullInt1.class, true);
 		NullInt1 nullThing = new NullInt1();
 		assertEquals(1, null1Dao.create(nullThing));
 		Dao<NullInt2, Object> null2Dao = createDao(NullInt2.class, false);
-		null2Dao.queryForAll();
+		try {
+			null2Dao.queryForAll();
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
+
 	}
 
 	@Test
@@ -1249,8 +1255,14 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertTrue(iterator.hasNext());
 		String[] result = iterator.next();
 		assertEquals(colN, result.length);
-		assertEquals(Integer.toString(foo.id), result[0]);
-		assertEquals(stuff, result[1]);
+		for (int colC = 0; colC < results.getNumberColumns(); colC++) {
+			if (results.getColumnNames()[colC] == "id") {
+				assertEquals(Integer.toString(foo.id), result[colC]);
+			}
+			if (results.getColumnNames()[colC] == "stuff") {
+				assertEquals(stuff, result[1]);
+			}
+		}
 		assertFalse(iterator.hasNext());
 	}
 
@@ -1282,8 +1294,14 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 			assertTrue(iterator.hasNext());
 			String[] result = iterator.next();
 			assertEquals(colN, result.length);
-			assertEquals(Integer.toString(foo.id), result[0]);
-			assertEquals(stuff, result[1]);
+			for (int colC = 0; colC < results.getNumberColumns(); colC++) {
+				if (results.getColumnNames()[colC] == "id") {
+					assertEquals(Integer.toString(foo.id), result[colC]);
+				}
+				if (results.getColumnNames()[colC] == "stuff") {
+					assertEquals(stuff, result[1]);
+				}
+			}
 			assertFalse(iterator.hasNext());
 		} finally {
 			iterator.close();
@@ -1332,11 +1350,16 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertNull(allDates.get(0).date);
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testSpringBadWiring() throws Exception {
 		BaseDaoImpl<String, String> daoSupport = new BaseDaoImpl<String, String>(String.class) {
 		};
-		daoSupport.initialize();
+		try {
+			daoSupport.initialize();
+			fail("expected exception");
+		} catch (IllegalStateException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -1655,58 +1678,6 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		@DatabaseField
 		public String values;
 		public ReservedField() {
-		}
-	}
-
-	protected static class Javax {
-		@Id
-		@GeneratedValue
-		public int id;
-		@Column(name = STUFF_FIELD_NAME)
-		public String stuff;
-		public Javax() {
-		}
-	}
-
-	protected static class JavaxUnknownType {
-		@Id
-		@GeneratedValue
-		public int id;
-		// this thing is not serializable
-		@Column
-		public Javax Javax;
-		public JavaxUnknownType() {
-		}
-	}
-
-	protected static class JavaxSerialization {
-		@Id
-		@GeneratedValue
-		public int id;
-		// this is serializable
-		@Column
-		public SerialField obj;
-		public JavaxSerialization() {
-		}
-	}
-
-	protected static class JavaxForeign {
-		@Id
-		@GeneratedValue
-		public int id;
-		@ManyToOne
-		Foreign foreign;
-		public JavaxForeign() {
-		}
-	}
-
-	protected static class JavaxForeignOneToOne {
-		@Id
-		@GeneratedValue
-		public int id;
-		@OneToOne
-		Foreign foreign;
-		public JavaxForeignOneToOne() {
 		}
 	}
 
