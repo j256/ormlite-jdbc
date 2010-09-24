@@ -73,7 +73,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	private final static String DEFAULT_ENUM_VALUE = "FIRST";
 	private final static String DEFAULT_ENUM_NUMBER_VALUE = "1";
 
-	private Dao<Foo, Integer> fooDao;
+	// needs to be protected for test base classes
+	protected Dao<Foo, Integer> fooDao;
 
 	@Test
 	public void testCreateDaoStatic() throws Exception {
