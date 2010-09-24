@@ -32,6 +32,19 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 
 public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
+	private final boolean CLOSE_IS_NOOP = false;
+	private final boolean UPDATE_ROWS_RETURNS_ONE = false;
+
+	@Before
+	@Override
+	public void before() throws Exception {
+		super.before();
+		fooDao = createDao(Foo.class, true);
+		assertEquals(Foo.class, ((BaseDaoImpl<Foo, Integer>) fooDao).getDataClass());
+	}
+
+	/* ======================================================================================== */
+
 	private final static String STUFF_FIELD_NAME = "stuff";
 	private final static String DEFAULT_VALUE_STRING = "1314199";
 	private final static int DEFAULT_VALUE = Integer.parseInt(DEFAULT_VALUE_STRING);
@@ -60,17 +73,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	private final static String DEFAULT_ENUM_VALUE = "FIRST";
 	private final static String DEFAULT_ENUM_NUMBER_VALUE = "1";
 
-	protected Dao<Foo, Integer> fooDao;
-
-	@Before
-	@Override
-	public void before() throws Exception {
-		super.before();
-		fooDao = createDao(Foo.class, true);
-		assertEquals(Foo.class, ((BaseDaoImpl<Foo, Integer>) fooDao).getDataClass());
-	}
-
-	/* ======================================================================================== */
+	private Dao<Foo, Integer> fooDao;
 
 	@Test
 	public void testCreateDaoStatic() throws Exception {
@@ -120,7 +123,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void doubleCreate() throws Exception {
+	public void testDoubleCreate() throws Exception {
 		Dao<DoubleCreate, Object> doubleDao = createDao(DoubleCreate.class, true);
 		int id = 313413123;
 		DoubleCreate foo = new DoubleCreate();
@@ -129,13 +132,13 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		try {
 			doubleDao.create(foo);
 			fail("expected exception");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// expected
 		}
 	}
 
 	@Test
-	public void iterateRemove() throws Exception {
+	public void testIterateRemove() throws Exception {
 		List<Foo> acctList = fooDao.queryForAll();
 		int initialSize = acctList.size();
 
@@ -198,7 +201,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void objectToString() throws Exception {
+	public void testObjectToString() throws Exception {
 		String stuff = "foo123231";
 		Foo foo1 = new Foo();
 		foo1.stuff = stuff;
@@ -208,27 +211,27 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void createNull() throws Exception {
+	public void testCreateNull() throws Exception {
 		assertEquals(0, fooDao.create(null));
 	}
 
 	@Test
-	public void updateNull() throws Exception {
+	public void testUpdateNull() throws Exception {
 		assertEquals(0, fooDao.update(null));
 	}
 
 	@Test
-	public void updateIdNull() throws Exception {
+	public void testUpdateIdNull() throws Exception {
 		assertEquals(0, fooDao.updateId(null, null));
 	}
 
 	@Test
-	public void deleteNull() throws Exception {
+	public void testDeleteNull() throws Exception {
 		assertEquals(0, fooDao.delete((Foo) null));
 	}
 
 	@Test
-	public void closeInIterator() throws Exception {
+	public void testCloseInIterator() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -238,14 +241,16 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 				iterator.next();
 				closeConnection();
 			}
-			fail("expected exception");
+			if (!CLOSE_IS_NOOP) {
+				fail("expected exception");
+			}
 		} catch (IllegalStateException e) {
 			// expected
 		}
 	}
 
 	@Test
-	public void closeIteratorFirst() throws Exception {
+	public void testCloseIteratorFirst() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -259,7 +264,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void closeIteratorBeforeNext() throws Exception {
+	public void testCloseIteratorBeforeNext() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -269,14 +274,16 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 				closeConnection();
 				iterator.next();
 			}
-			fail("expected exception");
+			if (!CLOSE_IS_NOOP) {
+				fail("expected exception");
+			}
 		} catch (IllegalStateException e) {
 			// expected
 		}
 	}
 
 	@Test
-	public void closeIteratorBeforeRemove() throws Exception {
+	public void testCloseIteratorBeforeRemove() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -288,13 +295,13 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 				iterator.remove();
 			}
 			fail("expected exception");
-		} catch (IllegalStateException e) {
+		} catch (Exception e) {
 			// expected
 		}
 	}
 
 	@Test
-	public void noNextBeforeRemove() throws Exception {
+	public void testNoNextBeforeRemove() throws Exception {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -331,7 +338,12 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 			fooList.add(foo);
 		}
 
-		assertEquals(fooList.size(), fooDao.delete(fooList));
+		int deleted = fooDao.delete(fooList);
+		if (UPDATE_ROWS_RETURNS_ONE) {
+			assertEquals(1, deleted);
+		} else {
+			assertEquals(fooList.size(), deleted);
+		}
 		assertEquals(0, fooDao.queryForAll().size());
 	}
 
@@ -351,7 +363,12 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 			fooIdList.add(foo.id);
 		}
 
-		assertEquals(fooIdList.size(), fooDao.deleteIds(fooIdList));
+		int deleted = fooDao.deleteIds(fooIdList);
+		if (UPDATE_ROWS_RETURNS_ONE) {
+			assertEquals(1, deleted);
+		} else {
+			assertEquals(fooIdList.size(), deleted);
+		}
 		assertEquals(0, fooDao.queryForAll().size());
 	}
 
@@ -363,7 +380,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void hasNextAfterDone() throws Exception {
+	public void testHasNextAfterDone() throws Exception {
 		Iterator<Foo> iterator = fooDao.iterator();
 		while (iterator.hasNext()) {
 		}
@@ -371,18 +388,18 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void nextWithoutHasNext() throws Exception {
+	public void testNextWithoutHasNext() throws Exception {
 		Iterator<Foo> iterator = fooDao.iterator();
 		try {
 			iterator.next();
 			fail("expected exception");
-		} catch (IllegalStateException e) {
+		} catch (Exception e) {
 			// expected
 		}
 	}
 
 	@Test
-	public void removeAfterDone() throws Exception {
+	public void testRemoveAfterDone() throws Exception {
 		Iterator<Foo> iterator = fooDao.iterator();
 		assertFalse(iterator.hasNext());
 		try {
@@ -394,7 +411,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	@Test
-	public void iteratorNoResults() throws Exception {
+	public void testIteratorNoResults() throws Exception {
 		Iterator<Foo> iterator = fooDao.iterator();
 		assertFalse(iterator.hasNext());
 		assertNull(iterator.next());
@@ -779,7 +796,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		try {
 			fooDao.create(foo1);
 			fail("expected exception");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// expected
 		}
 	}
@@ -802,7 +819,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		try {
 			defValDao.create(notNull);
 			fail("expected exception");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// expected
 		}
 	}
@@ -1380,7 +1397,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		try {
 			dao.create(unique);
 			fail("Should have thrown");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// expected
 			return;
 		}
