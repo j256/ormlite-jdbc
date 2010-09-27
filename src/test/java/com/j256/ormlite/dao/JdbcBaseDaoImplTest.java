@@ -26,6 +26,7 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.StatementBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -45,6 +46,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 	/* ======================================================================================== */
 
+	private final static String FOREIGN_FIELD_NAME = "foreign";
 	private final static String STUFF_FIELD_NAME = "stuff";
 	private final static String DEFAULT_VALUE_STRING = "1314199";
 	private final static int DEFAULT_VALUE = Integer.parseInt(DEFAULT_VALUE_STRING);
@@ -1404,6 +1406,61 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		}
 	}
 
+	@Test
+	public void testForeignQuery() throws Exception {
+		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
+		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+
+		Foreign foreign = new Foreign();
+		String stuff1 = "stuff1";
+		foreign.stuff = stuff1;
+		// this sets the foreign id
+		assertEquals(1, foreignDao.create(foreign));
+
+		ForeignWrapper wrapper = new ForeignWrapper();
+		wrapper.foreign = foreign;
+		// this sets the wrapper id
+		assertEquals(1, wrapperDao.create(wrapper));
+
+		StatementBuilder<ForeignWrapper, Integer> qb = wrapperDao.statementBuilder();
+		qb.where().eq(FOREIGN_FIELD_NAME, foreign.id);
+		List<ForeignWrapper> results = wrapperDao.query(qb.prepareStatement());
+		assertEquals(1, results.size());
+		assertNotNull(results.get(0).foreign);
+		assertEquals(foreign.id, results.get(0).foreign.id);
+
+		/*
+		 * now look it up not by foreign.id but by foreign which should extract the id automagically
+		 */
+		qb.where().eq(FOREIGN_FIELD_NAME, foreign);
+		results = wrapperDao.query(qb.prepareStatement());
+		assertEquals(1, results.size());
+		assertNotNull(results.get(0).foreign);
+		assertEquals(foreign.id, results.get(0).foreign.id);
+
+		/*
+		 * Now let's try the same thing but with a SelectArg
+		 */
+		SelectArg selectArg = new SelectArg();
+		qb.where().eq(FOREIGN_FIELD_NAME, selectArg);
+		selectArg.setValue(foreign.id);
+		results = wrapperDao.query(qb.prepareStatement());
+		assertEquals(1, results.size());
+		assertNotNull(results.get(0).foreign);
+		assertEquals(foreign.id, results.get(0).foreign.id);
+
+		/*
+		 * Now let's try the same thing but with a SelectArg with foreign value, not foreign.id
+		 */
+		selectArg = new SelectArg();
+		qb.where().eq(FOREIGN_FIELD_NAME, selectArg);
+		selectArg.setValue(foreign);
+		results = wrapperDao.query(qb.prepareStatement());
+		assertEquals(1, results.size());
+		assertNotNull(results.get(0).foreign);
+		assertEquals(foreign.id, results.get(0).foreign.id);
+	}
+
 	/* ==================================================================================== */
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)
@@ -1451,7 +1508,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	private static class ForeignWrapper {
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField(foreign = true)
+		@DatabaseField(foreign = true, columnName = FOREIGN_FIELD_NAME)
 		Foreign foreign;
 	}
 
