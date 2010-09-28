@@ -24,6 +24,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	private final static String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
 	private final static FieldConverter byteConverter = new ByteFieldConverter();
+	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
 	public String getDriverUrlPart() {
 		return DATABASE_URL_PORTION;
