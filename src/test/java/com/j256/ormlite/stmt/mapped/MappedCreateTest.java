@@ -3,6 +3,7 @@ package com.j256.ormlite.stmt.mapped;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.sql.SQLException;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class MappedCreateTest extends BaseOrmLiteTest {
 		assertNull(whereDao.queryForId(id));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = SQLException.class)
 	public void testJustIdInsert() throws Exception {
 		createDao(JustId.class, true);
 	}
