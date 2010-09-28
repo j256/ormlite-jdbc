@@ -18,8 +18,6 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-
 public class JdbcConnectionSourceTest {
 
 	@Test

@@ -92,14 +92,14 @@ public class TypeValMapper {
 	}
 
 	/**
-	 * Return the SqlType associated with the JDBC type value or null if none. 
+	 * Return the SqlType associated with the JDBC type value or null if none.
 	 */
 	public static SqlType getSqlTypeForTypeVal(int typeVal) {
 		return valToTypeMap.get(typeVal);
 	}
-	
+
 	/**
-	 * Return the SqlType associated with the JDBC type value or null if none. 
+	 * Return the SqlType associated with the JDBC type value or null if none.
 	 */
 	public static DataType getDataTypeForIdTypeVal(int typeVal) {
 		return idValToDataTypeMap.get(typeVal);

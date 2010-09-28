@@ -30,7 +30,6 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	private final static FieldConverter objectConverter = new ObjectFieldConverter();
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
-
 	public String getDriverUrlPart() {
 		return DATABASE_URL_PORTION;
 	}
