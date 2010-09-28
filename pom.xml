@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 	<name>ORMLite JDBC</name>
 	<url>http://ormlite.sourceforge.net/</url>
-	<description>Lightweight Object Relational Model (ORM) Android classes</description>
+	<description>Lightweight Object Relational Model (ORM) JDBC classes</description>
 	<licenses>
 		<license>
 			<name>BSD License</name>
