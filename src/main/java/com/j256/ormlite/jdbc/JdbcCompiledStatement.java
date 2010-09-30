@@ -5,6 +5,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
 
@@ -16,10 +17,12 @@ import com.j256.ormlite.support.DatabaseResults;
 public class JdbcCompiledStatement implements CompiledStatement {
 
 	private final PreparedStatement preparedStatement;
+	private final StatementType type;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcCompiledStatement(PreparedStatement preparedStatement) {
+	public JdbcCompiledStatement(PreparedStatement preparedStatement, StatementType type) {
 		this.preparedStatement = preparedStatement;
+		this.type = type;
 	}
 
 	public int getColumnCount() throws SQLException {
@@ -37,10 +40,16 @@ public class JdbcCompiledStatement implements CompiledStatement {
 	}
 
 	public int executeUpdate() throws SQLException {
+		if (type == StatementType.SELECT) {
+			throw new IllegalArgumentException("Cannot call execute on a " + type + " statement");
+		}
 		return preparedStatement.executeUpdate();
 	}
 
 	public DatabaseResults executeQuery() throws SQLException {
+		if (type != StatementType.SELECT) {
+			throw new IllegalArgumentException("Cannot call executeQuery on a " + type + " statement");
+		}
 		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery());
 	}
 

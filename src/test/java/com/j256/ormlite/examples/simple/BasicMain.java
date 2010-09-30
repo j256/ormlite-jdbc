@@ -118,7 +118,7 @@ public class BasicMain {
 		assertEquals("Should have found 1 account in for loop", 1, accountC);
 
 		// construct a query using the QueryBuilder
-		StatementBuilder<Account, Integer> statementBuilder = accountDao.statementBuilder();
+		StatementBuilder<Account, Integer> statementBuilder = accountDao.selectBuilder();
 		// shouldn't find anything: name LIKE 'hello" does not match our account
 		statementBuilder.where().like(Account.NAME_FIELD_NAME, "hello");
 		accounts = accountDao.query(statementBuilder.prepareStatement());
@@ -185,7 +185,7 @@ public class BasicMain {
 		assertEquals(1, accountDao.create(new Account(name2)));
 		assertEquals(1, accountDao.create(new Account(name3)));
 
-		StatementBuilder<Account, Integer> statementBuilder = accountDao.statementBuilder();
+		StatementBuilder<Account, Integer> statementBuilder = accountDao.selectBuilder();
 		SelectArg selectArg = new SelectArg();
 		// build a query with the WHERE clause set to 'name = ?'
 		statementBuilder.where().like(Account.NAME_FIELD_NAME, selectArg);

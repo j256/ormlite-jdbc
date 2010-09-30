@@ -139,7 +139,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 		};
 		dao.setConnectionSource(connectionSource);
 		dao.initialize();
-		StatementBuilder<Foo, String> qb = dao.statementBuilder();
+		StatementBuilder<Foo, String> qb = dao.selectBuilder();
 		int limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();

@@ -10,6 +10,7 @@ import java.sql.Statement;
 
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.GenericRowMapper;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
@@ -21,7 +22,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	private static SqlType[] noArgTypes = new SqlType[0];
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
-	private Connection connection;
+	private final Connection connection;
 	private Boolean supportsSavePoints = null;
 
 	public JdbcDatabaseConnection(Connection connection) {
@@ -68,9 +69,9 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public CompiledStatement compileStatement(String statement) throws SQLException {
+	public CompiledStatement compileStatement(String statement, StatementType type) throws SQLException {
 		return new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
-				ResultSet.CONCUR_READ_ONLY));
+				ResultSet.CONCUR_READ_ONLY), type);
 	}
 
 	public void close() throws SQLException {

@@ -14,6 +14,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
@@ -32,10 +33,12 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
 		MappedPreparedStmt<Foo> rowMapper =
 				new MappedPreparedStmt<Foo>(tableInfo, null, new ArrayList<FieldType>(),
-						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
+						StatementType.SELECT);
 
 		CompiledStatement stmt =
-				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME);
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT);
 
 		DatabaseResults results = stmt.executeQuery();
 		while (results.next()) {
@@ -60,12 +63,13 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
 		MappedPreparedStmt<Foo> preparedQuery =
 				new MappedPreparedStmt<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
-						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), 1);
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), 1, StatementType.SELECT);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =
 				new MappedPreparedStmt<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
-						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null);
+						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
+						StatementType.SELECT);
 		checkResults(foos, preparedQuery, 2);
 	}
 
@@ -92,7 +96,8 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
 		new MappedPreparedStmt<NoConstructor>(new TableInfo<NoConstructor>(databaseType, NoConstructor.class), null,
-				new ArrayList<FieldType>(), new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null);
+				new ArrayList<FieldType>(), new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null,
+				StatementType.SELECT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -100,7 +105,7 @@ public class MappedPreparedQueryTest extends BaseOrmLiteTest {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
 		new MappedPreparedStmt<Foo>(new TableInfo<Foo>(databaseType, Foo.class), null, new ArrayList<FieldType>(),
-				new ArrayList<FieldType>(), selectArgList, null);
+				new ArrayList<FieldType>(), selectArgList, null, StatementType.SELECT);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)

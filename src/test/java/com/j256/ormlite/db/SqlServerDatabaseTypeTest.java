@@ -55,7 +55,7 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 		};
 		dao.setConnectionSource(createMock(ConnectionSource.class));
 		dao.initialize();
-		StatementBuilder<Foo, String> qb = dao.statementBuilder();
+		StatementBuilder<Foo, String> qb = dao.selectBuilder();
 		int limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();

@@ -46,8 +46,6 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 	/* ======================================================================================== */
 
-	private final static String FOREIGN_FIELD_NAME = "foreign";
-	private final static String STUFF_FIELD_NAME = "stuff";
 	private final static String DEFAULT_VALUE_STRING = "1314199";
 	private final static int DEFAULT_VALUE = Integer.parseInt(DEFAULT_VALUE_STRING);
 	private final static int ALL_TYPES_STRING_WIDTH = 4;
@@ -220,7 +218,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testUpdateNull() throws Exception {
-		assertEquals(0, fooDao.update(null));
+		assertEquals(0, fooDao.update((Foo) null));
 	}
 
 	@Test
@@ -379,6 +377,46 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	public void testDeleteIdsNone() throws Exception {
 		List<Integer> fooIdList = new ArrayList<Integer>();
 		assertEquals(fooIdList.size(), fooDao.deleteIds(fooIdList));
+		assertEquals(0, fooDao.queryForAll().size());
+	}
+
+	@Test
+	public void testDeletePreparedStmtIn() throws Exception {
+		List<Integer> fooIdList = new ArrayList<Integer>();
+		for (int i = 0; i < 100; i++) {
+			Foo foo = new Foo();
+			assertEquals(1, fooDao.create(foo));
+			fooIdList.add(foo.id);
+		}
+
+		StatementBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
+		stmtBuilder.where().in(Foo.ID_FIELD_NAME, fooIdList);
+
+		int deleted = fooDao.delete(stmtBuilder.prepareStatement());
+		if (UPDATE_ROWS_RETURNS_ONE) {
+			assertEquals(1, deleted);
+		} else {
+			assertEquals(fooIdList.size(), deleted);
+		}
+		assertEquals(0, fooDao.queryForAll().size());
+	}
+
+	@Test
+	public void testDeleteAllPreparedStmt() throws Exception {
+		int fooN = 100;
+		for (int i = 0; i < fooN; i++) {
+			Foo foo = new Foo();
+			assertEquals(1, fooDao.create(foo));
+		}
+
+		StatementBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
+
+		int deleted = fooDao.delete(stmtBuilder.prepareStatement());
+		if (UPDATE_ROWS_RETURNS_ONE) {
+			assertEquals(1, deleted);
+		} else {
+			assertEquals(fooN, deleted);
+		}
 		assertEquals(0, fooDao.queryForAll().size());
 	}
 
@@ -668,8 +706,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 		String stuff = "ewf4334234u42f";
 
-		StatementBuilder<Foo, Integer> qb = fooDao.statementBuilder();
-		qb.where().eq(STUFF_FIELD_NAME, stuff);
+		StatementBuilder<Foo, Integer> qb = fooDao.selectBuilder();
+		qb.where().eq(Foo.STUFF_FIELD_NAME, stuff);
 
 		assertNull(fooDao.queryForFirst(qb.prepareStatement()));
 
@@ -1267,10 +1305,13 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		results = fooDao.queryForAllRaw("select * from " + FOO_TABLE_NAME);
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
-		Field[] fields = Foo.class.getDeclaredFields();
-		for (int colC = 0; colC < colNames.length; colC++) {
-			assertTrue(fields[colC].getName().equalsIgnoreCase(colNames[colC]));
-		}
+		assertEquals(3, colNames.length);
+		Field field = Foo.class.getDeclaredField(Foo.ID_FIELD_NAME);
+		assertTrue(field.getName().equalsIgnoreCase(colNames[0]));
+		field = Foo.class.getDeclaredField(Foo.STUFF_FIELD_NAME);
+		assertTrue(field.getName().equalsIgnoreCase(colNames[1]));
+		field = Foo.class.getDeclaredField(Foo.VAL_FIELD_NAME);
+		assertTrue(field.getName().equalsIgnoreCase(colNames[2]));
 		CloseableIterator<String[]> iterator = results.iterator();
 		assertTrue(iterator.hasNext());
 		String[] result = iterator.next();
@@ -1305,10 +1346,13 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		results = fooDao.queryForAllRaw("select * from " + FOO_TABLE_NAME);
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
-		Field[] fields = Foo.class.getDeclaredFields();
-		for (int colC = 0; colC < colNames.length; colC++) {
-			assertTrue(fields[colC].getName().equalsIgnoreCase(colNames[colC]));
-		}
+		assertEquals(3, colNames.length);
+		Field field = Foo.class.getDeclaredField(Foo.ID_FIELD_NAME);
+		assertTrue(field.getName().equalsIgnoreCase(colNames[0]));
+		field = Foo.class.getDeclaredField(Foo.STUFF_FIELD_NAME);
+		assertTrue(field.getName().equalsIgnoreCase(colNames[1]));
+		field = Foo.class.getDeclaredField(Foo.VAL_FIELD_NAME);
+		assertTrue(field.getName().equalsIgnoreCase(colNames[2]));
 		iterator = results.iterator();
 		try {
 			assertTrue(iterator.hasNext());
@@ -1422,8 +1466,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		// this sets the wrapper id
 		assertEquals(1, wrapperDao.create(wrapper));
 
-		StatementBuilder<ForeignWrapper, Integer> qb = wrapperDao.statementBuilder();
-		qb.where().eq(FOREIGN_FIELD_NAME, foreign.id);
+		StatementBuilder<ForeignWrapper, Integer> qb = wrapperDao.selectBuilder();
+		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, foreign.id);
 		List<ForeignWrapper> results = wrapperDao.query(qb.prepareStatement());
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).foreign);
@@ -1432,7 +1476,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		/*
 		 * now look it up not by foreign.id but by foreign which should extract the id automagically
 		 */
-		qb.where().eq(FOREIGN_FIELD_NAME, foreign);
+		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, foreign);
 		results = wrapperDao.query(qb.prepareStatement());
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).foreign);
@@ -1442,7 +1486,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		 * Now let's try the same thing but with a SelectArg
 		 */
 		SelectArg selectArg = new SelectArg();
-		qb.where().eq(FOREIGN_FIELD_NAME, selectArg);
+		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, selectArg);
 		selectArg.setValue(foreign.id);
 		results = wrapperDao.query(qb.prepareStatement());
 		assertEquals(1, results.size());
@@ -1453,7 +1497,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		 * Now let's try the same thing but with a SelectArg with foreign value, not foreign.id
 		 */
 		selectArg = new SelectArg();
-		qb.where().eq(FOREIGN_FIELD_NAME, selectArg);
+		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, selectArg);
 		selectArg.setValue(foreign);
 		results = wrapperDao.query(qb.prepareStatement());
 		assertEquals(1, results.size());
@@ -1461,14 +1505,120 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		assertEquals(foreign.id, results.get(0).foreign.id);
 	}
 
+	@Test
+	public void testPrepareStatementUpdateValueString() throws Exception {
+		Foo foo = new Foo();
+		String stuff = "dqedqdq";
+		foo.stuff = stuff;
+		assertEquals(1, fooDao.create(foo));
+
+		StatementBuilder<Foo, Integer> stmtb = fooDao.selectBuilder();
+		stmtb.where().eq(Foo.STUFF_FIELD_NAME, stuff);
+		List<Foo> results = fooDao.query(stmtb.prepareStatement());
+		assertEquals(1, results.size());
+
+		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		String newStuff = "fepojefpjo";
+		updateb.updateColumnValue(Foo.STUFF_FIELD_NAME, newStuff);
+		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+
+		results = fooDao.query(stmtb.prepareStatement());
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testPrepareStatementUpdateValueNumber() throws Exception {
+		Foo foo = new Foo();
+		foo.val = 123213;
+		assertEquals(1, fooDao.create(foo));
+
+		StatementBuilder<Foo, Integer> stmtb = fooDao.selectBuilder();
+		stmtb.where().eq(Foo.ID_FIELD_NAME, foo.id);
+		List<Foo> results = fooDao.query(stmtb.prepareStatement());
+		assertEquals(1, results.size());
+
+		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		updateb.updateColumnValue(Foo.VAL_FIELD_NAME, foo.val + 1);
+		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+
+		results = fooDao.query(stmtb.prepareStatement());
+		assertEquals(1, results.size());
+		assertEquals(foo.val + 1, results.get(0).val);
+	}
+
+	@Test
+	public void testPrepareStatementUpdateValueExpression() throws Exception {
+		Foo foo = new Foo();
+		foo.val = 123213;
+		assertEquals(1, fooDao.create(foo));
+
+		StatementBuilder<Foo, Integer> stmtb = fooDao.selectBuilder();
+		stmtb.where().eq(Foo.ID_FIELD_NAME, foo.id);
+		List<Foo> results = fooDao.query(stmtb.prepareStatement());
+		assertEquals(1, results.size());
+
+		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		String stuff = "deopdjq";
+		updateb.updateColumnValue(Foo.STUFF_FIELD_NAME, stuff);
+		StringBuilder sb = new StringBuilder();
+		updateb.escapeColumnName(sb, Foo.VAL_FIELD_NAME);
+		sb.append("+ 1");
+		updateb.updateColumnExpression(Foo.VAL_FIELD_NAME, sb.toString());
+		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+
+		results = fooDao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(stuff, results.get(0).stuff);
+		assertEquals(foo.val + 1, results.get(0).val);
+	}
+
+	@Test
+	public void testPrepareStatementUpdateValueWhere() throws Exception {
+		Foo foo1 = new Foo();
+		foo1.val = 78582351;
+		assertEquals(1, fooDao.create(foo1));
+		Foo foo2 = new Foo();
+		String stuff = "eopqjdepodje";
+		foo2.stuff = stuff;
+		foo2.val = 123344131;
+		assertEquals(1, fooDao.create(foo2));
+
+		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		String newStuff = "deopdjq";
+		updateb.updateColumnValue(Foo.STUFF_FIELD_NAME, newStuff);
+		StringBuilder sb = new StringBuilder();
+		updateb.escapeColumnName(sb, Foo.VAL_FIELD_NAME);
+		sb.append("+ 1");
+		updateb.updateColumnExpression(Foo.VAL_FIELD_NAME, sb.toString());
+		updateb.where().eq(Foo.ID_FIELD_NAME, foo2.id);
+		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+
+		List<Foo> results = fooDao.queryForAll();
+		assertEquals(2, results.size());
+		Foo foo = results.get(0);
+		assertEquals(foo1.id, foo.id);
+		assertEquals(foo1.val, foo.val);
+		assertNull(foo.stuff);
+		foo = results.get(1);
+		assertEquals(foo2.id, foo.id);
+		assertEquals(foo2.val + 1, foo.val);
+		assertEquals(newStuff, foo.stuff);
+	}
+
 	/* ==================================================================================== */
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)
 	protected static class Foo {
-		@DatabaseField(generatedId = true)
+		public final static String ID_FIELD_NAME = "id";
+		public final static String STUFF_FIELD_NAME = "stuff";
+		public final static String VAL_FIELD_NAME = "val";
+
+		@DatabaseField(generatedId = true, columnName = ID_FIELD_NAME)
 		public int id;
 		@DatabaseField(columnName = STUFF_FIELD_NAME)
 		public String stuff;
+		@DatabaseField(columnName = VAL_FIELD_NAME)
+		public int val;
 		public Foo() {
 		}
 		@Override
@@ -1506,6 +1656,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 	}
 
 	private static class ForeignWrapper {
+		private final static String FOREIGN_FIELD_NAME = "foreign";
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true, columnName = FOREIGN_FIELD_NAME)

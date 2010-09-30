@@ -108,7 +108,7 @@ public class Main {
 		}
 
 		// construct a query using the QueryBuilder
-		StatementBuilder<Order, Integer> statementBuilder = orderDao.statementBuilder();
+		StatementBuilder<Order, Integer> statementBuilder = orderDao.selectBuilder();
 		// should find both of the orders that match the account id
 		statementBuilder.where().eq(Order.ACCOUNT_ID_FIELD_NAME, account.getId());
 		List<Order> orders = orderDao.query(statementBuilder.prepareStatement());
