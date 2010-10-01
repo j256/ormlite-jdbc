@@ -26,8 +26,10 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.stmt.StatementBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
@@ -389,10 +391,10 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 			fooIdList.add(foo.id);
 		}
 
-		StatementBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
+		DeleteBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
 		stmtBuilder.where().in(Foo.ID_FIELD_NAME, fooIdList);
 
-		int deleted = fooDao.delete(stmtBuilder.prepareStatement());
+		int deleted = fooDao.delete(stmtBuilder.prepare());
 		if (UPDATE_ROWS_RETURNS_ONE) {
 			assertEquals(1, deleted);
 		} else {
@@ -409,9 +411,9 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 			assertEquals(1, fooDao.create(foo));
 		}
 
-		StatementBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
+		DeleteBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
 
-		int deleted = fooDao.delete(stmtBuilder.prepareStatement());
+		int deleted = fooDao.delete(stmtBuilder.prepare());
 		if (UPDATE_ROWS_RETURNS_ONE) {
 			assertEquals(1, deleted);
 		} else {
@@ -706,17 +708,17 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 		String stuff = "ewf4334234u42f";
 
-		StatementBuilder<Foo, Integer> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, Integer> qb = fooDao.queryBuilder();
 		qb.where().eq(Foo.STUFF_FIELD_NAME, stuff);
 
-		assertNull(fooDao.queryForFirst(qb.prepareStatement()));
+		assertNull(fooDao.queryForFirst(qb.prepare()));
 
 		Foo foo1 = new Foo();
 		foo1.stuff = stuff;
 		assertEquals(1, fooDao.create(foo1));
 
 		// should still get foo1
-		Foo foo2 = fooDao.queryForFirst(qb.prepareStatement());
+		Foo foo2 = fooDao.queryForFirst(qb.prepare());
 		assertEquals(foo1.id, foo2.id);
 		assertEquals(stuff, foo2.stuff);
 
@@ -726,7 +728,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		foo3.stuff = stuff2;
 		assertEquals(1, fooDao.create(foo3));
 
-		foo2 = fooDao.queryForFirst(qb.prepareStatement());
+		foo2 = fooDao.queryForFirst(qb.prepare());
 		assertEquals(foo1.id, foo2.id);
 		assertEquals(stuff, foo2.stuff);
 	}
@@ -1306,12 +1308,21 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		assertEquals(3, colNames.length);
-		Field field = Foo.class.getDeclaredField(Foo.ID_FIELD_NAME);
-		assertTrue(field.getName().equalsIgnoreCase(colNames[0]));
-		field = Foo.class.getDeclaredField(Foo.STUFF_FIELD_NAME);
-		assertTrue(field.getName().equalsIgnoreCase(colNames[1]));
-		field = Foo.class.getDeclaredField(Foo.VAL_FIELD_NAME);
-		assertTrue(field.getName().equalsIgnoreCase(colNames[2]));
+		boolean gotId = false;
+		boolean gotStuff = false;
+		boolean gotVal = false;
+		for (int colC = 0; colC < 3; colC++) {
+			if (colNames[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
+				assertFalse(gotId);
+				gotId = true;
+			} else if (colNames[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+				assertFalse(gotStuff);
+				gotStuff = true;
+			} else if (colNames[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+				assertFalse(gotVal);
+				gotVal = true;
+			}
+		}
 		CloseableIterator<String[]> iterator = results.iterator();
 		assertTrue(iterator.hasNext());
 		String[] result = iterator.next();
@@ -1466,9 +1477,9 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		// this sets the wrapper id
 		assertEquals(1, wrapperDao.create(wrapper));
 
-		StatementBuilder<ForeignWrapper, Integer> qb = wrapperDao.selectBuilder();
+		QueryBuilder<ForeignWrapper, Integer> qb = wrapperDao.queryBuilder();
 		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, foreign.id);
-		List<ForeignWrapper> results = wrapperDao.query(qb.prepareStatement());
+		List<ForeignWrapper> results = wrapperDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).foreign);
 		assertEquals(foreign.id, results.get(0).foreign.id);
@@ -1477,7 +1488,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		 * now look it up not by foreign.id but by foreign which should extract the id automagically
 		 */
 		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, foreign);
-		results = wrapperDao.query(qb.prepareStatement());
+		results = wrapperDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).foreign);
 		assertEquals(foreign.id, results.get(0).foreign.id);
@@ -1488,7 +1499,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		SelectArg selectArg = new SelectArg();
 		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, selectArg);
 		selectArg.setValue(foreign.id);
-		results = wrapperDao.query(qb.prepareStatement());
+		results = wrapperDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).foreign);
 		assertEquals(foreign.id, results.get(0).foreign.id);
@@ -1499,7 +1510,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		selectArg = new SelectArg();
 		qb.where().eq(ForeignWrapper.FOREIGN_FIELD_NAME, selectArg);
 		selectArg.setValue(foreign);
-		results = wrapperDao.query(qb.prepareStatement());
+		results = wrapperDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertNotNull(results.get(0).foreign);
 		assertEquals(foreign.id, results.get(0).foreign.id);
@@ -1512,17 +1523,17 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		foo.stuff = stuff;
 		assertEquals(1, fooDao.create(foo));
 
-		StatementBuilder<Foo, Integer> stmtb = fooDao.selectBuilder();
+		QueryBuilder<Foo, Integer> stmtb = fooDao.queryBuilder();
 		stmtb.where().eq(Foo.STUFF_FIELD_NAME, stuff);
-		List<Foo> results = fooDao.query(stmtb.prepareStatement());
+		List<Foo> results = fooDao.query(stmtb.prepare());
 		assertEquals(1, results.size());
 
-		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		UpdateBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
 		String newStuff = "fepojefpjo";
 		updateb.updateColumnValue(Foo.STUFF_FIELD_NAME, newStuff);
-		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+		assertEquals(1, fooDao.update(updateb.prepare()));
 
-		results = fooDao.query(stmtb.prepareStatement());
+		results = fooDao.query(stmtb.prepare());
 		assertEquals(0, results.size());
 	}
 
@@ -1532,16 +1543,16 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		foo.val = 123213;
 		assertEquals(1, fooDao.create(foo));
 
-		StatementBuilder<Foo, Integer> stmtb = fooDao.selectBuilder();
+		QueryBuilder<Foo, Integer> stmtb = fooDao.queryBuilder();
 		stmtb.where().eq(Foo.ID_FIELD_NAME, foo.id);
-		List<Foo> results = fooDao.query(stmtb.prepareStatement());
+		List<Foo> results = fooDao.query(stmtb.prepare());
 		assertEquals(1, results.size());
 
-		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		UpdateBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
 		updateb.updateColumnValue(Foo.VAL_FIELD_NAME, foo.val + 1);
-		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+		assertEquals(1, fooDao.update(updateb.prepare()));
 
-		results = fooDao.query(stmtb.prepareStatement());
+		results = fooDao.query(stmtb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo.val + 1, results.get(0).val);
 	}
@@ -1552,19 +1563,19 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		foo.val = 123213;
 		assertEquals(1, fooDao.create(foo));
 
-		StatementBuilder<Foo, Integer> stmtb = fooDao.selectBuilder();
+		QueryBuilder<Foo, Integer> stmtb = fooDao.queryBuilder();
 		stmtb.where().eq(Foo.ID_FIELD_NAME, foo.id);
-		List<Foo> results = fooDao.query(stmtb.prepareStatement());
+		List<Foo> results = fooDao.query(stmtb.prepare());
 		assertEquals(1, results.size());
 
-		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		UpdateBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
 		String stuff = "deopdjq";
 		updateb.updateColumnValue(Foo.STUFF_FIELD_NAME, stuff);
 		StringBuilder sb = new StringBuilder();
 		updateb.escapeColumnName(sb, Foo.VAL_FIELD_NAME);
 		sb.append("+ 1");
 		updateb.updateColumnExpression(Foo.VAL_FIELD_NAME, sb.toString());
-		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+		assertEquals(1, fooDao.update(updateb.prepare()));
 
 		results = fooDao.queryForAll();
 		assertEquals(1, results.size());
@@ -1583,7 +1594,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		foo2.val = 123344131;
 		assertEquals(1, fooDao.create(foo2));
 
-		StatementBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
+		UpdateBuilder<Foo, Integer> updateb = fooDao.updateBuilder();
 		String newStuff = "deopdjq";
 		updateb.updateColumnValue(Foo.STUFF_FIELD_NAME, newStuff);
 		StringBuilder sb = new StringBuilder();
@@ -1591,7 +1602,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		sb.append("+ 1");
 		updateb.updateColumnExpression(Foo.VAL_FIELD_NAME, sb.toString());
 		updateb.where().eq(Foo.ID_FIELD_NAME, foo2.id);
-		assertEquals(1, fooDao.update(updateb.prepareStatement()));
+		assertEquals(1, fooDao.update(updateb.prepare()));
 
 		List<Foo> results = fooDao.queryForAll();
 		assertEquals(2, results.size());

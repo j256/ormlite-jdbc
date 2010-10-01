@@ -33,11 +33,11 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testAnd() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		// test And + Eq
 		qb.where().eq(Foo.ID_COLUMN_NAME, foo1.id).and().eq(Foo.VAL_COLUMN_NAME, foo1.val);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 
@@ -46,14 +46,14 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
 		where.and();
 		where.eq(Foo.VAL_COLUMN_NAME, foo2.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 
 		// test And double args
 		where = qb.where();
 		where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.VAL_COLUMN_NAME, foo1.val));
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 	}
@@ -61,11 +61,11 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testOr() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		// test Or + Eq
 		qb.where().eq(Foo.ID_COLUMN_NAME, foo1.id).or().eq(Foo.VAL_COLUMN_NAME, foo1.val);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 
@@ -74,7 +74,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
 		where.or();
 		where.eq(Foo.VAL_COLUMN_NAME, foo2.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 
@@ -82,7 +82,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		where = qb.where();
 		where.or(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.VAL_COLUMN_NAME, foo1.val)), where.eq(
 				Foo.ID_COLUMN_NAME, foo2.id).and().eq(Foo.VAL_COLUMN_NAME, foo2.val));
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -91,11 +91,11 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testSelectArgs() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		SelectArg idSelectArg = new SelectArg();
 		qb.where().eq(Foo.ID_COLUMN_NAME, idSelectArg);
-		PreparedStmt<Foo> preparedQuery = qb.prepareStatement();
+		PreparedQuery<Foo> preparedQuery = qb.prepare();
 
 		idSelectArg.setValue(foo1.id);
 		List<Foo> results = fooDao.query(preparedQuery);
@@ -103,7 +103,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		assertEquals(foo1, results.get(0));
 
 		idSelectArg.setValue(foo2.id);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 	}
@@ -111,10 +111,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testLike() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().like(Foo.ID_COLUMN_NAME, ID_PREFIX + "%");
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -124,12 +124,12 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	public void testSelectArgsNotSet() throws Exception {
 
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		SelectArg idSelectArg = new SelectArg();
 		qb.where().eq(Foo.ID_COLUMN_NAME, idSelectArg);
 		try {
-			fooDao.query(qb.prepareStatement());
+			fooDao.query(qb.prepare());
 			fail("expected exception");
 		} catch (SQLException e) {
 			// expected
@@ -139,10 +139,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testSelectNot() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().not().eq(Foo.ID_COLUMN_NAME, foo1.id);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 	}
@@ -150,10 +150,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testIn() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().in(Foo.ID_COLUMN_NAME, foo1.id, foo2.id);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -162,10 +162,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testInIterable() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().in(Foo.ID_COLUMN_NAME, Arrays.asList(foo1.id, foo2.id));
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -174,10 +174,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testNotIn() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().not().in(Foo.ID_COLUMN_NAME, foo1.id);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 	}
@@ -185,10 +185,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testNotBad() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.where().not();
 		try {
-			fooDao.query(qb.prepareStatement());
+			fooDao.query(qb.prepare());
 			fail("expected exception");
 		} catch (IllegalStateException e) {
 			// expected
@@ -198,7 +198,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testNotNotComparison() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		Where where = qb.where();
 		try {
 			where.not(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo1.id)));
@@ -211,10 +211,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testNotArg() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		Where where = qb.where();
 		where.not(where.eq(Foo.ID_COLUMN_NAME, foo1.id));
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 	}
@@ -222,10 +222,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testNoWhereOperations() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.where();
 		try {
-			fooDao.query(qb.prepareStatement());
+			fooDao.query(qb.prepare());
 			fail("expected exception");
 		} catch (IllegalStateException e) {
 			// expected
@@ -235,10 +235,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testMissingAnd() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.where().eq(Foo.ID_COLUMN_NAME, foo1.id).eq(Foo.ID_COLUMN_NAME, foo1.id);
 		try {
-			fooDao.query(qb.prepareStatement());
+			fooDao.query(qb.prepare());
 			fail("expected exception");
 		} catch (IllegalStateException e) {
 			// expected
@@ -248,7 +248,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testMissingAndArg() throws Exception {
 		Dao<Foo, String> fooDao = createDao(Foo.class, false);
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		try {
 			qb.where().and();
 			fail("expected exception");
@@ -260,38 +260,38 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testBetween() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().between(Foo.VAL_COLUMN_NAME, LOW_VAL, HIGH_VAL);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 
 		qb.where().between(Foo.VAL_COLUMN_NAME, LOW_VAL + 1, HIGH_VAL);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 
 		qb.where().between(Foo.VAL_COLUMN_NAME, LOW_VAL, HIGH_VAL - 1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 
 		qb.where().between(Foo.VAL_COLUMN_NAME, LOW_VAL + 1, HIGH_VAL - 1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 	}
 
 	@Test
 	public void testBetweenSelectArg() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		SelectArg lowSelectArg = new SelectArg();
 		qb.where().between(Foo.VAL_COLUMN_NAME, lowSelectArg, HIGH_VAL);
 		lowSelectArg.setValue(LOW_VAL);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -300,7 +300,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		lowSelectArg.setValue(LOW_VAL + 1);
 		highSelectArg.setValue(HIGH_VAL);
 		qb.where().between(Foo.VAL_COLUMN_NAME, lowSelectArg, highSelectArg);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 	}
@@ -308,12 +308,12 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testBetweenStrings() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		String low = ID_PREFIX;
 		String high = ID_PREFIX + "99999";
 		qb.where().between(Foo.ID_COLUMN_NAME, low, high);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -322,70 +322,70 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testLtGtEtc() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		qb.where().eq(Foo.VAL_COLUMN_NAME, foo1.val);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 
 		qb.where().ge(Foo.VAL_COLUMN_NAME, foo1.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 
 		qb.where().ge(Foo.VAL_COLUMN_NAME, foo1.val - 1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 
 		qb.where().ge(Foo.VAL_COLUMN_NAME, foo2.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 
 		qb.where().gt(Foo.VAL_COLUMN_NAME, foo1.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 
 		qb.where().gt(Foo.VAL_COLUMN_NAME, foo1.val - 1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 
 		qb.where().gt(Foo.VAL_COLUMN_NAME, foo2.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 
 		qb.where().le(Foo.VAL_COLUMN_NAME, foo1.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 
 		qb.where().le(Foo.VAL_COLUMN_NAME, foo1.val - 1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 
 		qb.where().lt(Foo.VAL_COLUMN_NAME, foo1.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 
 		qb.where().lt(Foo.VAL_COLUMN_NAME, foo1.val + 1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 
 		qb.where().ne(Foo.VAL_COLUMN_NAME, foo1.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo2, results.get(0));
 
 		qb.where().ne(Foo.VAL_COLUMN_NAME, foo1.val).and().ne(Foo.VAL_COLUMN_NAME, foo2.val);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 	}
 
@@ -402,21 +402,21 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		checkPartialList(partialDao.queryForAll(), ids, firsts, lasts, false, false);
 
 		Set<String> columnNames = new HashSet<String>();
-		StatementBuilder<PartialData, Integer> qb = partialDao.selectBuilder();
+		QueryBuilder<PartialData, Integer> qb = partialDao.queryBuilder();
 		qb.selectColumns(columnNames);
-		List<PartialData> partialList = partialDao.query(qb.prepareStatement());
+		List<PartialData> partialList = partialDao.query(qb.prepare());
 		checkPartialList(partialList, ids, firsts, lasts, true, true);
 
 		columnNames = new HashSet<String>();
 		columnNames.add(PartialData.FIRST_FIELD_NAME);
 		qb.selectColumns(columnNames);
-		partialList = partialDao.query(qb.prepareStatement());
+		partialList = partialDao.query(qb.prepare());
 		checkPartialList(partialList, ids, firsts, lasts, false, true);
 
 		columnNames = new HashSet<String>();
 		columnNames.add(PartialData.LAST_FIELD_NAME);
 		qb.selectColumns(columnNames);
-		partialList = partialDao.query(qb.prepareStatement());
+		partialList = partialDao.query(qb.prepare());
 		checkPartialList(partialList, ids, firsts, lasts, false, false);
 
 		for (PartialData partialData : partialDao) {
@@ -439,21 +439,21 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		checkPartialIterator(partialDao.iterator(), ids, firsts, lasts, false, false);
 
 		Set<String> columnNames = new HashSet<String>();
-		StatementBuilder<PartialData, Integer> qb = partialDao.selectBuilder();
+		QueryBuilder<PartialData, Integer> qb = partialDao.queryBuilder();
 		qb.selectColumns(columnNames);
-		Iterator<PartialData> iterator = partialDao.iterator(qb.prepareStatement());
+		Iterator<PartialData> iterator = partialDao.iterator(qb.prepare());
 		checkPartialIterator(iterator, ids, firsts, lasts, true, true);
 
 		columnNames = new HashSet<String>();
 		columnNames.add(PartialData.FIRST_FIELD_NAME);
 		qb.selectColumns(columnNames);
-		iterator = partialDao.iterator(qb.prepareStatement());
+		iterator = partialDao.iterator(qb.prepare());
 		checkPartialIterator(iterator, ids, firsts, lasts, false, true);
 
 		columnNames = new HashSet<String>();
 		columnNames.add(PartialData.LAST_FIELD_NAME);
 		qb.selectColumns(columnNames);
-		iterator = partialDao.iterator(qb.prepareStatement());
+		iterator = partialDao.iterator(qb.prepare());
 		checkPartialIterator(iterator, ids, firsts, lasts, false, false);
 
 		for (PartialData partialData : partialDao) {
@@ -476,9 +476,9 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		checkPartialList(partialDao.queryForAll(), ids, firsts, lasts, false, false);
 		checkPartialIterator(partialDao.iterator(), ids, firsts, lasts, false, false);
 
-		StatementBuilder<PartialData, Integer> qb = partialDao.selectBuilder();
+		QueryBuilder<PartialData, Integer> qb = partialDao.queryBuilder();
 		qb.where().eq(PartialData.FIRST_FIELD_NAME, firstFirst);
-		Iterator<PartialData> iterator = partialDao.iterator(qb.prepareStatement());
+		Iterator<PartialData> iterator = partialDao.iterator(qb.prepare());
 		assertTrue(iterator.hasNext());
 		assertEquals(firstFirst, iterator.next().first);
 		assertFalse(iterator.hasNext());
@@ -486,7 +486,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 		SelectArg firstArg = new SelectArg();
 		qb.where().eq(PartialData.FIRST_FIELD_NAME, firstArg);
 		firstArg.setValue(firstFirst);
-		iterator = partialDao.iterator(qb.prepareStatement());
+		iterator = partialDao.iterator(qb.prepare());
 		assertTrue(iterator.hasNext());
 		assertEquals(firstFirst, iterator.next().first);
 		assertFalse(iterator.hasNext());
@@ -495,7 +495,7 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testUnknownColumn() throws Exception {
 		Dao<Foo, String> fooDao = createDao(Foo.class, false);
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		try {
 			qb.selectColumns("unknown column");
 			fail("expected exception");
@@ -507,25 +507,25 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testOrderBy() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.orderBy(Foo.VAL_COLUMN_NAME, true);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 
-		qb = fooDao.selectBuilder();;
+		qb = fooDao.queryBuilder();;
 		qb.orderBy(Foo.VAL_COLUMN_NAME, false);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo2, results.get(0));
 		assertEquals(foo1, results.get(1));
 
 		// should be the same order
-		qb = fooDao.selectBuilder();;
+		qb = fooDao.queryBuilder();;
 		qb.orderBy(Foo.EQUAL_COLUMN_NAME, false);
 		qb.orderBy(Foo.VAL_COLUMN_NAME, false);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo2, results.get(0));
 		assertEquals(foo1, results.get(1));
@@ -534,10 +534,10 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testGroupBy() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.selectColumns(Foo.EQUAL_COLUMN_NAME);
 		qb.groupBy(Foo.EQUAL_COLUMN_NAME);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(EQUAL_VAL, results.get(0).equal);
 		assertNull(results.get(0).id);
@@ -546,13 +546,13 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testGroupAndOrderBy() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.selectColumns(Foo.EQUAL_COLUMN_NAME, Foo.ID_COLUMN_NAME);
 		qb.groupBy(Foo.EQUAL_COLUMN_NAME);
 		qb.groupBy(Foo.ID_COLUMN_NAME);
 		// get strange order otherwise
 		qb.orderBy(Foo.ID_COLUMN_NAME, true);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -561,19 +561,19 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testLimit() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		// no limit the default
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 		qb.limit(1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 		// set back to no-limit
 		qb.limit(null);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -582,17 +582,17 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testLimitDoublePrepare() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		// no limit the default
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 		qb.limit(1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 	}
@@ -600,19 +600,19 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testLimitAfterSelect() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		// no limit the default
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 		qb.limit(1);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 		// set back to no-limit
 		qb.limit(null);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -621,9 +621,9 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testReturnId() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.selectColumns(Foo.ID_COLUMN_NAME);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1.id, results.get(0).id);
 		assertEquals(0, results.get(0).val);
@@ -634,9 +634,9 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testDistinct() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		qb.distinct().selectColumns(Foo.EQUAL_COLUMN_NAME);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertEquals(EQUAL_VAL, results.get(0).equal);
 		assertNull(results.get(0).id);
@@ -645,16 +645,16 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testIsNull() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 
 		// null fields start off as null so 0 are not-null
 		qb.where().isNotNull(Foo.NULL_COLUMN_NAME);
-		List<Foo> results = fooDao.query(qb.prepareStatement());
+		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 
 		// all are null
 		qb.where().isNull(Foo.NULL_COLUMN_NAME);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -667,12 +667,12 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 
 		// no null results should be found
 		qb.where().isNull(Foo.NULL_COLUMN_NAME);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
 
 		// all are not-null
 		qb.where().isNotNull(Foo.NULL_COLUMN_NAME);
-		results = fooDao.query(qb.prepareStatement());
+		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
@@ -681,16 +681,16 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testSetWhere() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		Where where = qb.where();
 		where.eq(Foo.ID_COLUMN_NAME, foo1.id);
-		List<Foo> list = fooDao.query(qb.prepareStatement());
+		List<Foo> list = fooDao.query(qb.prepare());
 		assertEquals(1, list.size());
 		assertEquals(foo1, list.get(0));
 
-		qb = fooDao.selectBuilder();
+		qb = fooDao.queryBuilder();
 		qb.setWhere(where);
-		list = fooDao.query(qb.prepareStatement());
+		list = fooDao.query(qb.prepare());
 		assertEquals(1, list.size());
 		assertEquals(foo1, list.get(0));
 	}
@@ -698,11 +698,11 @@ public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
 	@Test
 	public void testQueryForStringInt() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		StatementBuilder<Foo, String> qb = fooDao.selectBuilder();
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
 		Where where = qb.where();
 		// testing the val column with a integer as a string
 		where.eq(Foo.VAL_COLUMN_NAME, Integer.toString(foo1.val));
-		List<Foo> list = fooDao.query(qb.prepareStatement());
+		List<Foo> list = fooDao.query(qb.prepare());
 		assertEquals(1, list.size());
 		assertEquals(foo1, list.get(0));
 	}
