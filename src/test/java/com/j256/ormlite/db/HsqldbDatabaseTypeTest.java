@@ -21,7 +21,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.StatementBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
 public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
@@ -139,7 +139,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 		};
 		dao.setConnectionSource(connectionSource);
 		dao.initialize();
-		StatementBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		int limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
