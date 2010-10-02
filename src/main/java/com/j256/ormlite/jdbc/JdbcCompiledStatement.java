@@ -47,6 +47,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 	}
 
 	public DatabaseResults executeQuery() throws SQLException {
+		// this can be a UPDATE, DELETE, or ... just not a SELECT
 		if (type != StatementType.SELECT) {
 			throw new IllegalArgumentException("Cannot call executeQuery on a " + type + " statement");
 		}
