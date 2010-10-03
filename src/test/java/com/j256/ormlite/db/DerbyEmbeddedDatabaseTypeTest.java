@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
 public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
@@ -20,7 +21,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
 	protected void setDatabaseParams() throws SQLException {
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		databaseUrl = "jdbc:derby:target/ormlitederby;create=true";
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
+		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

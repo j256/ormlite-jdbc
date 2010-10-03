@@ -21,6 +21,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
@@ -31,7 +32,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:hsqldb:ormlite";
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
+		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

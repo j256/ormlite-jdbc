@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
 public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
@@ -19,7 +20,7 @@ public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:sqlite:";
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
+		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

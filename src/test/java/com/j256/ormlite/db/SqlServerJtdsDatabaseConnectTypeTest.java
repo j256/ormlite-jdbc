@@ -6,12 +6,14 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+
 public class SqlServerJtdsDatabaseConnectTypeTest extends SqlServerDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:jtds:sqlserver://db/ormlite;ssl=request";
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
+		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

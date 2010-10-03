@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -22,7 +23,7 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:sqlserver:db";
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
+		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import com.j256.ormlite.BaseOrmLiteTest;
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
@@ -70,7 +71,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 		assertEquals(0, dbDir.list().length);
 		closeConnection();
 		String dbUrl = "jdbc:h2:" + dbDir.getPath() + "/" + DATABASE_NAME;
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(dbUrl);
+		connectionSource = new JdbcConnectionSource(dbUrl);
 		connectionSource.getReadWriteConnection();
 		databaseType = DatabaseTypeUtils.createDatabaseType(dbUrl);
 		assertTrue(dbDir.list().length != 0);

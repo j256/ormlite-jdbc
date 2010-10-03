@@ -20,21 +20,19 @@ public class DatabaseTypeUtilsTest {
 		constructors[0].newInstance();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testLoadUnknownDriver() throws Exception {
-		DatabaseTypeUtils.loadDriver("jdbc:unknown-db:stuff");
-	}
-
+	@SuppressWarnings("deprecation")
 	@Test
-	public void testLoadDriverOk() throws Exception {
+	public void testLoadDriver() throws Exception {
 		DatabaseTypeUtils.loadDriver("jdbc:h2:mem:ormlitetest");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testSimpleDataSource() throws Exception {
 		DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:mem:ormlitetest").getReadOnlyConnection().close();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test(expected = SQLException.class)
 	public void testSimpleDataSourceBadDriverArgs() throws Exception {
 		DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:").getReadOnlyConnection();
@@ -60,6 +58,7 @@ public class DatabaseTypeUtilsTest {
 		DatabaseTypeUtils.createDatabaseType("jdbc:");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCreateDbTypeDataSource() throws Exception {
 		ConnectionSource dataSource = null;

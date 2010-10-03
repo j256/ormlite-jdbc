@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.examples.common.Account;
 import com.j256.ormlite.examples.common.AccountDao;
 import com.j256.ormlite.examples.common.AccountDaoImpl;
@@ -43,7 +42,7 @@ public class BasicMain {
 		JdbcConnectionSource connectionSource = null;
 		try {
 			// create our data-source for the database
-			connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DATABASE_URL);
+			connectionSource = new JdbcConnectionSource(DATABASE_URL);
 			// setup our database and DAOs
 			setupDatabase(DATABASE_URL, connectionSource);
 			// read and write some data

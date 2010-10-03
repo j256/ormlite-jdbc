@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
 public class Db2DatabaseTypeTest extends BaseDatabaseTest {
@@ -18,7 +19,7 @@ public class Db2DatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:db2:ormlitedb2";
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(DEFAULT_DATABASE_URL);
+		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
 	}
 
 	@Override

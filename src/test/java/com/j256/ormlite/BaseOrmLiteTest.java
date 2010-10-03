@@ -68,11 +68,7 @@ public abstract class BaseOrmLiteTest {
 			Class.forName(databaseType.getDriverClassName());
 			isConnectionExpected = isConnectionExpected();
 			if (isConnectionExpected) {
-				if (userName == null && password == null) {
-					connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(url);
-				} else {
-					connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(url, userName, password);
-				}
+				connectionSource = new JdbcConnectionSource(url, userName, password);
 				databaseConnection = connectionSource.getReadWriteConnection();
 			}
 		}

@@ -5,10 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 
 /**
  * Utility class which helps with managing database specific classes.
@@ -19,7 +16,6 @@ public class DatabaseTypeUtils {
 
 	private static Map<String, Constructor<? extends DatabaseType>> constructorMap =
 			new HashMap<String, Constructor<? extends DatabaseType>>();
-	private static Map<String, String> driverNameMap = new HashMap<String, String>();
 
 	static {
 		// new drivers need to be added here
@@ -42,50 +38,28 @@ public class DatabaseTypeUtils {
 	}
 
 	/**
-	 * Examines the databaseUrl parameter and load the driver for the proper database type if it can. It is expecting a
-	 * databaseUrl format like jdbc:db-type:... where db-type is one of "h2", "mysql", "postgresql", ...
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the url format is not recognized or the database type is unknown.
-	 * @throws ClassNotFoundException
-	 *             If the database class is unknown.
+	 * @deprecated The {@link JdbcConnectionSource} does this automatically now.
 	 */
+	@Deprecated
 	public static void loadDriver(String databaseUrl) throws ClassNotFoundException {
-		String dbTypePart = extractDbType(databaseUrl);
-		String driverClass = driverNameMap.get(dbTypePart);
-		if (driverClass == null) {
-			throw new IllegalArgumentException("Unknown database-type url part '" + dbTypePart + "' in: " + databaseUrl);
-		}
-		// this instantiates the driver class which wires in the JDBC glue
-		Class.forName(driverClass);
+		// does nothing since the JdbcConnectionSource does it now
 	}
 
 	/**
-	 * Creates and returns a SimpleDataSource associated with the databaseUrl and optional userName and password. Calls
-	 * {@link #loadDriver} as well. You can, of course, provide your own {@link DataSource} for use with the package.
-	 * 
-	 * @throws SQLException
-	 *             If there are problems constructing the {@link DataSource}.
+	 * @deprecated Use {@link JdbcConnectionSource#JdbcConnectionSource(String)}
 	 */
+	@Deprecated
 	public static JdbcConnectionSource createJdbcConnectionSource(String databaseUrl) throws SQLException {
-		return createJdbcConnectionSource(databaseUrl, null, null);
+		return new JdbcConnectionSource(databaseUrl);
 	}
 
 	/**
-	 * Creates and returns a {@link JdbcConnectionSource} associated with the databaseUrl and optional userName and
-	 * password. Calls {@link #loadDriver} as well.
-	 * 
-	 * @throws SQLException
-	 *             If there are problems constructing the {@link DataSource}.
+	 * @deprecated Use {@link JdbcConnectionSource#JdbcConnectionSource(String, String, String)}
 	 */
+	@Deprecated
 	public static JdbcConnectionSource createJdbcConnectionSource(String databaseUrl, String userName, String password)
 			throws SQLException {
-		try {
-			loadDriver(databaseUrl);
-			return new JdbcConnectionSource(databaseUrl, userName, password);
-		} catch (Exception e) {
-			throw SqlExceptionUtil.create("Problems creating simple dataSource from " + databaseUrl, e);
-		}
+		return new JdbcConnectionSource(databaseUrl, userName, password);
 	}
 
 	/**
@@ -120,10 +94,6 @@ public class DatabaseTypeUtils {
 		String urlPart = driverType.getDriverUrlPart();
 		if (!constructorMap.containsKey(urlPart)) {
 			constructorMap.put(urlPart, constructor);
-		}
-		String driverName = driverType.getDriverClassName();
-		if (driverName != null && !driverNameMap.containsKey(urlPart)) {
-			driverNameMap.put(urlPart, driverName);
 		}
 	}
 

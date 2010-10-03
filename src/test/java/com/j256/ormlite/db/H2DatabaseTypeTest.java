@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
 public class H2DatabaseTypeTest extends BaseDatabaseTest {
@@ -54,7 +55,7 @@ public class H2DatabaseTypeTest extends BaseDatabaseTest {
 		// try to disable the retry feature which delays this test failure
 		System.setProperty("h2.socketConnectRetry", "0");
 		String dbUrl = "jdbc:h2:tcp://localhost:" + notTheRightPort + "/" + dbDir.getPath() + "/" + DATABASE_NAME;
-		connectionSource = DatabaseTypeUtils.createJdbcConnectionSource(dbUrl);
+		connectionSource = new JdbcConnectionSource(dbUrl);
 		connectionSource.getReadOnlyConnection();
 		DatabaseTypeUtils.createDatabaseType(dbUrl);
 	}
