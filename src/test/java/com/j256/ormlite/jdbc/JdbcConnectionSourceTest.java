@@ -18,7 +18,9 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-public class JdbcConnectionSourceTest {
+import com.j256.ormlite.BaseOrmLiteCoreTest;
+
+public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testSimpleDataSource() {
@@ -46,8 +48,8 @@ public class JdbcConnectionSourceTest {
 
 	@Test
 	public void testGetConnection() throws Exception {
-		String url = "jdbc:h2:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url);
+		String url = "jdbc:bar:baz";
+		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		Driver driver = createMock(Driver.class);
 		expect(driver.connect(isA(String.class), isA(Properties.class))).andReturn(conn);
@@ -74,8 +76,8 @@ public class JdbcConnectionSourceTest {
 
 	@Test(expected = SQLException.class)
 	public void testGetConnectionNull() throws Exception {
-		String url = "jdbc:h2:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url);
+		String url = "jdbc:bar:baz";
+		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Driver driver = createMock(Driver.class);
 		Properties props = new Properties();
 		expect(driver.connect(eq(url), eq(props))).andReturn(null);
@@ -90,8 +92,8 @@ public class JdbcConnectionSourceTest {
 
 	@Test
 	public void testClose() throws Exception {
-		String url = "jdbc:h2:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url);
+		String url = "jdbc:bar:baz";
+		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		conn.close();
 		Driver driver = createMock(Driver.class);
@@ -116,8 +118,8 @@ public class JdbcConnectionSourceTest {
 
 	@Test(expected = SQLException.class)
 	public void testConnectionClosed() throws Exception {
-		String url = "jdbc:h2:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url);
+		String url = "jdbc:bar:baz";
+		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		expect(conn.isClosed()).andReturn(true);
 		Driver driver = createMock(Driver.class);
