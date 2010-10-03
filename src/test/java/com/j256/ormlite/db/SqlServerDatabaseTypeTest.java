@@ -1,6 +1,5 @@
 package com.j256.ormlite.db;
 
-import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -15,6 +14,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
@@ -51,9 +51,23 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	@Test
 	public void testLimitFormat() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(databaseType, Foo.class) {
+		ConnectionSource connectionSource = new ConnectionSource() {
+			public void close() throws SQLException {
+			}
+			public DatabaseType getDatabaseType() {
+				return databaseType;
+			}
+			public DatabaseConnection getReadOnlyConnection() throws SQLException {
+				return null;
+			}
+			public DatabaseConnection getReadWriteConnection() throws SQLException {
+				return null;
+			}
+			public void releaseConnection(DatabaseConnection connection) throws SQLException {
+			}
 		};
-		dao.setConnectionSource(createMock(ConnectionSource.class));
+		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
+		};
 		dao.initialize();
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		int limit = 1232;

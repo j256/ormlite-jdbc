@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.examples.common.Account;
 import com.j256.ormlite.examples.common.AccountDao;
@@ -57,24 +56,19 @@ public class Main {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
-		databaseType.loadDriver();
-
 		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
-		accountJdbcDao.setDatabaseType(databaseType);
 		accountJdbcDao.setConnectionSource(connectionSource);
 		accountJdbcDao.initialize();
 		accountDao = accountJdbcDao;
 
 		OrderDaoImpl orderJdbcDao = new OrderDaoImpl();
-		orderJdbcDao.setDatabaseType(databaseType);
 		orderJdbcDao.setConnectionSource(connectionSource);
 		orderJdbcDao.initialize();
 		orderDao = orderJdbcDao;
 
 		// if you need to create the table
-		TableUtils.createTable(databaseType, connectionSource, Account.class);
-		TableUtils.createTable(databaseType, connectionSource, Order.class);
+		TableUtils.createTable(connectionSource, Account.class);
+		TableUtils.createTable(connectionSource, Order.class);
 	}
 
 	private void readWriteData() throws Exception {

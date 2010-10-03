@@ -80,7 +80,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 
 	@Test
 	public void testCreateDaoStatic() throws Exception {
-		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(databaseType, connectionSource, Foo.class);
+		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(connectionSource, Foo.class);
 		String stuff = "stuff";
 		Foo foo = new Foo();
 		foo.stuff = stuff;
@@ -544,7 +544,6 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 			// expected
 		}
 		fooDao.setConnectionSource(connectionSource);
-		fooDao.setDatabaseType(databaseType);
 		fooDao.initialize();
 		Foo foo = new Foo();
 		assertEquals(1, fooDao.create(foo));

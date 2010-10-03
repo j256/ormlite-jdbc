@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -103,10 +104,10 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteTest {
 		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + limit + " "));
 	}
 
-	@Test(expected = ClassNotFoundException.class)
+	@Test(expected = SQLException.class)
 	public void testLoadDriver() throws Exception {
 		if (isDriverClassExpected()) {
-			throw new ClassNotFoundException("We have the class so simulate a failure");
+			throw new SQLException("We have the class so simulate a failure");
 		} else {
 			databaseType.loadDriver();
 		}

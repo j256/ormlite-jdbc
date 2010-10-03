@@ -135,9 +135,9 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	@Test
 	public void testLimitFormat() throws Exception {
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(databaseType, Foo.class) {
+		connectionSource.setDatabaseType(databaseType);
+		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
 		};
-		dao.setConnectionSource(connectionSource);
 		dao.initialize();
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		int limit = 1232;

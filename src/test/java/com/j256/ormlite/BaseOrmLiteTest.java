@@ -24,7 +24,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
-import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
@@ -42,7 +42,7 @@ public abstract class BaseOrmLiteTest {
 	protected String userName = null;
 	protected String password = null;
 
-	protected static ConnectionSource connectionSource = null;
+	protected static JdbcConnectionSource connectionSource = null;
 	protected static DatabaseConnection databaseConnection = null;
 	protected DatabaseType databaseType = null;
 	protected boolean isConnectionExpected = false;
@@ -130,7 +130,7 @@ public abstract class BaseOrmLiteTest {
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
-		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(databaseType, tableConfig) {
+		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
 		};
 		return configDao(tableConfig, createTable, dao);
 	}
@@ -146,7 +146,7 @@ public abstract class BaseOrmLiteTest {
 		} catch (SQLException ignored) {
 			// ignore any errors about missing tables
 		}
-		TableUtils.createTable(databaseType, connectionSource, tableConfig);
+		TableUtils.createTable(connectionSource, tableConfig);
 		if (dropAtEnd) {
 			dropClassSet.add(tableConfig);
 		}
@@ -154,12 +154,12 @@ public abstract class BaseOrmLiteTest {
 
 	protected <T> void dropTable(Class<T> clazz, boolean ignoreErrors) throws Exception {
 		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(databaseType, connectionSource, clazz, ignoreErrors);
+		TableUtils.dropTable(connectionSource, clazz, ignoreErrors);
 	}
 
 	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws Exception {
 		// drop the table and ignore any errors along the way
-		TableUtils.dropTable(databaseType, connectionSource, tableConfig, ignoreErrors);
+		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
 	}
 
 	private <T, ID> Dao<T, ID> configDao(DatabaseTableConfig<T> tableConfig, boolean createTable, BaseDaoImpl<T, ID> dao)

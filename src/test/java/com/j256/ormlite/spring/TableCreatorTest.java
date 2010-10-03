@@ -27,7 +27,6 @@ public class TableCreatorTest extends BaseOrmLiteTest {
 		}
 
 		TableCreator tableCreator = new TableCreator();
-		tableCreator.setDatabaseType(databaseType);
 		tableCreator.setConnectionSource(connectionSource);
 
 		List<BaseDaoImpl<?, ?>> daoList = new ArrayList<BaseDaoImpl<?, ?>>();
@@ -66,7 +65,6 @@ public class TableCreatorTest extends BaseOrmLiteTest {
 	@Test(expected = IllegalStateException.class)
 	public void testNoConfiguredDaos() throws Exception {
 		TableCreator tableCreator = new TableCreator();
-		tableCreator.setDatabaseType(databaseType);
 		tableCreator.setConnectionSource(connectionSource);
 
 		try {

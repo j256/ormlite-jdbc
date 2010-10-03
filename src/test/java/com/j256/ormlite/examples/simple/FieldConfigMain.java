@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.examples.common.Account;
 import com.j256.ormlite.examples.common.AccountDao;
@@ -59,11 +58,7 @@ public class FieldConfigMain {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource dataSource) throws Exception {
 
-		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
-		databaseType.loadDriver();
-
 		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
-		accountJdbcDao.setDatabaseType(databaseType);
 		accountJdbcDao.setConnectionSource(dataSource);
 		accountJdbcDao.initialize();
 		accountDao = accountJdbcDao;
@@ -71,14 +66,13 @@ public class FieldConfigMain {
 		DatabaseTableConfig<Delivery> tableConfig = buildTableConfig();
 		DeliveryDaoImpl deliveryJdbcDao = new DeliveryDaoImpl();
 		deliveryJdbcDao.setTableConfig(tableConfig);
-		deliveryJdbcDao.setDatabaseType(databaseType);
 		deliveryJdbcDao.setConnectionSource(dataSource);
 		deliveryJdbcDao.initialize();
 		deliveryDao = deliveryJdbcDao;
 
 		// if you need to create the table
-		TableUtils.createTable(databaseType, dataSource, Account.class);
-		TableUtils.createTable(databaseType, dataSource, tableConfig);
+		TableUtils.createTable(dataSource, Account.class);
+		TableUtils.createTable(dataSource, tableConfig);
 	}
 
 	private DatabaseTableConfig<Delivery> buildTableConfig() {

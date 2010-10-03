@@ -29,37 +29,24 @@ public class JdbcConnectionSourceTest {
 	}
 
 	@Test
-	public void testSimpleDataSourceString() {
-		String url = "foo:bar:baz";
+	public void testSimpleDataSourceString() throws Exception {
+		String url = "jdbc:h2:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		assertEquals(url, sds.getUrl());
 	}
 
 	@Test
 	public void testSimpleDataSourceStringStringString() throws Exception {
-		String url = "foo:bar:baz";
 		String username = "user";
 		String password = "_secret";
+		String url = "jdbc:h2:ormlite-up;USER=" + username + ";PASSWORD=" + password;
 		JdbcConnectionSource sds = new JdbcConnectionSource(url, username, password);
-		Connection conn = createMock(Connection.class);
-		Driver driver = createMock(Driver.class);
-		Properties props = new Properties();
-		props.put("user", username);
-		props.put("password", password);
-		expect(driver.connect(eq(url), eq(props))).andReturn(conn);
-		replay(driver);
-		DriverManager.registerDriver(driver);
-		try {
-			assertNotNull(sds.getReadOnlyConnection());
-			verify(driver);
-		} finally {
-			DriverManager.deregisterDriver(driver);
-		}
+		assertNotNull(sds.getReadOnlyConnection());
 	}
 
 	@Test
 	public void testGetConnection() throws Exception {
-		String url = "foo:bar:baz";
+		String url = "jdbc:h2:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		Connection conn = createMock(Connection.class);
 		Driver driver = createMock(Driver.class);
@@ -76,31 +63,18 @@ public class JdbcConnectionSourceTest {
 
 	@Test
 	public void testGetConnectionUserPassSetters() throws Exception {
-		String url = "foo:bar:baz";
 		String username = "user";
 		String password = "_secret";
+		String url = "jdbc:h2:mem:ormlite-up;USER=" + username + ";PASSWORD=" + password;
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		sds.setUsername(username);
 		sds.setPassword(password);
-		Connection conn = createMock(Connection.class);
-		Driver driver = createMock(Driver.class);
-		Properties props = new Properties();
-		props.put("user", username);
-		props.put("password", password);
-		expect(driver.connect(eq(url), eq(props))).andReturn(conn);
-		replay(driver);
-		DriverManager.registerDriver(driver);
-		try {
-			assertNotNull(sds.getReadOnlyConnection());
-			verify(driver);
-		} finally {
-			DriverManager.deregisterDriver(driver);
-		}
+		assertNotNull(sds.getReadOnlyConnection());
 	}
 
 	@Test(expected = SQLException.class)
 	public void testGetConnectionNull() throws Exception {
-		String url = "foo:bar:baz";
+		String url = "jdbc:h2:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		Driver driver = createMock(Driver.class);
 		Properties props = new Properties();
@@ -116,7 +90,7 @@ public class JdbcConnectionSourceTest {
 
 	@Test
 	public void testClose() throws Exception {
-		String url = "foo:bar:baz";
+		String url = "jdbc:h2:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		Connection conn = createMock(Connection.class);
 		conn.close();
@@ -135,14 +109,14 @@ public class JdbcConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testInitNoUrl() {
+	@Test(expected = SQLException.class)
+	public void testInitNoUrl() throws Exception {
 		new JdbcConnectionSource().initialize();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testConnectionClosed() throws Exception {
-		String url = "foo:bar:baz";
+		String url = "jdbc:h2:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		Connection conn = createMock(Connection.class);
 		expect(conn.isClosed()).andReturn(true);
@@ -162,7 +136,7 @@ public class JdbcConnectionSourceTest {
 
 	@Test
 	public void testSpringWiring() throws Exception {
-		String url = "foo:bar:baz";
+		String url = "jdbc:h2:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.setUrl(url);
 		sds.initialize();

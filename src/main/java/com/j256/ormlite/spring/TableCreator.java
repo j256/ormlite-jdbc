@@ -49,7 +49,6 @@ public class TableCreator {
 	public final static String AUTO_CREATE_TABLES = "ormlite.auto.create.tables";
 	public final static String AUTO_DROP_TABLES = "ormlite.auto.drop.tables";
 
-	private DatabaseType databaseType;
 	private ConnectionSource dataSource;
 	private List<BaseDaoImpl<?, ?>> configuredDaos;
 	private Set<DatabaseTableConfig<?>> createdClasses = new HashSet<DatabaseTableConfig<?>>();
@@ -71,7 +70,7 @@ public class TableCreator {
 			Class<?> clazz = dao.getDataClass();
 			try {
 				DatabaseTableConfig<?> tableConfig = dao.getTableConfig();
-				TableUtils.createTable(databaseType, dataSource, tableConfig);
+				TableUtils.createTable(dataSource, tableConfig);
 				createdClasses.add(tableConfig);
 			} catch (Exception e) {
 				// we don't stop because the table might already exist
@@ -86,7 +85,7 @@ public class TableCreator {
 		}
 		for (DatabaseTableConfig<?> tableConfig : createdClasses) {
 			try {
-				TableUtils.dropTable(databaseType, dataSource, tableConfig, false);
+				TableUtils.dropTable(dataSource, tableConfig, false);
 			} catch (Exception e) {
 				// we don't stop because the table might already exist
 				System.err.println("Was unable to auto-drop table for " + tableConfig.getDataClass());
@@ -95,9 +94,9 @@ public class TableCreator {
 		createdClasses.clear();
 	}
 
-	// @Required
+	// not-required
+	@Deprecated
 	public void setDatabaseType(DatabaseType databaseType) {
-		this.databaseType = databaseType;
 	}
 
 	// @Required
