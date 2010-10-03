@@ -32,7 +32,7 @@ public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testSimpleDataSourceString() throws Exception {
-		String url = "jdbc:h2:baz";
+		String url = "jdbc:h2:mem:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		assertEquals(url, sds.getUrl());
 	}
@@ -41,14 +41,14 @@ public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
 	public void testSimpleDataSourceStringStringString() throws Exception {
 		String username = "user";
 		String password = "_secret";
-		String url = "jdbc:h2:ormlite-up;USER=" + username + ";PASSWORD=" + password;
+		String url = "jdbc:h2:mem:ormlite-up;USER=" + username + ";PASSWORD=" + password;
 		JdbcConnectionSource sds = new JdbcConnectionSource(url, username, password);
 		assertNotNull(sds.getReadOnlyConnection());
 	}
 
 	@Test
 	public void testGetConnection() throws Exception {
-		String url = "jdbc:bar:baz";
+		String url = "jdbc:bar:mem:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		Driver driver = createMock(Driver.class);
@@ -138,7 +138,7 @@ public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
 
 	@Test
 	public void testSpringWiring() throws Exception {
-		String url = "jdbc:h2:baz";
+		String url = "jdbc:h2:mem:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.setUrl(url);
 		sds.initialize();
