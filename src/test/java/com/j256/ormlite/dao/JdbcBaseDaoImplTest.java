@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1357,12 +1356,22 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		assertEquals(3, colNames.length);
-		Field field = Foo.class.getDeclaredField(Foo.ID_FIELD_NAME);
-		assertTrue(field.getName().equalsIgnoreCase(colNames[0]));
-		field = Foo.class.getDeclaredField(Foo.STUFF_FIELD_NAME);
-		assertTrue(field.getName().equalsIgnoreCase(colNames[1]));
-		field = Foo.class.getDeclaredField(Foo.VAL_FIELD_NAME);
-		assertTrue(field.getName().equalsIgnoreCase(colNames[2]));
+		boolean gotId = false;
+		boolean gotStuff = false;
+		boolean gotVal = false;
+		// all this crap is here because of android column order
+		for (int colC = 0; colC < 3; colC++) {
+			if (colNames[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
+				assertFalse(gotId);
+				gotId = true;
+			} else if (colNames[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+				assertFalse(gotStuff);
+				gotStuff = true;
+			} else if (colNames[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+				assertFalse(gotVal);
+				gotVal = true;
+			}
+		}
 		iterator = results.iterator();
 		try {
 			assertTrue(iterator.hasNext());
