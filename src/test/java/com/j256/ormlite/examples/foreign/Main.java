@@ -56,14 +56,10 @@ public class Main {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
-		accountJdbcDao.setConnectionSource(connectionSource);
-		accountJdbcDao.initialize();
+		AccountDaoImpl accountJdbcDao = new AccountDaoImpl(connectionSource);
 		accountDao = accountJdbcDao;
 
-		OrderDaoImpl orderJdbcDao = new OrderDaoImpl();
-		orderJdbcDao.setConnectionSource(connectionSource);
-		orderJdbcDao.initialize();
+		OrderDaoImpl orderJdbcDao = new OrderDaoImpl(connectionSource);
 		orderDao = orderJdbcDao;
 
 		// if you need to create the table

@@ -16,6 +16,11 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 
+/**
+ * Wrapper around a JDBC {@link Connection} object which we delegate to.
+ * 
+ * @author graywatson
+ */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	private static Object[] noArgs = new Object[0];

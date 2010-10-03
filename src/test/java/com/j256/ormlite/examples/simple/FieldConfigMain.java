@@ -56,23 +56,18 @@ public class FieldConfigMain {
 	/**
 	 * Setup our database and DAOs
 	 */
-	private void setupDatabase(String databaseUrl, ConnectionSource dataSource) throws Exception {
+	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
-		accountJdbcDao.setConnectionSource(dataSource);
-		accountJdbcDao.initialize();
+		AccountDaoImpl accountJdbcDao = new AccountDaoImpl(connectionSource);
 		accountDao = accountJdbcDao;
 
 		DatabaseTableConfig<Delivery> tableConfig = buildTableConfig();
-		DeliveryDaoImpl deliveryJdbcDao = new DeliveryDaoImpl();
-		deliveryJdbcDao.setTableConfig(tableConfig);
-		deliveryJdbcDao.setConnectionSource(dataSource);
-		deliveryJdbcDao.initialize();
+		DeliveryDaoImpl deliveryJdbcDao = new DeliveryDaoImpl(connectionSource, tableConfig);
 		deliveryDao = deliveryJdbcDao;
 
 		// if you need to create the table
-		TableUtils.createTable(dataSource, Account.class);
-		TableUtils.createTable(dataSource, tableConfig);
+		TableUtils.createTable(connectionSource, Account.class);
+		TableUtils.createTable(connectionSource, tableConfig);
 	}
 
 	private DatabaseTableConfig<Delivery> buildTableConfig() {

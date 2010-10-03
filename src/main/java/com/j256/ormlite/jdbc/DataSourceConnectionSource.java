@@ -28,14 +28,15 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	private boolean initialized = false;
 
 	/**
-	 * Constructor for Spring type wiring if you are using the set methods.
+	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
+	 * use: init-method="initialize"
 	 */
 	public DataSourceConnectionSource() {
-		// for spring wiring
+		// for spring type wiring
 	}
 
 	/**
-	 * Create a data source for a particular database URL.
+	 * Create a data source wrapper for a DataSource.
 	 * 
 	 * @throws SQLException
 	 *             If the driver associated with the database URL is not found in the classpath.
@@ -47,9 +48,9 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	}
 
 	/**
-	 * Create a data source for a particular database URL. The databaseType is usually determined from the databaseUrl
-	 * so most users should call {@link #DataSourceConnectionSource(DataSource, String)} instead. If, however, you need
-	 * to force the class to use a specific DatabaseType then this constructor should be used.
+	 * Create a data source wrapper for a DataSource. The databaseType is usually determined from the databaseUrl so
+	 * most users should call {@link #DataSourceConnectionSource(DataSource, String)} instead. If, however, you need to
+	 * force the class to use a specific DatabaseType then this constructor should be used.
 	 * 
 	 * @throws SQLException
 	 *             If the driver associated with the database URL is not found in the classpath.
@@ -61,7 +62,8 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	}
 
 	/**
-	 * If you are using the Spring type wiring, this should be called after all of the set methods.
+	 * Initialize the class after the setters have been called. If you are using the no-arg constructor and Spring type
+	 * wiring, this should be called after all of the set methods.
 	 * 
 	 * @throws SQLException
 	 *             If the driver associated with the database URL is not found in the classpath.

@@ -67,9 +67,7 @@ public class BasicMain {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		AccountDaoImpl accountJdbcDao = new AccountDaoImpl();
-		accountJdbcDao.setConnectionSource(connectionSource);
-		accountJdbcDao.initialize();
+		AccountDaoImpl accountJdbcDao = new AccountDaoImpl(connectionSource);
 		accountDao = accountJdbcDao;
 
 		// if you need to create the table
