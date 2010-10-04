@@ -28,8 +28,7 @@ import com.j256.ormlite.table.TableUtils;
  * <pre>
  * &lt;!-- our database type factory-bean --&gt;
  * &lt;bean id="tableCreator" class="com.j256.ormlite.db.TableCreator" init-method="initialize"&gt;
- * 	&lt;property name="databaseType" ref="databaseType" /&gt;
- * 	&lt;property name="dataSource" ref="dataSource" /&gt;
+ * 	&lt;property name="connectionSource" ref="connectionSource" /&gt;
  * 	&lt;property name="configuredDaos"&gt;
  * 		&lt;list&gt;
  * 			&lt;ref bean="accountDao" /&gt;
