@@ -13,10 +13,10 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.support.DatabaseConnection;
 
-public class DataSourceConnectionSourceTest extends BaseOrmLiteTest {
+public class DataSourceConnectionSourceTest extends BaseOrmLiteJdbcTest {
 
 	@Test
 	public void testDscsUrl() throws Exception {

@@ -21,7 +21,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -32,7 +32,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
-public class JdbcBaseDaoImplTest extends BaseOrmLiteTest {
+public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 
 	private final boolean CLOSE_IS_NOOP = false;
 	private final boolean UPDATE_ROWS_RETURNS_ONE = false;

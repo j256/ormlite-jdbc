@@ -13,14 +13,14 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class DataTypeTest extends BaseOrmLiteTest {
+public class DataTypeTest extends BaseOrmLiteJdbcTest {
 
 	private static final String TABLE_NAME = "foo";
 

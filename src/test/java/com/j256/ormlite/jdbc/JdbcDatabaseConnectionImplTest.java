@@ -7,14 +7,14 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 
-public class JdbcDatabaseConnectionImplTest extends BaseOrmLiteTest {
+public class JdbcDatabaseConnectionImplTest extends BaseOrmLiteJdbcTest {
 
 	@Test
 	public void testQueryForLong() throws Exception {

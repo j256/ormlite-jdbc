@@ -17,11 +17,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class JdbcStatementBuilderTest extends BaseOrmLiteTest {
+public class JdbcStatementBuilderTest extends BaseOrmLiteJdbcTest {
 
 	private final static String ID_PREFIX = "id";
 	private final static int LOW_VAL = 21114;

@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class StatementExecutorTest extends BaseOrmLiteTest {
+public class StatementExecutorTest extends BaseOrmLiteJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testUpdateIdNoId() throws Exception {

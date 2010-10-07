@@ -4,11 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class TableInfoTest extends BaseOrmLiteTest {
+public class TableInfoTest extends BaseOrmLiteJdbcTest {
 
 	/**
 	 * Test to make sure that we can call a private constructor

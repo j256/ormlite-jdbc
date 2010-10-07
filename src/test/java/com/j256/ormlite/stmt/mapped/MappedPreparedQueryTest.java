@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -20,7 +20,7 @@ import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableInfo;
 
-public class MappedPreparedQueryTest extends BaseOrmLiteTest {
+public class MappedPreparedQueryTest extends BaseOrmLiteJdbcTest {
 
 	private final static String TABLE_NAME = "tableName";
 

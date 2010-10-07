@@ -6,12 +6,12 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-public class MappedRefreshTest extends BaseOrmLiteTest {
+public class MappedRefreshTest extends BaseOrmLiteJdbcTest {
 
 	@Test
 	public void testRefreshNotFound() throws Exception {

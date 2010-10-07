@@ -10,11 +10,11 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteTest;
+import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class TransactionManagerTest extends BaseOrmLiteTest {
+public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 
 	@Test
 	public void testDaoTransactionManagerCommitted() throws Exception {
