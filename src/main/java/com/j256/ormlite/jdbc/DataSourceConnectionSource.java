@@ -111,7 +111,7 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		// noop right now
+		connection.close();
 	}
 
 	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {

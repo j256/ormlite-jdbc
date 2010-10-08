@@ -150,4 +150,17 @@ public class DataSourceConnectionSourceTest extends BaseOrmLiteJdbcTest {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.getDatabaseType();
 	}
+
+	@Test
+	public void testDscsGetReadOnlyAndClose() throws Exception {
+		DataSource dataSource = createMock(DataSource.class);
+		DataSourceConnectionSource dscs = new DataSourceConnectionSource(dataSource, databaseType);
+		Connection conn = createMock(Connection.class);
+		conn.close();
+		expect(dataSource.getConnection()).andReturn(conn);
+		replay(dataSource, conn);
+		DatabaseConnection dbConn = dscs.getReadOnlyConnection();
+		dscs.releaseConnection(dbConn);
+		verify(dataSource, conn);
+	}
 }
