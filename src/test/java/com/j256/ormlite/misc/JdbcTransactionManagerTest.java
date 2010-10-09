@@ -18,26 +18,11 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 
 	@Test
 	public void testDaoTransactionManagerCommitted() throws Exception {
-		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		final Foo foo1 = new Foo();
-		String stuff = "stuff";
-		foo1.stuff = stuff;
-		assertEquals(1, fooDao.create(foo1));
+		if (connectionSource == null) {
+			return;
+		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
-		final int returnVal = 284234832;
-		int val = mgr.callInTransaction(new Callable<Integer>() {
-			public Integer call() throws Exception {
-				// we delete it inside a transaction
-				assertEquals(1, fooDao.delete(foo1));
-				// we can't find it
-				assertNull(fooDao.queryForId(foo1.id));
-				return returnVal;
-			}
-		});
-		assertEquals(returnVal, val);
-
-		// still doesn't find it after we delete it
-		assertNull(fooDao.queryForId(foo1.id));
+		testTransactionManager(mgr, null);
 	}
 
 	@Test
@@ -78,25 +63,43 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 		foo1.stuff = stuff;
 		assertEquals(1, fooDao.create(foo1));
 		try {
-			mgr.callInTransaction(new Callable<Void>() {
-				public Void call() throws Exception {
+			final int val = 13431231; 
+			int returned = mgr.callInTransaction(new Callable<Integer>() {
+				public Integer call() throws Exception {
 					// we delete it inside a transaction
 					assertEquals(1, fooDao.delete(foo1));
 					// we can't find it
 					assertNull(fooDao.queryForId(foo1.id));
-					// but then we throw an exception which rolls back the transaction
-					throw exception;
+					if (exception != null) {
+						// but then we throw an exception which rolls back the transaction
+						throw exception;
+					} else {
+						return val;
+					}
 				}
 			});
-			fail("Should have thrown");
+			if (exception == null) {
+				assertEquals(val, returned);
+			} else {
+				fail("Should have thrown");
+			}
 		} catch (SQLException e) {
-			// expected
+			if (exception == null) {
+				throw e;
+			} else {
+				// expected
+			}
 		}
 
-		// still finds it after we delete it
-		Foo foo2 = fooDao.queryForId(foo1.id);
-		assertNotNull(foo2);
-		assertEquals(stuff, foo2.stuff);
+		if (exception == null) {
+			// still doesn't find it after we delete it
+			assertNull(fooDao.queryForId(foo1.id));
+		} else {
+			// still finds it after we delete it
+			Foo foo2 = fooDao.queryForId(foo1.id);
+			assertNotNull(foo2);
+			assertEquals(stuff, foo2.stuff);
+		}
 	}
 
 	public static class Foo {
