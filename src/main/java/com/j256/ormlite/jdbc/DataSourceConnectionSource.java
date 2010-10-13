@@ -26,6 +26,8 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	private DatabaseType databaseType;
 	private String databaseUrl;
 	private boolean initialized = false;
+	private boolean usesTransactions = false;
+	private ThreadLocal<DatabaseConnection> storedConnection = new ThreadLocal<DatabaseConnection>();
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
@@ -104,6 +106,12 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
+		if (usesTransactions) {
+			DatabaseConnection stored = storedConnection.get();
+			if (stored != null) {
+				return stored;
+			}
+		}
 		return new JdbcDatabaseConnection(dataSource.getConnection());
 	}
 
@@ -111,14 +119,37 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		connection.close();
+		if (usesTransactions && storedConnection.get() == connection) {
+			// ignore the release because we will close it at the end of the connection
+		} else {
+			connection.close();
+		}
 	}
 
 	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
+		if (usesTransactions) {
+			DatabaseConnection stored = storedConnection.get();
+			if (stored != null) {
+				return stored;
+			}
+		}
 		return new JdbcDatabaseConnection(dataSource.getConnection(username, password));
+	}
+
+	public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+		/*
+		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
+		 * or have it synchronized in over time.
+		 */
+		usesTransactions = true;
+		storedConnection.set(connection);
+	}
+
+	public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+		storedConnection.set(null);
 	}
 
 	public void close() throws SQLException {
@@ -145,5 +176,9 @@ public class DataSourceConnectionSource implements ConnectionSource {
 
 	public void setDatabaseUrl(String databaseUrl) {
 		this.databaseUrl = databaseUrl;
+	}
+
+	public void setUsesTransactions(boolean usesTransactions) {
+		this.usesTransactions = usesTransactions;
 	}
 }

@@ -8,13 +8,27 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 
 public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
+
+	@Override
+	@Before
+	public void before() throws Exception {
+		if (databaseType != null) {
+			return;
+		}
+		super.before();
+		if (connectionSource != null) {
+			connectionSource = new JdbcPooledConnectionSource(databaseUrl, userName, password, databaseType);
+		}
+	}
 
 	@Test
 	public void testDaoTransactionManagerCommitted() throws Exception {
@@ -63,7 +77,7 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 		foo1.stuff = stuff;
 		assertEquals(1, fooDao.create(foo1));
 		try {
-			final int val = 13431231; 
+			final int val = 13431231;
 			int returned = mgr.callInTransaction(new Callable<Integer>() {
 				public Integer call() throws Exception {
 					// we delete it inside a transaction

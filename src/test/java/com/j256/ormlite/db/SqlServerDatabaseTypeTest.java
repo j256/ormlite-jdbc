@@ -66,6 +66,10 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 			}
 			public void releaseConnection(DatabaseConnection connection) throws SQLException {
 			}
+			public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+			}
+			public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+			}
 		};
 		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
 		};

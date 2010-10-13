@@ -31,7 +31,7 @@ public class JdbcConnectionSource implements ConnectionSource {
 	private String password;
 	private JdbcDatabaseConnection connection;
 	private DatabaseType databaseType;
-	private boolean initialized = false;
+	protected boolean initialized = false;
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
@@ -133,10 +133,13 @@ public class JdbcConnectionSource implements ConnectionSource {
 	}
 
 	public void close() throws SQLException {
+		if (!initialized) {
+			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
+		}
 		if (connection != null) {
 			connection.close();
+			logger.debug("closed connection {}", connection);
 			connection = null;
-			logger.debug("closed connection to {}", url);
 		}
 	}
 
@@ -166,21 +169,8 @@ public class JdbcConnectionSource implements ConnectionSource {
 				return connection;
 			}
 		}
-		Properties properties = new Properties();
-		if (username != null) {
-			properties.setProperty("user", username);
-		}
-		if (password != null) {
-			properties.setProperty("password", password);
-		}
-		logger.debug("opening connection to {}", url);
-		connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
-		if (connection == null) {
-			// may never get here but let's be careful
-			throw new SQLException("Could not establish connection to database URL: " + url);
-		} else {
-			return connection;
-		}
+		connection = makeConnection(logger);
+		return connection;
 	}
 
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
@@ -188,6 +178,14 @@ public class JdbcConnectionSource implements ConnectionSource {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
 		}
 		// noop right now
+	}
+
+	public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+		// noop since this is a single connection source
+	}
+
+	public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+		// noop since this is a single connection source
 	}
 
 	public DatabaseType getDatabaseType() {
@@ -210,5 +208,26 @@ public class JdbcConnectionSource implements ConnectionSource {
 	// not required
 	public void setDatabaseType(DatabaseType databaseType) {
 		this.databaseType = databaseType;
+	}
+
+	/**
+	 * Make a connection to the database.
+	 */
+	protected JdbcDatabaseConnection makeConnection(Logger logger) throws SQLException {
+		Properties properties = new Properties();
+		if (username != null) {
+			properties.setProperty("user", username);
+		}
+		if (password != null) {
+			properties.setProperty("password", password);
+		}
+		JdbcDatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
+		if (connection == null) {
+			// may never get here but let's be careful
+			throw new SQLException("Could not establish connection to database URL: " + url);
+		} else {
+			logger.debug("opened connection to {} got {}", url, connection.hashCode());
+			return connection;
+		}
 	}
 }

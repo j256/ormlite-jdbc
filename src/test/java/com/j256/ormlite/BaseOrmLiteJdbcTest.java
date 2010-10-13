@@ -38,7 +38,7 @@ public abstract class BaseOrmLiteJdbcTest {
 	protected static final String DEFAULT_DATABASE_URL = "jdbc:h2:mem:ormlite";
 
 	protected String databaseHost = null;
-	protected String databaseUrl = null;
+	protected String databaseUrl = DEFAULT_DATABASE_URL;
 	protected String userName = null;
 	protected String password = null;
 
@@ -57,18 +57,12 @@ public abstract class BaseOrmLiteJdbcTest {
 		// do this for everyone
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		setDatabaseParams();
-		String url;
-		if (databaseUrl == null) {
-			url = DEFAULT_DATABASE_URL;
-		} else {
-			url = databaseUrl;
-		}
-		databaseType = DatabaseTypeUtils.createDatabaseType(url);
+		databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		if (connectionSource == null) {
 			Class.forName(databaseType.getDriverClassName());
 			isConnectionExpected = isConnectionExpected();
 			if (isConnectionExpected) {
-				connectionSource = new JdbcConnectionSource(url, userName, password);
+				connectionSource = new JdbcConnectionSource(databaseUrl, userName, password);
 				databaseConnection = connectionSource.getReadWriteConnection();
 			}
 		}
