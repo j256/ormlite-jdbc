@@ -13,7 +13,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
- * Implementation of the ConnectionSource interface that supports basic pooled connections. *
+ * Implementation of the ConnectionSource interface that supports basic pooled connections. New connections are created
+ * on demand only if there are no dormant connections otherwise released connections will be reused. This class is
+ * reentrant and can handle requests from multiple threads.
  * 
  * <p>
  * <b> WARNING: </b> As of 10/2010 this is one of the newer parts of ORMLite meaning it may still have bugs. Additional
@@ -210,21 +212,21 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	/**
-	 * Return the number of connections opened over the life of the pool. 
+	 * Return the number of connections opened over the life of the pool.
 	 */
 	public int getOpenCount() {
 		return openCount;
 	}
 
 	/**
-	 * Return the number of connections closed over the life of the pool. 
+	 * Return the number of connections closed over the life of the pool.
 	 */
 	public int getCloseCount() {
 		return closeCount;
 	}
 
 	/**
-	 * Return the maximum number of connections in use at one time. 
+	 * Return the maximum number of connections in use at one time.
 	 */
 	public int getMaxConnectionsInUse() {
 		return maxInUse;

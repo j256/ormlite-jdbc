@@ -11,8 +11,8 @@ import com.j256.ormlite.support.ConnectionSource;
 public class AccountDaoImpl extends BaseDaoImpl<Account, Integer> implements AccountDao {
 
 	/**
-	 * Used by Spring which injects the DatabaseType afterwards.  If you are using Spring then your should
-	 * use: init-method="initialize"
+	 * Used by Spring which injects the DatabaseType afterwards. If you are using Spring then your should use:
+	 * init-method="initialize"
 	 */
 	public AccountDaoImpl() throws SQLException {
 		super(Account.class);

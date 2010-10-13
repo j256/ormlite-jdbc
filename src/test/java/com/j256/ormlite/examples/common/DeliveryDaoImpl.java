@@ -12,8 +12,8 @@ import com.j256.ormlite.table.DatabaseTableConfig;
 public class DeliveryDaoImpl extends BaseDaoImpl<Delivery, Integer> implements DeliveryDao {
 
 	/**
-	 * Used by Spring which injects the DatabaseType afterwards.  If you are using Spring then your should
-	 * use: init-method="initialize"
+	 * Used by Spring which injects the DatabaseType afterwards. If you are using Spring then your should use:
+	 * init-method="initialize"
 	 */
 	public DeliveryDaoImpl() throws SQLException {
 		super(Delivery.class);

@@ -11,8 +11,8 @@ import com.j256.ormlite.support.ConnectionSource;
 public class OrderDaoImpl extends BaseDaoImpl<Order, Integer> implements OrderDao {
 
 	/**
-	 * Used by Spring which injects the DatabaseType afterwards.  If you are using Spring then your should
-	 * use: init-method="initialize"
+	 * Used by Spring which injects the DatabaseType afterwards. If you are using Spring then your should use:
+	 * init-method="initialize"
 	 */
 	public OrderDaoImpl() throws SQLException {
 		super(Order.class);
