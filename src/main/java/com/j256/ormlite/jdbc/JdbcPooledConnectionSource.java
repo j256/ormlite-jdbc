@@ -171,6 +171,10 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		 */
 		usesTransactions = true;
 		transactionConnection.set(connection);
+		if (logger.isDebugEnabled()) {
+			ConnectionMetaData meta = connectionMap.get(connection);
+			logger.debug("saved trxn connection {}", meta);
+		}
 	}
 
 	@Override
@@ -180,6 +184,10 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		}
 		transactionConnection.set(null);
 		// release is then called after the clear
+		if (logger.isDebugEnabled()) {
+			ConnectionMetaData meta = connectionMap.get(connection);
+			logger.debug("cleared trxn connection {}", meta);
+		}
 	}
 
 	public void setUsesTransactions(boolean usesTransactions) {
