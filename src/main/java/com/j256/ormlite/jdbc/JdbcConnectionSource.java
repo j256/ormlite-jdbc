@@ -226,7 +226,7 @@ public class JdbcConnectionSource implements ConnectionSource {
 			// may never get here but let's be careful
 			throw new SQLException("Could not establish connection to database URL: " + url);
 		} else {
-			logger.debug("opened connection to {} got {}", url, connection.hashCode());
+			logger.debug("opened connection to {} got #{}", url, connection.hashCode());
 			return connection;
 		}
 	}

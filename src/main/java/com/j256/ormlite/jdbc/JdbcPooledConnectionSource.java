@@ -43,6 +43,10 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			new HashMap<DatabaseConnection, ConnectionMetaData>();
 	private final Object lock = new Object();
 
+	private int openCount = 0;
+	private int closeCount = 0;
+	private int maxInUse = 0;
+
 	public JdbcPooledConnectionSource() {
 		// for spring type wiring
 	}
@@ -71,13 +75,14 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		}
 		logger.debug("closing");
 		synchronized (lock) {
-			// close the outstanding connections
+			// close the outstanding connections in the list
 			for (ConnectionMetaData connMetaData : connList) {
 				closeConnection(connMetaData.connection);
 			}
 			connList.clear();
-			connectionMap.clear();
 			connList = null;
+			// NOTE: We can't close the ones left in the connectionMap because they may still be in use.
+			connectionMap.clear();
 		}
 	}
 
@@ -113,8 +118,12 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			}
 			// if none in the list then make a new one
 			DatabaseConnection connection = makeConnection(logger);
+			openCount++;
 			// add it to our connection map
 			connectionMap.put(connection, new ConnectionMetaData(connection));
+			if (connectionMap.size() > maxInUse) {
+				maxInUse = connectionMap.size();
+			}
 			return connection;
 		}
 	}
@@ -140,11 +149,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 				closeConnection(connection);
 			} else {
 				connList.add(meta);
+				logger.debug("cache released connection {}", meta);
 				if (connList.size() > maxConnectionsFree) {
 					// close the first connection in the queue
-					closeConnection(connList.remove(0).connection);
+					meta = connList.remove(0);
+					logger.debug("cache too full, closing connection {}", meta);
+					closeConnection(meta.connection);
 				}
-				logger.debug("cache released connection {}", meta);
 			}
 		}
 	}
@@ -190,10 +201,39 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		this.maxConnectionAgeMillis = maxConnectionAgeMillis;
 	}
 
+	/**
+	 * Return the number of connections opened over the life of the pool. 
+	 */
+	public int getOpenCount() {
+		return openCount;
+	}
+
+	/**
+	 * Return the number of connections closed over the life of the pool. 
+	 */
+	public int getCloseCount() {
+		return closeCount;
+	}
+
+	/**
+	 * Return the maximum number of connections in use at one time. 
+	 */
+	public int getMaxConnectionsInUse() {
+		return maxInUse;
+	}
+
+	/**
+	 * Return the number of current connections that we are tracking.
+	 */
+	public int getCurrentConnectionsManaged() {
+		return connectionMap.size();
+	}
+
 	private void closeConnection(DatabaseConnection connection) throws SQLException {
 		ConnectionMetaData meta = connectionMap.remove(connection);
 		connection.close();
 		logger.debug("closed connection {}", meta);
+		closeCount++;
 	}
 
 	private class ConnectionMetaData {
@@ -210,6 +250,10 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		}
 		public boolean isExpired(long now) {
 			return (expiresMillis <= now);
+		}
+		@Override
+		public String toString() {
+			return "@" + Integer.toHexString(hashCode());
 		}
 	}
 }
