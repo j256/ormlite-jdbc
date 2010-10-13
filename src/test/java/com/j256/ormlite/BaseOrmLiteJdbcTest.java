@@ -77,7 +77,7 @@ public abstract class BaseOrmLiteJdbcTest {
 
 	@After
 	public void after() throws Exception {
-		closeConnection();
+		closeConnectionSource();
 	}
 
 	/**
@@ -104,7 +104,7 @@ public abstract class BaseOrmLiteJdbcTest {
 		}
 	}
 
-	protected void closeConnection() throws Exception {
+	protected void closeConnectionSource() throws Exception {
 		if (connectionSource != null) {
 			for (DatabaseTableConfig<?> tableConfig : dropClassSet) {
 				dropTable(tableConfig, true);

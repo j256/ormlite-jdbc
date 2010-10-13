@@ -40,7 +40,7 @@ public class H2DatabaseTypeTest extends BaseDatabaseTest {
 
 	@Test
 	public void testUsernamePassword() throws Exception {
-		closeConnection();
+		closeConnectionSource();
 		databaseType = new DerbyEmbeddedDatabaseType();
 	}
 
@@ -51,7 +51,7 @@ public class H2DatabaseTypeTest extends BaseDatabaseTest {
 		dbDir.mkdirs();
 		// bad port
 		int notTheRightPort = 12345;
-		closeConnection();
+		closeConnectionSource();
 		// try to disable the retry feature which delays this test failure
 		System.setProperty("h2.socketConnectRetry", "0");
 		String dbUrl = "jdbc:h2:tcp://localhost:" + notTheRightPort + "/" + dbDir.getPath() + "/" + DATABASE_NAME;

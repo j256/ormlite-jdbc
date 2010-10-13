@@ -67,7 +67,7 @@ public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
 
 	@Test
 	public void testUsernamePassword() throws Exception {
-		closeConnection();
+		closeConnectionSource();
 		databaseType = new DerbyEmbeddedDatabaseType();
 	}
 

@@ -69,7 +69,7 @@ public abstract class BaseDatabaseTest extends BaseOrmLiteJdbcTest {
 		TestUtils.deleteDirectory(dbDir);
 		dbDir.mkdirs();
 		assertEquals(0, dbDir.list().length);
-		closeConnection();
+		closeConnectionSource();
 		String dbUrl = "jdbc:h2:" + dbDir.getPath() + "/" + DATABASE_NAME;
 		connectionSource = new JdbcConnectionSource(dbUrl);
 		connectionSource.getReadWriteConnection();

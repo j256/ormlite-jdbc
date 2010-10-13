@@ -241,7 +241,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
-				closeConnection();
+				closeConnectionSource();
 			}
 			if (!CLOSE_IS_NOOP) {
 				fail("expected exception");
@@ -256,7 +256,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		closeConnection();
+		closeConnectionSource();
 		try {
 			fooDao.iterator();
 			fail("expected exception");
@@ -273,7 +273,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		Iterator<Foo> iterator = fooDao.iterator();
 		try {
 			while (iterator.hasNext()) {
-				closeConnection();
+				closeConnectionSource();
 				iterator.next();
 			}
 			if (!CLOSE_IS_NOOP) {
@@ -293,7 +293,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
-				closeConnection();
+				closeConnectionSource();
 				iterator.remove();
 			}
 			fail("expected exception");
