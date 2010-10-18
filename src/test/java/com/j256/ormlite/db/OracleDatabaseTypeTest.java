@@ -134,4 +134,37 @@ public class OracleDatabaseTypeTest extends BaseDatabaseTest {
 	public void testGetDriverClassName() {
 		assertEquals("oracle.jdbc.driver.OracleDriver", databaseType.getDriverClassName());
 	}
+
+	@Test
+	public void testUnique() throws Exception {
+		OracleDatabaseType dbType = new OracleDatabaseType();
+		StringBuilder sb = new StringBuilder();
+		List<String> after = new ArrayList<String>();
+		String fieldName = "id";
+		Field field = Foo.class.getDeclaredField(fieldName);
+		String tableName = "foo";
+		FieldType fieldType = FieldType.createFieldType(dbType, tableName, field);
+		dbType.appendUnique(sb, fieldType, after);
+		assertEquals(0, sb.length());
+		assertEquals(1, after.size());
+		assertEquals("ALTER TABLE \"" + tableName + "\" ADD CONSTRAINT " + tableName + "_" + fieldName
+				+ "_unique UNIQUE (\"" + fieldName + "\");", after.get(0));
+	}
+
+	@Test
+	public void testObject() throws Exception {
+		OracleDatabaseType dbType = new OracleDatabaseType();
+		StringBuilder sb = new StringBuilder();
+		dbType.appendObjectType(sb);
+		assertEquals("LONG RAW", sb.toString());
+	}
+
+	@Test
+	public void testSelectNextVal() throws Exception {
+		OracleDatabaseType dbType = new OracleDatabaseType();
+		StringBuilder sb = new StringBuilder();
+		String sequenceName = "stuff_seq";
+		dbType.appendSelectNextValFromSequence(sb, sequenceName);
+		assertEquals("SELECT \"" + sequenceName + "\".nextval FROM dual", sb.toString());
+	}
 }

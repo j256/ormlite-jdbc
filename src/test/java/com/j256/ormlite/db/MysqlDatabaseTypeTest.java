@@ -62,4 +62,30 @@ public class MysqlDatabaseTypeTest extends BaseDatabaseTest {
 		assertEquals(1, additionalArgs.size());
 		assertTrue(additionalArgs.get(0).contains("PRIMARY KEY"));
 	}
+
+	@Test
+	public void testTableSuffix() throws Exception {
+		MysqlDatabaseType dbType = new MysqlDatabaseType();
+		String suffix = "ewfwefef";
+		dbType.setCreateTableSuffix(suffix);
+		StringBuilder sb = new StringBuilder();
+		dbType.appendCreateTableSuffix(sb);
+		assertTrue(sb.toString().contains(suffix));
+	}
+
+	@Test
+	public void testDateTime() throws Exception {
+		MysqlDatabaseType dbType = new MysqlDatabaseType();
+		StringBuilder sb = new StringBuilder();
+		dbType.appendDateType(sb, 0);
+		assertEquals("DATETIME", sb.toString());
+	}
+
+	@Test
+	public void testObject() throws Exception {
+		MysqlDatabaseType dbType = new MysqlDatabaseType();
+		StringBuilder sb = new StringBuilder();
+		dbType.appendObjectType(sb);
+		assertEquals("BLOB", sb.toString());
+	}
 }

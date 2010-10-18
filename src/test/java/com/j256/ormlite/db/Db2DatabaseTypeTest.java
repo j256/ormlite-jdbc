@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +77,28 @@ public class Db2DatabaseTypeTest extends BaseDatabaseTest {
 		assertEquals(0, statementsBefore.size());
 		assertEquals(1, additionalArgs.size());
 		assertTrue(additionalArgs.get(0).contains("PRIMARY KEY"));
+	}
+
+	@Test
+	public void testObject() throws Exception {
+		Db2DatabaseType dbType = new Db2DatabaseType();
+		StringBuilder sb = new StringBuilder();
+		dbType.appendObjectType(sb);
+		assertEquals("VARCHAR [] FOR BIT DATA", sb.toString());
+	}
+
+	@Test
+	public void testUnique() throws Exception {
+		Db2DatabaseType dbType = new Db2DatabaseType();
+		StringBuilder sb = new StringBuilder();
+		List<String> after = new ArrayList<String>();
+		String fieldName = "id";
+		Field field = Foo.class.getDeclaredField(fieldName);
+		String tableName = "foo";
+		FieldType fieldType = FieldType.createFieldType(dbType, tableName, field);
+		dbType.appendUnique(sb, fieldType, after);
+		assertEquals(0, sb.length());
+		assertEquals(1, after.size());
+		assertEquals("ALTER TABLE \"" + tableName + "\" ADD UNIQUE (\"" + fieldName + "\");", after.get(0));
 	}
 }

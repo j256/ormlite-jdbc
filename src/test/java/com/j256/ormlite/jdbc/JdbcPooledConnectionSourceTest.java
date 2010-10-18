@@ -198,8 +198,8 @@ public class JdbcPooledConnectionSourceTest {
 			assertEquals(0, pooled.getCloseCount());
 			assertEquals(2, pooled.getMaxConnectionsInUse());
 			assertEquals(2, pooled.getCurrentConnectionsManaged());
-			conn2.close();
-			conn1.close();
+			pooled.releaseConnection(conn2);
+			pooled.releaseConnection(conn1);
 			assertEquals(2, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
 			assertEquals(2, pooled.getMaxConnectionsInUse());
@@ -207,6 +207,9 @@ public class JdbcPooledConnectionSourceTest {
 		} finally {
 			pooled.close();
 		}
+		assertEquals(2, pooled.getCloseCount());
+		assertEquals(2, pooled.getMaxConnectionsInUse());
+		assertEquals(0, pooled.getCurrentConnectionsManaged());
 	}
 
 	@Test
@@ -225,6 +228,5 @@ public class JdbcPooledConnectionSourceTest {
 		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, null, null, databaseType);
 		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
 		assertSame(databaseType, pooled.getDatabaseType());
-
 	}
 }
