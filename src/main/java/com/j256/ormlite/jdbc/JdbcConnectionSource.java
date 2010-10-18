@@ -222,12 +222,7 @@ public class JdbcConnectionSource implements ConnectionSource {
 			properties.setProperty("password", password);
 		}
 		JdbcDatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
-		if (connection == null) {
-			// may never get here but let's be careful
-			throw new SQLException("Could not establish connection to database URL: " + url);
-		} else {
-			logger.debug("opened connection to {} got #{}", url, connection.hashCode());
-			return connection;
-		}
+		logger.debug("opened connection to {} got #{}", url, connection.hashCode());
+		return connection;
 	}
 }
