@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
@@ -7,6 +8,8 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.support.DatabaseConnection;
 
 public class JdbcPooledConnectionSourceTest {
@@ -175,5 +178,53 @@ public class JdbcPooledConnectionSourceTest {
 		} finally {
 			pooled.close();
 		}
+	}
+
+	@Test
+	public void testUsageCounts() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			assertEquals(1, pooled.getOpenCount());
+			assertEquals(0, pooled.getCloseCount());
+			assertEquals(1, pooled.getMaxConnectionsInUse());
+			assertEquals(1, pooled.getCurrentConnectionsManaged());
+			assertEquals(1, pooled.getOpenCount());
+			assertEquals(0, pooled.getCloseCount());
+			assertEquals(1, pooled.getMaxConnectionsInUse());
+			assertEquals(1, pooled.getCurrentConnectionsManaged());
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			assertEquals(2, pooled.getOpenCount());
+			assertEquals(0, pooled.getCloseCount());
+			assertEquals(2, pooled.getMaxConnectionsInUse());
+			assertEquals(2, pooled.getCurrentConnectionsManaged());
+			conn2.close();
+			conn1.close();
+			assertEquals(2, pooled.getOpenCount());
+			assertEquals(0, pooled.getCloseCount());
+			assertEquals(2, pooled.getMaxConnectionsInUse());
+			assertEquals(2, pooled.getCurrentConnectionsManaged());
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testConstructors() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
+
+		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, null, null);
+		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
+
+		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(DEFAULT_DATABASE_URL);
+		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, databaseType);
+		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
+		assertSame(databaseType, pooled.getDatabaseType());
+
+		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, null, null, databaseType);
+		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
+		assertSame(databaseType, pooled.getDatabaseType());
+
 	}
 }

@@ -143,4 +143,34 @@ public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
 		sds.setUrl(url);
 		sds.initialize();
 	}
+
+	@Test(expected = SQLException.class)
+	public void testCloseBeforeInitialize() throws Exception {
+		JdbcConnectionSource sds = new JdbcConnectionSource();
+		sds.close();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testGetReadOnlyConnectionBeforeInitialize() throws Exception {
+		JdbcConnectionSource sds = new JdbcConnectionSource();
+		sds.getReadOnlyConnection();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testGetReadWriteConnectionBeforeInitialize() throws Exception {
+		JdbcConnectionSource sds = new JdbcConnectionSource();
+		sds.getReadWriteConnection();
+	}
+
+	@Test(expected = SQLException.class)
+	public void testReleaseConnectionBeforeInitialize() throws Exception {
+		JdbcConnectionSource sds = new JdbcConnectionSource();
+		sds.releaseConnection(null);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testGetDatabaseTypeBeforeInitialize() throws Exception {
+		JdbcConnectionSource sds = new JdbcConnectionSource();
+		sds.getDatabaseType();
+	}
 }
