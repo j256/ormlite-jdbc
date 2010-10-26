@@ -1,18 +1,29 @@
 package com.j256.ormlite.db;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.rowset.serial.SerialBlob;
+
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
 public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
@@ -84,5 +95,72 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
 	@Test
 	public void testLimitSupport() throws Exception {
 		assertFalse(databaseType.isLimitSqlSupported());
+	}
+
+	@Test
+	public void testGetFieldConverterSerializable() throws Exception {
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		assertEquals(SqlType.BLOB, converter.getSqlType());
+		assertTrue(converter.isStreamType());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testObjectFieldConverterParseDefaultString() throws Exception {
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		converter.parseDefaultString(null, null);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testObjectFieldConverterJavaToArgNonSerializable() throws Exception {
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		converter.javaToArg(null, new NotSerializable());
+	}
+
+	@Test
+	public void testObjectFieldConverterJavaToArg() throws Exception {
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		Object object = converter.javaToArg(null, "TEST");
+		assertEquals(SerialBlob.class, object.getClass());
+	}
+
+	@Test
+	public void testObjectFieldConverterResultToJavaStreamNull() throws Exception {
+		int COLUMN = 1;
+		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
+		expect(results.getBlobStream(COLUMN)).andReturn(null);
+		replay(results);
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		assertEquals(null, converter.resultToJava(null, results, COLUMN));
+		verify(results);
+	}
+
+	@Test(expected = SQLException.class)
+	public void testObjectFieldConverterResultToJavaStreamNotObject() throws Exception {
+		int COLUMN = 1;
+		DatabaseResults results = (DatabaseResults) createMock(DatabaseResults.class);
+		String value = "NotASerializedObject";
+		expect(results.getBlobStream(COLUMN)).andReturn(new ByteArrayInputStream(value.getBytes()));
+		replay(results);
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		Object obj = converter.resultToJava(null, results, COLUMN);
+		verify(results);
+		assertEquals(value, obj);
+	}
+
+	@Test
+	public void testAppendObjectType() throws Exception {
+		StringBuilder sb = new StringBuilder();
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		type.appendObjectType(sb);
+		assertEquals("BLOB", sb.toString());
+	}
+
+	private static class NotSerializable {
 	}
 }
