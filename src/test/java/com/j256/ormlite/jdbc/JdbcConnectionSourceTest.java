@@ -190,8 +190,8 @@ public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
 		DatabaseConnection conn1 = sds.getReadOnlyConnection();
 		DatabaseConnection conn2 = sds.getReadOnlyConnection();
 		assertSame(conn1, conn2);
-		sds.saveTransactionConnection(conn1);
-		sds.clearTransactionConnection(conn1);
+		sds.saveSpecialConnection(conn1);
+		sds.clearSpecialConnection(conn1);
 		sds.releaseConnection(conn1);
 	}
 	

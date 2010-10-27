@@ -163,9 +163,9 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+	public void saveSpecialConnection(DatabaseConnection connection) {
 		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
+			throw new IllegalStateException(getClass().getSimpleName() + " was not initialized properly");
 		}
 		/*
 		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
@@ -180,9 +180,9 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+	public void clearSpecialConnection(DatabaseConnection connection) {
 		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
+			throw new IllegalStateException(getClass().getSimpleName() + " was not initialized properly");
 		}
 		transactionConnection.set(null);
 		// release is then called after the clear

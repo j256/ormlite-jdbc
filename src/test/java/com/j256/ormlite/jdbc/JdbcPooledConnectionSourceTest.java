@@ -54,7 +54,7 @@ public class JdbcPooledConnectionSourceTest {
 			pooled.setUsesTransactions(true);
 			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
 			DatabaseConnection conn2 = pooled.getReadWriteConnection();
-			pooled.saveTransactionConnection(conn2);
+			pooled.saveSpecialConnection(conn2);
 			DatabaseConnection conn3 = pooled.getReadWriteConnection();
 			assertSame(conn2, conn3);
 			pooled.releaseConnection(conn3);
@@ -62,7 +62,7 @@ public class JdbcPooledConnectionSourceTest {
 			DatabaseConnection conn4 = pooled.getReadWriteConnection();
 			assertSame(conn2, conn4);
 			pooled.releaseConnection(conn4);
-			pooled.clearTransactionConnection(conn2);
+			pooled.clearSpecialConnection(conn2);
 			DatabaseConnection conn5 = pooled.getReadWriteConnection();
 			assertSame(conn1, conn5);
 			conn1.close();
@@ -164,7 +164,7 @@ public class JdbcPooledConnectionSourceTest {
 	public void testSaveTransaction() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		try {
-			pooled.saveTransactionConnection(null);
+			pooled.saveSpecialConnection(null);
 		} finally {
 			pooled.close();
 		}
@@ -174,7 +174,7 @@ public class JdbcPooledConnectionSourceTest {
 	public void testClearTransaction() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		try {
-			pooled.clearTransactionConnection(null);
+			pooled.clearSpecialConnection(null);
 		} finally {
 			pooled.close();
 		}

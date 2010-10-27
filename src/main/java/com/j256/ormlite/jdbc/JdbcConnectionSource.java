@@ -180,11 +180,11 @@ public class JdbcConnectionSource implements ConnectionSource {
 		// noop right now
 	}
 
-	public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+	public void saveSpecialConnection(DatabaseConnection connection) {
 		// noop since this is a single connection source
 	}
 
-	public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+	public void clearSpecialConnection(DatabaseConnection connection) {
 		// noop since this is a single connection source
 	}
 

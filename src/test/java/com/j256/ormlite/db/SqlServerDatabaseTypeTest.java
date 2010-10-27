@@ -58,17 +58,17 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 			public DatabaseType getDatabaseType() {
 				return databaseType;
 			}
-			public DatabaseConnection getReadOnlyConnection() throws SQLException {
+			public DatabaseConnection getReadOnlyConnection() {
 				return null;
 			}
-			public DatabaseConnection getReadWriteConnection() throws SQLException {
+			public DatabaseConnection getReadWriteConnection() {
 				return null;
 			}
-			public void releaseConnection(DatabaseConnection connection) throws SQLException {
+			public void releaseConnection(DatabaseConnection connection) {
 			}
-			public void saveTransactionConnection(DatabaseConnection connection) throws SQLException {
+			public void saveSpecialConnection(DatabaseConnection connection) {
 			}
-			public void clearTransactionConnection(DatabaseConnection connection) throws SQLException {
+			public void clearSpecialConnection(DatabaseConnection connection) {
 			}
 		};
 		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
