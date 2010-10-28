@@ -164,6 +164,16 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
 		 * or have it synchronized in over time.
 		 */
+		// check for a connection already saved
+		DatabaseConnection currentSavedConn = transactionConnection.get();
+		if (currentSavedConn != null) {
+			if (currentSavedConn == connection) {
+				throw new IllegalStateException("nested transactions are not current supported");
+			} else {
+				throw new IllegalStateException("trying to save connection " + connection
+						+ " but already have saved connection " + currentSavedConn);
+			}
+		}
 		usesTransactions = true;
 		transactionConnection.set(connection);
 		if (logger.isDebugEnabled()) {
@@ -175,6 +185,12 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		checkInitializedIllegalStateException();
+		DatabaseConnection currentSavedConn = transactionConnection.get();
+		if (currentSavedConn == null) {
+			logger.error("no transaction has been saved when clear() called");
+		} else if (currentSavedConn != connection) {
+			logger.error("transaction saved {} is not the one being cleared {}", currentSavedConn, connection);
+		}
 		transactionConnection.set(null);
 		// release is then called after the clear
 		if (logger.isDebugEnabled()) {
