@@ -39,7 +39,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private int maxConnectionsFree = DEFAULT_MAX_CONNECTIONS_FREE;
 	private long maxConnectionAgeMillis = DEFAULT_MAX_CONNECTION_AGE_MILLIS;
 	private boolean usesTransactions = false;
-	private List<ConnectionMetaData> connList = new ArrayList<ConnectionMetaData>();
+	private List<ConnectionMetaData> connFreeList = new ArrayList<ConnectionMetaData>();
 	private ThreadLocal<DatabaseConnection> transactionConnection = new ThreadLocal<DatabaseConnection>();
 	private Map<DatabaseConnection, ConnectionMetaData> connectionMap =
 			new HashMap<DatabaseConnection, ConnectionMetaData>();
@@ -72,17 +72,15 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	@Override
 	public void close() throws SQLException {
-		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
-		}
+		checkInitializedSqlException();
 		logger.debug("closing");
 		synchronized (lock) {
 			// close the outstanding connections in the list
-			for (ConnectionMetaData connMetaData : connList) {
+			for (ConnectionMetaData connMetaData : connFreeList) {
 				closeConnection(connMetaData.connection);
 			}
-			connList.clear();
-			connList = null;
+			connFreeList.clear();
+			connFreeList = null;
 			// NOTE: We can't close the ones left in the connectionMap because they may still be in use.
 			connectionMap.clear();
 		}
@@ -90,14 +88,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	@Override
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+		// set the connection to be read-only in JDBC-land? would need to set read-only or read-write
 		return getReadWriteConnection();
 	}
 
 	@Override
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
-		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
-		}
+		checkInitializedSqlException();
 		if (usesTransactions) {
 			DatabaseConnection stored = transactionConnection.get();
 			if (stored != null) {
@@ -106,9 +103,9 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		}
 		synchronized (lock) {
 			long now = System.currentTimeMillis();
-			while (connList.size() > 0) {
+			while (connFreeList.size() > 0) {
 				// take the first one off of the list
-				ConnectionMetaData connMetaData = connList.remove(0);
+				ConnectionMetaData connMetaData = connFreeList.remove(0);
 				// is it already expired
 				if (connMetaData.isExpired(now)) {
 					// close expired connection
@@ -118,7 +115,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 					return connMetaData.connection;
 				}
 			}
-			// if none in the list then make a new one
+			// if none in the free list then make a new one
 			DatabaseConnection connection = makeConnection(logger);
 			openCount++;
 			// add it to our connection map
@@ -132,15 +129,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	@Override
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
-		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
-		}
+		checkInitializedSqlException();
 		if (usesTransactions && transactionConnection.get() == connection) {
 			// ignore the release when we are in a transaction
 			return;
 		}
 		synchronized (lock) {
-			if (connList == null) {
+			if (connFreeList == null) {
 				// if we've already closed the pool then just close the connection
 				closeConnection(connection);
 				return;
@@ -150,11 +145,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 				logger.error("should have found connection {} in the map", connection);
 				closeConnection(connection);
 			} else {
-				connList.add(meta);
+				connFreeList.add(meta);
 				logger.debug("cache released connection {}", meta);
-				if (connList.size() > maxConnectionsFree) {
+				if (connFreeList.size() > maxConnectionsFree) {
 					// close the first connection in the queue
-					meta = connList.remove(0);
+					meta = connFreeList.remove(0);
 					logger.debug("cache too full, closing connection {}", meta);
 					closeConnection(meta.connection);
 				}
@@ -164,9 +159,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	@Override
 	public void saveSpecialConnection(DatabaseConnection connection) {
-		if (!initialized) {
-			throw new IllegalStateException(getClass().getSimpleName() + " was not initialized properly");
-		}
+		checkInitializedIllegalStateException();
 		/*
 		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
 		 * or have it synchronized in over time.
@@ -181,9 +174,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
-		if (!initialized) {
-			throw new IllegalStateException(getClass().getSimpleName() + " was not initialized properly");
-		}
+		checkInitializedIllegalStateException();
 		transactionConnection.set(null);
 		// release is then called after the clear
 		if (logger.isDebugEnabled()) {
@@ -212,21 +203,21 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	/**
-	 * Return the number of connections opened over the life of the pool.
+	 * Return the approximate number of connections opened over the life of the pool.
 	 */
 	public int getOpenCount() {
 		return openCount;
 	}
 
 	/**
-	 * Return the number of connections closed over the life of the pool.
+	 * Return the approximate number of connections closed over the life of the pool.
 	 */
 	public int getCloseCount() {
 		return closeCount;
 	}
 
 	/**
-	 * Return the maximum number of connections in use at one time.
+	 * Return the approximate maximum number of connections in use at one time.
 	 */
 	public int getMaxConnectionsInUse() {
 		return maxInUse;
@@ -236,19 +227,41 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	 * Return the number of current connections that we are tracking.
 	 */
 	public int getCurrentConnectionsManaged() {
-		return connectionMap.size();
+		synchronized (lock) {
+			return connectionMap.size();
+		}
 	}
 
+	private void checkInitializedSqlException() throws SQLException {
+		if (!initialized) {
+			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
+		}
+	}
+
+	private void checkInitializedIllegalStateException() {
+		if (!initialized) {
+			throw new IllegalStateException(getClass().getSimpleName() + " was not initialized properly");
+		}
+	}
+
+	/**
+	 * This should be inside of synchronized (lock) stanza.
+	 */
 	private void closeConnection(DatabaseConnection connection) throws SQLException {
+		// this can return null if we are closing the pool
 		ConnectionMetaData meta = connectionMap.remove(connection);
 		connection.close();
 		logger.debug("closed connection {}", meta);
 		closeCount++;
 	}
 
+	/**
+	 * Class to hold the connection and its meta data.
+	 */
 	private class ConnectionMetaData {
 		public final DatabaseConnection connection;
 		private final long expiresMillis;
+
 		public ConnectionMetaData(DatabaseConnection connection) {
 			this.connection = connection;
 			long now = System.currentTimeMillis();
@@ -258,9 +271,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 				this.expiresMillis = now + maxConnectionAgeMillis;
 			}
 		}
+
 		public boolean isExpired(long now) {
 			return (expiresMillis <= now);
 		}
+
 		@Override
 		public String toString() {
 			return "@" + Integer.toHexString(hashCode());
