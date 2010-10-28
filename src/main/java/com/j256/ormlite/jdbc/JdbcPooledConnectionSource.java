@@ -135,6 +135,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			return;
 		}
 		synchronized (lock) {
+			if (connection.isClosed()) {
+				// it's already closed so just drop it
+				logger.debug("dropping already closed connection {}", connectionMap.remove(connection));
+				return;
+			}
 			if (connFreeList == null) {
 				// if we've already closed the pool then just close the connection
 				closeConnection(connection);

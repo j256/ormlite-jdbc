@@ -86,7 +86,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	/**
 	 * Returns whether the connection has already been closed. Used by {@link JdbcConnectionSource}.
 	 */
-	boolean isClosed() throws SQLException {
+	public boolean isClosed() throws SQLException {
 		return connection.isClosed();
 	}
 
