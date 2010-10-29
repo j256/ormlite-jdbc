@@ -8,6 +8,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.BaseConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -22,7 +23,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  * 
  * @author graywatson
  */
-public class JdbcConnectionSource implements ConnectionSource {
+public class JdbcConnectionSource extends BaseConnectionSource implements ConnectionSource {
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcConnectionSource.class);
 

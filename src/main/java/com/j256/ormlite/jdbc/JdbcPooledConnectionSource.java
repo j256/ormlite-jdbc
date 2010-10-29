@@ -38,9 +38,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	private int maxConnectionsFree = DEFAULT_MAX_CONNECTIONS_FREE;
 	private long maxConnectionAgeMillis = DEFAULT_MAX_CONNECTION_AGE_MILLIS;
-	private boolean usesTransactions = false;
 	private List<ConnectionMetaData> connFreeList = new ArrayList<ConnectionMetaData>();
-	private ThreadLocal<DatabaseConnection> transactionConnection = new ThreadLocal<DatabaseConnection>();
 	private Map<DatabaseConnection, ConnectionMetaData> connectionMap =
 			new HashMap<DatabaseConnection, ConnectionMetaData>();
 	private final Object lock = new Object();
@@ -95,11 +93,9 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	@Override
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		checkInitializedSqlException();
-		if (usesTransactions) {
-			DatabaseConnection stored = transactionConnection.get();
-			if (stored != null) {
-				return stored;
-			}
+		DatabaseConnection conn = getSavedConnection();
+		if (conn != null) {
+			return conn;
 		}
 		synchronized (lock) {
 			long now = System.currentTimeMillis();
@@ -130,7 +126,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	@Override
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
 		checkInitializedSqlException();
-		if (usesTransactions && transactionConnection.get() == connection) {
+		if (isSavedConnection(connection)) {
 			// ignore the release when we are in a transaction
 			return;
 		}
@@ -165,22 +161,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	@Override
 	public void saveSpecialConnection(DatabaseConnection connection) {
 		checkInitializedIllegalStateException();
-		/*
-		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
-		 * or have it synchronized in over time.
-		 */
-		// check for a connection already saved
-		DatabaseConnection currentSavedConn = transactionConnection.get();
-		if (currentSavedConn != null) {
-			if (currentSavedConn == connection) {
-				throw new IllegalStateException("nested transactions are not current supported");
-			} else {
-				throw new IllegalStateException("trying to save connection " + connection
-						+ " but already have saved connection " + currentSavedConn);
-			}
-		}
-		usesTransactions = true;
-		transactionConnection.set(connection);
+		saveSpecial(connection);
 		if (logger.isDebugEnabled()) {
 			ConnectionMetaData meta = connectionMap.get(connection);
 			logger.debug("saved trxn connection {}", meta);
@@ -190,22 +171,16 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		checkInitializedIllegalStateException();
-		DatabaseConnection currentSavedConn = transactionConnection.get();
-		if (currentSavedConn == null) {
-			logger.error("no transaction has been saved when clear() called");
-		} else if (currentSavedConn != connection) {
-			logger.error("transaction saved {} is not the one being cleared {}", currentSavedConn, connection);
-		}
-		transactionConnection.set(null);
-		// release is then called after the clear
+		clearSpecial(connection, logger);
 		if (logger.isDebugEnabled()) {
 			ConnectionMetaData meta = connectionMap.get(connection);
 			logger.debug("cleared trxn connection {}", meta);
 		}
+		// release should then called after the clear
 	}
 
 	public void setUsesTransactions(boolean usesTransactions) {
-		this.usesTransactions = usesTransactions;
+		this.usedSpecialConnection = usesTransactions;
 	}
 
 	/**
