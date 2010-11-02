@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -210,6 +211,43 @@ public class JdbcPooledConnectionSourceTest {
 		assertEquals(2, pooled.getCloseCount());
 		assertEquals(2, pooled.getMaxConnectionsInUse());
 		assertEquals(0, pooled.getCurrentConnectionsManaged());
+	}
+
+	@Test
+	public void testReleaseAlreadyClosed() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			conn1.close();
+			pooled.releaseConnection(conn1);
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testReleaseUnknown() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			JdbcDatabaseConnection conn1 =
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			pooled.releaseConnection(conn1);
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testReleaseAlreadyClosedUnknown() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			JdbcDatabaseConnection conn1 =
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			conn1.close();
+			pooled.releaseConnection(conn1);
+		} finally {
+			pooled.close();
+		}
 	}
 
 	@Test

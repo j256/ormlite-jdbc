@@ -133,7 +133,12 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		synchronized (lock) {
 			if (connection.isClosed()) {
 				// it's already closed so just drop it
-				logger.debug("dropping already closed connection {}", connectionMap.remove(connection));
+				ConnectionMetaData meta = connectionMap.remove(connection);
+				if (meta == null) {
+					logger.debug("dropping already closed unknown connection {}", connection);
+				} else {
+					logger.debug("dropping already closed connection {}", meta);
+				}
 				return;
 			}
 			if (connFreeList == null) {
