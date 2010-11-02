@@ -169,7 +169,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		saveSpecial(connection);
 		if (logger.isDebugEnabled()) {
 			ConnectionMetaData meta = connectionMap.get(connection);
-			logger.debug("saved trxn connection {}", meta);
+			logger.debug("saved special connection {}", meta);
 		}
 	}
 
@@ -179,7 +179,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		clearSpecial(connection, logger);
 		if (logger.isDebugEnabled()) {
 			ConnectionMetaData meta = connectionMap.get(connection);
-			logger.debug("cleared trxn connection {}", meta);
+			logger.debug("cleared special connection {}", meta);
 		}
 		// release should then called after the clear
 	}

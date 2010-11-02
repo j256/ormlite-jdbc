@@ -70,6 +70,20 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"));
 	}
 
+	@Test
+	public void testTransactionWithinTransaction() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
+		final TransactionManager mgr = new TransactionManager(connectionSource);
+		mgr.callInTransaction(new Callable<Void>() {
+			public Void call() throws Exception {
+				testTransactionManager(mgr, null);
+				return null;
+			}
+		});
+	}
+
 	private void testTransactionManager(TransactionManager mgr, final Exception exception) throws Exception {
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		final Foo foo1 = new Foo();
