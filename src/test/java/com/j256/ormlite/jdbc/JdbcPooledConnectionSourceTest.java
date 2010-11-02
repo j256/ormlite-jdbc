@@ -267,4 +267,50 @@ public class JdbcPooledConnectionSourceTest {
 		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
 		assertSame(databaseType, pooled.getDatabaseType());
 	}
+
+	@Test
+	public void testNestedConnection() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			JdbcDatabaseConnection conn1 =
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			pooled.saveSpecialConnection(conn1);
+			pooled.saveSpecialConnection(conn1);
+			pooled.releaseConnection(conn1);
+			pooled.releaseConnection(conn1);
+		} finally {
+			pooled.close();
+		}
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testSaveOtherConnection() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			JdbcDatabaseConnection conn1 =
+				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			JdbcDatabaseConnection conn2 =
+				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			pooled.saveSpecialConnection(conn1);
+			pooled.saveSpecialConnection(conn2);
+		} finally {
+			pooled.close();
+		}
+	}
+	
+	@Test
+	public void testClearOtherConnection() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			JdbcDatabaseConnection conn1 =
+				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			JdbcDatabaseConnection conn2 =
+				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+			pooled.saveSpecialConnection(conn1);
+			pooled.clearSpecialConnection(conn2);
+		} finally {
+			pooled.close();
+		}
+	}
+
 }
