@@ -36,7 +36,8 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
-		testTransactionManager(mgr, null);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		testTransactionManager(mgr, null, fooDao);
 	}
 
 	@Test
@@ -45,7 +46,8 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
-		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"));
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao);
 	}
 
 	@Test
@@ -56,7 +58,8 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 		TransactionManager mgr = new TransactionManager();
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
-		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"));
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao);
 	}
 
 	@Test
@@ -67,7 +70,8 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 		TransactionManager mgr = new TransactionManager();
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
-		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"));
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"), fooDao);
 	}
 
 	@Test
@@ -76,16 +80,17 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 			return;
 		}
 		final TransactionManager mgr = new TransactionManager(connectionSource);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
-				testTransactionManager(mgr, null);
+				testTransactionManager(mgr, null, fooDao);
 				return null;
 			}
 		});
 	}
 
-	private void testTransactionManager(TransactionManager mgr, final Exception exception) throws Exception {
-		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+	private void testTransactionManager(TransactionManager mgr, final Exception exception,
+			final Dao<Foo, Integer> fooDao) throws Exception {
 		final Foo foo1 = new Foo();
 		String stuff = "stuff";
 		foo1.stuff = stuff;

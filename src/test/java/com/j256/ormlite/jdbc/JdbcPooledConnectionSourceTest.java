@@ -188,28 +188,28 @@ public class JdbcPooledConnectionSourceTest {
 			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
 			assertEquals(1, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
-			assertEquals(1, pooled.getMaxConnectionsInUse());
+			assertEquals(1, pooled.getMaxConnectionsEverUsed());
 			assertEquals(1, pooled.getCurrentConnectionsManaged());
 			assertEquals(1, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
-			assertEquals(1, pooled.getMaxConnectionsInUse());
+			assertEquals(1, pooled.getMaxConnectionsEverUsed());
 			assertEquals(1, pooled.getCurrentConnectionsManaged());
 			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
 			assertEquals(2, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
-			assertEquals(2, pooled.getMaxConnectionsInUse());
+			assertEquals(2, pooled.getMaxConnectionsEverUsed());
 			assertEquals(2, pooled.getCurrentConnectionsManaged());
 			pooled.releaseConnection(conn2);
 			pooled.releaseConnection(conn1);
 			assertEquals(2, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
-			assertEquals(2, pooled.getMaxConnectionsInUse());
+			assertEquals(2, pooled.getMaxConnectionsEverUsed());
 			assertEquals(2, pooled.getCurrentConnectionsManaged());
 		} finally {
 			pooled.close();
 		}
 		assertEquals(2, pooled.getCloseCount());
-		assertEquals(2, pooled.getMaxConnectionsInUse());
+		assertEquals(2, pooled.getMaxConnectionsEverUsed());
 		assertEquals(0, pooled.getCurrentConnectionsManaged());
 	}
 

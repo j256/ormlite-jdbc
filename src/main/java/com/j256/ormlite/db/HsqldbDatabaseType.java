@@ -100,6 +100,11 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
+	public boolean isNestedSavePointsSupported() {
+		return false;
+	}
+
+	@Override
 	protected void appendUnique(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
 		StringBuilder alterSb = new StringBuilder();
 		alterSb.append("ALTER TABLE ");

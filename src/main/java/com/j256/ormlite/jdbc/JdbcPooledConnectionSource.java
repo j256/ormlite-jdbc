@@ -45,7 +45,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	private int openCount = 0;
 	private int closeCount = 0;
-	private int maxInUse = 0;
+	private int maxEverUsed = 0;
 
 	public JdbcPooledConnectionSource() {
 		// for spring type wiring
@@ -116,8 +116,9 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			openCount++;
 			// add it to our connection map
 			connectionMap.put(connection, new ConnectionMetaData(connection));
-			if (connectionMap.size() > maxInUse) {
-				maxInUse = connectionMap.size();
+			int maxInUse = connectionMap.size();
+			if (maxInUse > maxEverUsed) {
+				maxEverUsed = maxInUse;
 			}
 			return connection;
 		}
@@ -164,13 +165,14 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public void saveSpecialConnection(DatabaseConnection connection) {
+	public boolean saveSpecialConnection(DatabaseConnection connection) {
 		checkInitializedIllegalStateException();
-		saveSpecial(connection);
+		boolean saved = saveSpecial(connection);
 		if (logger.isDebugEnabled()) {
 			ConnectionMetaData meta = connectionMap.get(connection);
 			logger.debug("saved special connection {}", meta);
 		}
+		return saved;
 	}
 
 	@Override
@@ -220,8 +222,8 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	/**
 	 * Return the approximate maximum number of connections in use at one time.
 	 */
-	public int getMaxConnectionsInUse() {
-		return maxInUse;
+	public int getMaxConnectionsEverUsed() {
+		return maxEverUsed;
 	}
 
 	/**

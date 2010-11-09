@@ -66,7 +66,8 @@ public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
 			}
 			public void releaseConnection(DatabaseConnection connection) {
 			}
-			public void saveSpecialConnection(DatabaseConnection connection) {
+			public boolean saveSpecialConnection(DatabaseConnection connection) {
+				return true;
 			}
 			public void clearSpecialConnection(DatabaseConnection connection) {
 			}

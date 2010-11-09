@@ -6,6 +6,9 @@ import javax.sql.DataSource;
 
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.support.BaseConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -20,14 +23,14 @@ import com.j256.ormlite.support.DatabaseConnection;
  * 
  * @author graywatson
  */
-public class DataSourceConnectionSource implements ConnectionSource {
+public class DataSourceConnectionSource extends BaseConnectionSource implements ConnectionSource {
+
+	private static Logger logger = LoggerFactory.getLogger(DataSourceConnectionSource.class);
 
 	private DataSource dataSource;
 	private DatabaseType databaseType;
 	private String databaseUrl;
 	private boolean initialized = false;
-	private boolean usesTransactions = false;
-	private ThreadLocal<DatabaseConnection> storedConnection = new ThreadLocal<DatabaseConnection>();
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
@@ -106,11 +109,9 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		if (usesTransactions) {
-			DatabaseConnection stored = storedConnection.get();
-			if (stored != null) {
-				return stored;
-			}
+		DatabaseConnection saved = getSavedConnection();
+		if (saved != null) {
+			return saved;
 		}
 		return new JdbcDatabaseConnection(dataSource.getConnection());
 	}
@@ -119,7 +120,7 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		if (usesTransactions && storedConnection.get() == connection) {
+		if (isSavedConnection(connection)) {
 			// ignore the release because we will close it at the end of the connection
 		} else {
 			connection.close();
@@ -130,26 +131,23 @@ public class DataSourceConnectionSource implements ConnectionSource {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		if (usesTransactions) {
-			DatabaseConnection stored = storedConnection.get();
-			if (stored != null) {
-				return stored;
-			}
+		DatabaseConnection saved = getSavedConnection();
+		if (saved != null) {
+			return saved;
 		}
 		return new JdbcDatabaseConnection(dataSource.getConnection(username, password));
 	}
 
-	public void saveSpecialConnection(DatabaseConnection connection) {
+	public boolean saveSpecialConnection(DatabaseConnection connection) {
 		/*
 		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
 		 * or have it synchronized in over time.
 		 */
-		usesTransactions = true;
-		storedConnection.set(connection);
+		return saveSpecial(connection);
 	}
 
 	public void clearSpecialConnection(DatabaseConnection connection) {
-		storedConnection.set(null);
+		clearSpecial(connection, logger);
 	}
 
 	public void close() throws SQLException {
@@ -179,6 +177,6 @@ public class DataSourceConnectionSource implements ConnectionSource {
 	}
 
 	public void setUsesTransactions(boolean usesTransactions) {
-		this.usesTransactions = usesTransactions;
+		this.usedSpecialConnection = usesTransactions;
 	}
 }
