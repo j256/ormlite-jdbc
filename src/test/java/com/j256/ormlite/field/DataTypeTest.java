@@ -88,7 +88,7 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(date, DataType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
-		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.javaToArg(null, date));
+		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.javaToSqlArg(null, date));
 		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);

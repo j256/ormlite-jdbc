@@ -105,7 +105,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
-		public Object javaToArg(FieldType fieldType, Object javaObject) {
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			// convert the Byte arg to be a short
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;

@@ -116,14 +116,14 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
 	public void testObjectFieldConverterJavaToArgNonSerializable() throws Exception {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
 		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
-		converter.javaToArg(null, new NotSerializable());
+		converter.javaToSqlArg(null, new NotSerializable());
 	}
 
 	@Test
 	public void testObjectFieldConverterJavaToArg() throws Exception {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
 		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
-		Object object = converter.javaToArg(null, "TEST");
+		Object object = converter.javaToSqlArg(null, "TEST");
 		assertEquals(SerialBlob.class, object.getClass());
 	}
 

@@ -1460,6 +1460,17 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	}
 
 	@Test
+	public void testDateRefresh() throws Exception {
+		Dao<LocalDate, Object> dao = createDao(LocalDate.class, true);
+		LocalDate localDate = new LocalDate();
+		// note: this does not have milliseconds
+		Date date = new Date(2131232000);
+		localDate.date = date;
+		assertEquals(1, dao.create(localDate));
+		assertEquals(1, dao.refresh(localDate));
+	}
+
+	@Test
 	public void testSpringBadWiring() throws Exception {
 		BaseDaoImpl<String, String> daoSupport = new BaseDaoImpl<String, String>(String.class) {
 		};
