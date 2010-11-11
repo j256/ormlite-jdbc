@@ -925,6 +925,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		allTypes.floatField = floatVal;
 		allTypes.doubleField = doubleVal;
 		allTypes.ourEnum = ourEnum;
+		allTypes.ourEnum2 = ourEnum;
+		allTypes.ourEnum3 = ourEnum;
 		String stuff = "ewpjowpjogrjpogrjp";
 		SerialField obj = new SerialField();
 		obj.stuff = stuff;
@@ -977,6 +979,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		numberMaxs.floatField = 1.0e+37F;
 		numberMaxs.doubleField = 1.0e+307;
 		assertEquals(1, numberDao.create(numberMaxs));
+		assertEquals(1, numberDao.refresh(numberMaxs));
 
 		List<NumberTypes> allTypesList = numberDao.queryForAll();
 		assertEquals(3, allTypesList.size());
@@ -1216,6 +1219,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		all.objectField = new SerialField();
 		all.ourEnum = OurEnum.FIRST;
 		assertEquals(1, allDao.create(all));
+		assertEquals(1, allDao.refresh(all));
 		List<AllObjectTypes> allList = allDao.queryForAll();
 		assertEquals(1, allList.size());
 		assertTrue(allDao.objectsEqual(all, allList.get(0)));
@@ -1226,6 +1230,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		Dao<AllTypesDefault, Object> allDao = createDao(AllTypesDefault.class, true);
 		AllTypesDefault all = new AllTypesDefault();
 		assertEquals(1, allDao.create(all));
+		assertEquals(1, allDao.refresh(all));
 		List<AllTypesDefault> allList = allDao.queryForAll();
 		assertEquals(1, allList.size());
 		all.stringField = DEFAULT_STRING_VALUE;
@@ -1515,6 +1520,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		Foreign foreign = new Foreign();
 		String stuff1 = "stuff1";
 		foreign.stuff = stuff1;
+		Date date = new Date();
+		foreign.date = date;
 		// this sets the foreign id
 		assertEquals(1, foreignDao.create(foreign));
 
@@ -1705,11 +1712,13 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		public String id;
 	}
 
-	private static class Foreign {
+	protected static class Foreign {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
 		String stuff;
+		@DatabaseField
+		Date date;
 	}
 
 	private static class ForeignWrapper {
@@ -1829,6 +1838,10 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		SerialField objectField;
 		@DatabaseField
 		OurEnum ourEnum;
+		@DatabaseField(dataType = DataType.ENUM_STRING)
+		OurEnum ourEnum2;
+		@DatabaseField(dataType = DataType.ENUM_INTEGER)
+		OurEnum ourEnum3;
 		AllTypes() {
 		}
 	}
