@@ -933,6 +933,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		List<AllTypes> allTypesList = allDao.queryForAll();
 		assertEquals(1, allTypesList.size());
 		assertTrue(allDao.objectsEqual(allTypes, allTypesList.get(0)));
+		assertEquals(1, allDao.refresh(allTypes));
 	}
 
 	@Test
@@ -1800,6 +1801,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	}
 
 	protected static class AllTypes {
+		@DatabaseField(generatedId = true)
+		int id;
 		@DatabaseField
 		String stringField;
 		@DatabaseField
