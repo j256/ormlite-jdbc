@@ -1802,7 +1802,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 
 	protected static class GeneratedId {
 		@DatabaseField(generatedId = true)
-		public int id;
+		int id;
 		@DatabaseField
 		String other;
 		public GeneratedId() {
@@ -1847,6 +1847,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	}
 
 	protected static class AllTypesDefault {
+		@DatabaseField(generatedId = true)
+		int id;
 		@DatabaseField(defaultValue = DEFAULT_STRING_VALUE)
 		String stringField;
 		@DatabaseField(defaultValue = DEFAULT_DATE_VALUE)
@@ -1903,6 +1905,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	}
 
 	protected static class AllObjectTypes {
+		@DatabaseField(generatedId = true)
+		int id;
 		@DatabaseField
 		String stringField;
 		@DatabaseField
@@ -1930,6 +1934,8 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	}
 
 	protected static class NumberTypes {
+		@DatabaseField(generatedId = true)
+		public int id;
 		@DatabaseField
 		public byte byteField;
 		@DatabaseField
@@ -1982,7 +1988,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	// test the field name that has a capital letter in it
 	protected static class GeneratedColumnCapital {
 		@DatabaseField(generatedId = true, columnName = "idCap")
-		public int id;
+		int id;
 		@DatabaseField
 		String other;
 		public GeneratedColumnCapital() {
@@ -2120,7 +2126,7 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	@DatabaseTable
 	protected static class LocalDate {
 		@DatabaseField(generatedId = true)
-		public int id;
+		int id;
 		@DatabaseField
 		Date date;
 	}
