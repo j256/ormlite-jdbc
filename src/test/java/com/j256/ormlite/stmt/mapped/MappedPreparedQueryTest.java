@@ -31,8 +31,8 @@ public class MappedPreparedQueryTest extends BaseOrmLiteJdbcTest {
 		fooDao.create(foo1);
 
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
-		MappedPreparedStmt<Foo> rowMapper =
-				new MappedPreparedStmt<Foo>(tableInfo, null, new ArrayList<FieldType>(),
+		MappedPreparedStmt<Foo, Integer> rowMapper =
+				new MappedPreparedStmt<Foo, Integer>(tableInfo, null, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
 						StatementType.SELECT);
 
@@ -61,19 +61,20 @@ public class MappedPreparedQueryTest extends BaseOrmLiteJdbcTest {
 		foos.add(foo);
 
 		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
-		MappedPreparedStmt<Foo> preparedQuery =
-				new MappedPreparedStmt<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
-						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), 1, StatementType.SELECT);
+		MappedPreparedStmt<Foo, Integer> preparedQuery =
+				new MappedPreparedStmt<Foo, Integer>(tableInfo, "select * from " + TABLE_NAME,
+						new ArrayList<FieldType>(), Arrays.asList(tableInfo.getFieldTypes()),
+						new ArrayList<SelectArg>(), 1, StatementType.SELECT);
 
 		checkResults(foos, preparedQuery, 1);
 		preparedQuery =
-				new MappedPreparedStmt<Foo>(tableInfo, "select * from " + TABLE_NAME, new ArrayList<FieldType>(),
-						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
-						StatementType.SELECT);
+				new MappedPreparedStmt<Foo, Integer>(tableInfo, "select * from " + TABLE_NAME,
+						new ArrayList<FieldType>(), Arrays.asList(tableInfo.getFieldTypes()),
+						new ArrayList<SelectArg>(), null, StatementType.SELECT);
 		checkResults(foos, preparedQuery, 2);
 	}
 
-	private void checkResults(List<Foo> foos, MappedPreparedStmt<Foo> preparedQuery, int expectedNum)
+	private void checkResults(List<Foo> foos, MappedPreparedStmt<Foo, Integer> preparedQuery, int expectedNum)
 			throws SQLException {
 		CompiledStatement stmt = null;
 		try {
@@ -95,8 +96,8 @@ public class MappedPreparedQueryTest extends BaseOrmLiteJdbcTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
-		new MappedPreparedStmt<NoConstructor>(new TableInfo<NoConstructor>(databaseType, NoConstructor.class), null,
-				new ArrayList<FieldType>(), new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null,
+		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor>(databaseType, NoConstructor.class),
+				null, new ArrayList<FieldType>(), new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null,
 				StatementType.SELECT);
 	}
 
@@ -104,8 +105,8 @@ public class MappedPreparedQueryTest extends BaseOrmLiteJdbcTest {
 	public void testDifferentArgSizes() throws SQLException {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
-		new MappedPreparedStmt<Foo>(new TableInfo<Foo>(databaseType, Foo.class), null, new ArrayList<FieldType>(),
-				new ArrayList<FieldType>(), selectArgList, null, StatementType.SELECT);
+		new MappedPreparedStmt<Foo, Integer>(new TableInfo<Foo>(databaseType, Foo.class), null,
+				new ArrayList<FieldType>(), new ArrayList<FieldType>(), selectArgList, null, StatementType.SELECT);
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
