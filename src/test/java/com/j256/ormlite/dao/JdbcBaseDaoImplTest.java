@@ -552,11 +552,11 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	@Test
 	public void testForeignCreation() throws Exception {
 		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
-		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Dao<AllTypes, Integer> foreignDao = createDao(AllTypes.class, true);
 
-		Foreign foreign = new Foreign();
+		AllTypes foreign = new AllTypes();
 		String stuff1 = "stuff1";
-		foreign.stuff = stuff1;
+		foreign.stringField = stuff1;
 		// this sets the foreign id
 		assertEquals(1, foreignDao.create(foreign));
 
@@ -571,16 +571,16 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		assertTrue(wrapperDao.objectsEqual(wrapper, wrapper2));
 		// this won't be true because wrapper2.foreign is a shell
 		assertFalse(foreignDao.objectsEqual(foreign, wrapper2.foreign));
-		assertNull(wrapper2.foreign.stuff);
+		assertNull(wrapper2.foreign.stringField);
 		assertEquals(1, foreignDao.refresh(wrapper2.foreign));
 		// now it should be true
 		assertTrue(foreignDao.objectsEqual(foreign, wrapper2.foreign));
-		assertEquals(stuff1, wrapper2.foreign.stuff);
+		assertEquals(stuff1, wrapper2.foreign.stringField);
 
 		// create a new foreign
-		foreign = new Foreign();
+		foreign = new AllTypes();
 		String stuff2 = "stuff2";
-		foreign.stuff = stuff2;
+		foreign.stringField = stuff2;
 		// this sets the foreign id
 		assertEquals(1, foreignDao.create(foreign));
 
@@ -595,21 +595,21 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		assertTrue(wrapperDao.objectsEqual(wrapper, wrapper2));
 		// this won't be true because wrapper2.foreign is a shell
 		assertFalse(foreignDao.objectsEqual(foreign, wrapper2.foreign));
-		assertNull(wrapper2.foreign.stuff);
+		assertNull(wrapper2.foreign.stringField);
 		assertEquals(1, foreignDao.refresh(wrapper2.foreign));
 		// now it should be true
 		assertTrue(foreignDao.objectsEqual(foreign, wrapper2.foreign));
-		assertEquals(stuff2, wrapper2.foreign.stuff);
+		assertEquals(stuff2, wrapper2.foreign.stringField);
 	}
 
 	@Test
 	public void testForeignRefreshNoChange() throws Exception {
 		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
-		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Dao<AllTypes, Integer> foreignDao = createDao(AllTypes.class, true);
 
-		Foreign foreign = new Foreign();
+		AllTypes foreign = new AllTypes();
 		String stuff1 = "stuff1";
-		foreign.stuff = stuff1;
+		foreign.stringField = stuff1;
 		// this sets the foreign id
 		assertEquals(1, foreignDao.create(foreign));
 
@@ -620,18 +620,18 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 
 		ForeignWrapper wrapper2 = wrapperDao.queryForId(wrapper.id);
 		assertEquals(1, foreignDao.refresh(wrapper2.foreign));
-		Foreign foreign2 = wrapper2.foreign;
-		assertEquals(stuff1, foreign2.stuff);
+		AllTypes foreign2 = wrapper2.foreign;
+		assertEquals(stuff1, foreign2.stringField);
 
 		assertEquals(1, wrapperDao.refresh(wrapper2));
 		assertSame(foreign2, wrapper2.foreign);
-		assertEquals(stuff1, wrapper2.foreign.stuff);
+		assertEquals(stuff1, wrapper2.foreign.stringField);
 
 		// now, in the background, we change the foreign
 		ForeignWrapper wrapper3 = wrapperDao.queryForId(wrapper.id);
-		Foreign foreign3 = new Foreign();
+		AllTypes foreign3 = new AllTypes();
 		String stuff3 = "stuff3";
-		foreign3.stuff = stuff3;
+		foreign3.stringField = stuff3;
 		assertEquals(1, foreignDao.create(foreign3));
 		wrapper3.foreign = foreign3;
 		assertEquals(1, wrapperDao.update(wrapper3));
@@ -639,18 +639,18 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		assertEquals(1, wrapperDao.refresh(wrapper2));
 		// now all of a sudden wrapper2 should not have the same foreign field
 		assertNotSame(foreign2, wrapper2.foreign);
-		assertNull(wrapper2.foreign.stuff);
+		assertNull(wrapper2.foreign.stringField);
 	}
 
 	@Test
 	public void testMultipleForeignWrapper() throws Exception {
 		Dao<MultipleForeignWrapper, Integer> multipleWrapperDao = createDao(MultipleForeignWrapper.class, true);
 		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
-		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Dao<AllTypes, Integer> foreignDao = createDao(AllTypes.class, true);
 
-		Foreign foreign = new Foreign();
+		AllTypes foreign = new AllTypes();
 		String stuff1 = "stuff1";
-		foreign.stuff = stuff1;
+		foreign.stringField = stuff1;
 		// this sets the foreign id
 		assertEquals(1, foreignDao.create(foreign));
 
@@ -667,20 +667,20 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 
 		MultipleForeignWrapper multiWrapper2 = multipleWrapperDao.queryForId(multiWrapper.id);
 		assertEquals(foreign.id, multiWrapper2.foreign.id);
-		assertNull(multiWrapper2.foreign.stuff);
+		assertNull(multiWrapper2.foreign.stringField);
 		assertEquals(wrapper.id, multiWrapper2.foreignWrapper.id);
 		assertNull(multiWrapper2.foreignWrapper.foreign);
 
 		assertEquals(1, foreignDao.refresh(multiWrapper2.foreign));
-		assertEquals(stuff1, multiWrapper2.foreign.stuff);
+		assertEquals(stuff1, multiWrapper2.foreign.stringField);
 		assertNull(multiWrapper2.foreignWrapper.foreign);
 
 		assertEquals(1, wrapperDao.refresh(multiWrapper2.foreignWrapper));
 		assertEquals(foreign.id, multiWrapper2.foreignWrapper.foreign.id);
-		assertNull(multiWrapper2.foreignWrapper.foreign.stuff);
+		assertNull(multiWrapper2.foreignWrapper.foreign.stringField);
 
 		assertEquals(1, foreignDao.refresh(multiWrapper2.foreignWrapper.foreign));
-		assertEquals(stuff1, multiWrapper2.foreignWrapper.foreign.stuff);
+		assertEquals(stuff1, multiWrapper2.foreignWrapper.foreign.stringField);
 	}
 
 	@Test
@@ -1515,13 +1515,13 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 	@Test
 	public void testForeignQuery() throws Exception {
 		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
-		Dao<Foreign, Integer> foreignDao = createDao(Foreign.class, true);
+		Dao<AllTypes, Integer> foreignDao = createDao(AllTypes.class, true);
 
-		Foreign foreign = new Foreign();
+		AllTypes foreign = new AllTypes();
 		String stuff1 = "stuff1";
-		foreign.stuff = stuff1;
+		foreign.stringField = stuff1;
 		Date date = new Date();
-		foreign.date = date;
+		foreign.dateField = date;
 		// this sets the foreign id
 		assertEquals(1, foreignDao.create(foreign));
 
@@ -1669,6 +1669,124 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		assertEquals(newStuff, foo.stuff);
 	}
 
+	@Test
+	public void testDateAsId() throws Exception {
+		Dao<DateId, Date> dateIdDao = createDao(DateId.class, true);
+
+		Date date = new Date();
+		String s1 = "stuff";
+		DateId dateId1 = new DateId();
+		dateId1.date = date;
+		dateId1.stuff = s1;
+
+		// persist foo to db through the dao and sends the id on foo because it was auto-generated by the db
+		assertEquals(1, dateIdDao.create(dateId1));
+		assertEquals(s1, dateId1.stuff);
+
+		// now we query for foo from the database to make sure it was persisted right
+		DateId dateId2 = dateIdDao.queryForId(dateId1.date);
+		assertNotNull(dateId2);
+		assertEquals(dateId1.date, dateId2.date);
+		assertEquals(s1, dateId2.stuff);
+
+		String s2 = "stuff2";
+		dateId2.stuff = s2;
+
+		// now we update 1 row in a the database after changing foo
+		assertEquals(1, dateIdDao.update(dateId2));
+
+		// now we get it from the db again to make sure it was updated correctly
+		DateId dateId3 = dateIdDao.queryForId(dateId1.date);
+		assertEquals(s2, dateId3.stuff);
+		
+		Date newId = new Date();
+		assertEquals(1, dateIdDao.updateId(dateId2, newId));
+		DateId dateId4 = dateIdDao.queryForId(newId);
+		assertNotNull(dateId4);
+		assertEquals(s2, dateId4.stuff);
+		
+		assertEquals(1, dateIdDao.delete(dateId2));
+		assertNull(dateIdDao.queryForId(dateId1.date));
+	}
+
+	@Test
+	public void testEnumStringAsId() throws Exception {
+		Dao<EnumStringId, Enum<OurEnum>> enumIdDao = createDao(EnumStringId.class, true);
+
+		String s1 = "stuff";
+		EnumStringId enumId1 = new EnumStringId();
+		enumId1.ourEnum = OurEnum.SECOND;
+		enumId1.stuff = s1;
+
+		// persist foo to db through the dao and sends the id on foo because it was auto-generated by the db
+		assertEquals(1, enumIdDao.create(enumId1));
+		assertEquals(s1, enumId1.stuff);
+
+		// now we query for foo from the database to make sure it was persisted right
+		EnumStringId enumId2 = enumIdDao.queryForId(enumId1.ourEnum);
+		assertNotNull(enumId2);
+		assertEquals(enumId1.ourEnum, enumId2.ourEnum);
+		assertEquals(s1, enumId2.stuff);
+
+		String s2 = "stuff2";
+		enumId2.stuff = s2;
+
+		// now we update 1 row in a the database after changing foo
+		assertEquals(1, enumIdDao.update(enumId2));
+
+		// now we get it from the db again to make sure it was updated correctly
+		EnumStringId enumId3 = enumIdDao.queryForId(enumId1.ourEnum);
+		assertEquals(s2, enumId3.stuff);
+		
+		OurEnum newId = OurEnum.FIRST;
+		assertEquals(1, enumIdDao.updateId(enumId2, newId));
+		EnumStringId enumId4 = enumIdDao.queryForId(newId);
+		assertNotNull(enumId4);
+		assertEquals(s2, enumId4.stuff);
+
+		assertEquals(1, enumIdDao.delete(enumId2));
+		assertNull(enumIdDao.queryForId(enumId1.ourEnum));
+	}
+
+	@Test
+	public void testEnumIntegerAsId() throws Exception {
+		Dao<EnumIntegerId, Enum<OurEnum>> enumIdDao = createDao(EnumIntegerId.class, true);
+
+		String s1 = "stuff";
+		EnumIntegerId enumId1 = new EnumIntegerId();
+		enumId1.ourEnum = OurEnum.SECOND;
+		enumId1.stuff = s1;
+
+		// persist foo to db through the dao and sends the id on foo because it was auto-generated by the db
+		assertEquals(1, enumIdDao.create(enumId1));
+		assertEquals(s1, enumId1.stuff);
+
+		// now we query for foo from the database to make sure it was persisted right
+		EnumIntegerId enumId2 = enumIdDao.queryForId(enumId1.ourEnum);
+		assertNotNull(enumId2);
+		assertEquals(enumId1.ourEnum, enumId2.ourEnum);
+		assertEquals(s1, enumId2.stuff);
+
+		String s2 = "stuff2";
+		enumId2.stuff = s2;
+
+		// now we update 1 row in a the database after changing foo
+		assertEquals(1, enumIdDao.update(enumId2));
+
+		// now we get it from the db again to make sure it was updated correctly
+		EnumIntegerId enumId3 = enumIdDao.queryForId(enumId1.ourEnum);
+		assertEquals(s2, enumId3.stuff);
+		
+		OurEnum newId = OurEnum.FIRST;
+		assertEquals(1, enumIdDao.updateId(enumId2, newId));
+		EnumIntegerId enumId4 = enumIdDao.queryForId(newId);
+		assertNotNull(enumId4);
+		assertEquals(s2, enumId4.stuff);
+
+		assertEquals(1, enumIdDao.delete(enumId2));
+		assertNull(enumIdDao.queryForId(enumId1.ourEnum));
+	}
+
 	/* ==================================================================================== */
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)
@@ -1712,28 +1830,19 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		public String id;
 	}
 
-	protected static class Foreign {
-		@DatabaseField(generatedId = true)
-		int id;
-		@DatabaseField
-		String stuff;
-		@DatabaseField
-		Date date;
-	}
-
 	private static class ForeignWrapper {
 		private final static String FOREIGN_FIELD_NAME = "foreign";
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true, columnName = FOREIGN_FIELD_NAME)
-		Foreign foreign;
+		AllTypes foreign;
 	}
 
 	private static class MultipleForeignWrapper {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(foreign = true)
-		Foreign foreign;
+		AllTypes foreign;
 		@DatabaseField(foreign = true)
 		ForeignWrapper foreignWrapper;
 	}
@@ -2129,6 +2238,30 @@ public class JdbcBaseDaoImplTest extends BaseOrmLiteJdbcTest {
 		int id;
 		@DatabaseField
 		Date date;
+	}
+
+	@DatabaseTable
+	protected static class DateId {
+		@DatabaseField(id = true)
+		Date date;
+		@DatabaseField
+		String stuff;
+	}
+
+	@DatabaseTable
+	protected static class EnumStringId {
+		@DatabaseField(id = true)
+		OurEnum ourEnum;
+		@DatabaseField
+		String stuff;
+	}
+
+	@DatabaseTable
+	protected static class EnumIntegerId {
+		@DatabaseField(id = true, dataType = DataType.ENUM_INTEGER)
+		OurEnum ourEnum;
+		@DatabaseField
+		String stuff;
 	}
 
 	private static class Mapper implements RawRowMapper<Foo> {
