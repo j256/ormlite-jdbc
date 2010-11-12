@@ -94,6 +94,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 		sb.append("TOP ").append(limit).append(' ');
 	}
 
+	@Override
+	public boolean isSerializableIdAllowed() {
+		return false;
+	}
+
 	/**
 	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
 	 */
