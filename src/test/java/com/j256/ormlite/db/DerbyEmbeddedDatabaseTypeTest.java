@@ -26,7 +26,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
-public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTypeTest {
+public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {

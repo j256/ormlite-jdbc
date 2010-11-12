@@ -7,11 +7,11 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class TableUtilsTest extends BaseOrmLiteJdbcTest {
+public class TableUtilsTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateTable() throws Exception {

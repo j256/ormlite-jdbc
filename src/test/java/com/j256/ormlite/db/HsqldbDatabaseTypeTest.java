@@ -25,7 +25,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
-public class HsqldbDatabaseTypeTest extends BaseDatabaseTypeTest {
+public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	private final static String GENERATED_ID_SEQ = "genId_seq";
 

@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class TableCreatorTest extends BaseOrmLiteJdbcTest {
+public class TableCreatorTest extends BaseJdbcTest {
 
 	@Test
 	public void testInitialize() throws Exception {

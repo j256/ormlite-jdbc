@@ -5,10 +5,10 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 
-public class DatabaseFieldTest extends BaseOrmLiteJdbcTest {
+public class DatabaseFieldTest extends BaseJdbcTest {
 
 	@Test
 	public void testBaseClassAnnotations() throws Exception {

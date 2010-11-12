@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
@@ -23,7 +23,7 @@ import com.j256.ormlite.table.TableInfo;
 /**
  * Base test for other database tests which perform specific functionality tests on all databases.
  */
-public abstract class BaseDatabaseTypeTest extends BaseOrmLiteJdbcTest {
+public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	private final static String DATABASE_NAME = "ormlite";
 	private final String DB_DIRECTORY = "target/" + getClass().getSimpleName();

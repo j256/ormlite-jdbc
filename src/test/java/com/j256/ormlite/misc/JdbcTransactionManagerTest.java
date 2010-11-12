@@ -11,12 +11,12 @@ import java.util.concurrent.Callable;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 
-public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
+public class JdbcTransactionManagerTest extends BaseJdbcTest {
 
 	@Override
 	@Before

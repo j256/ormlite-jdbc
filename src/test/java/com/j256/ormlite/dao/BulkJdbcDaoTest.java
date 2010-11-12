@@ -7,10 +7,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.field.DatabaseField;
 
-public class BulkJdbcDaoTest extends BaseOrmLiteJdbcTest {
+public class BulkJdbcDaoTest extends BaseJdbcTest {
 
 	private final static int NUMBER_OBJECTS_TO_CREATE = 1000;
 

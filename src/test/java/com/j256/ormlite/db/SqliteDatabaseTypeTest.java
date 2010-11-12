@@ -15,7 +15,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class SqliteDatabaseTypeTest extends BaseDatabaseTypeTest {
+public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {

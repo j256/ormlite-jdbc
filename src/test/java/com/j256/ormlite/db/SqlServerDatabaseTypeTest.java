@@ -18,7 +18,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
-public class SqlServerDatabaseTypeTest extends BaseDatabaseTypeTest {
+public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {

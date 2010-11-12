@@ -27,7 +27,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
-public abstract class BaseOrmLiteJdbcTest {
+public abstract class BaseJdbcTest {
 
 	private static final String DATASOURCE_ERROR = "Property 'dataSource' is required";
 	@Rule

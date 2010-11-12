@@ -20,11 +20,11 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseOrmLiteCoreTest;
+import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.support.DatabaseConnection;
 
-public class JdbcConnectionSourceTest extends BaseOrmLiteCoreTest {
+public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test
 	public void testSimpleDataSource() {
