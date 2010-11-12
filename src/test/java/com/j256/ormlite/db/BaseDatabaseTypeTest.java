@@ -23,13 +23,14 @@ import com.j256.ormlite.table.TableInfo;
 /**
  * Base test for other database tests which perform specific functionality tests on all databases.
  */
-public abstract class BaseDatabaseTest extends BaseOrmLiteJdbcTest {
+public abstract class BaseDatabaseTypeTest extends BaseOrmLiteJdbcTest {
 
 	private final static String DATABASE_NAME = "ormlite";
 	private final String DB_DIRECTORY = "target/" + getClass().getSimpleName();
 
 	protected final static String GENERATED_ID_SEQ = "genId_seq";
-
+	protected DatabaseType databaseType;
+	
 	@Test
 	public void testCommentLinePrefix() throws Exception {
 		assertEquals("-- ", databaseType.getCommentLinePrefix());

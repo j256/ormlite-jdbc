@@ -66,7 +66,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalBoolean.class.getDeclaredField(BOOLEAN_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalBoolean.class.getDeclaredField(BOOLEAN_COLUMN));
 		assertEquals(bool, DataType.BOOLEAN.resultToJava(fieldType, results, results.findColumn(BOOLEAN_COLUMN)));
 		assertFalse(DataType.BOOLEAN.isValidGeneratedType());
 	}
@@ -92,7 +93,7 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
-		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, dateField);
+		FieldType fieldType = FieldType.createFieldType(connectionSource.getDatabaseType(), TABLE_NAME, dateField);
 		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(fieldType,
 				dateFormat.format(date)));
 	}
@@ -111,7 +112,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalByte.class.getDeclaredField(BYTE_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalByte.class.getDeclaredField(BYTE_COLUMN));
 		assertEquals(byteField, DataType.BYTE.resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN)));
 		assertFalse(DataType.BYTE.isValidGeneratedType());
 	}
@@ -130,7 +132,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalShort.class.getDeclaredField(SHORT_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalShort.class.getDeclaredField(SHORT_COLUMN));
 		assertEquals(shortField, DataType.SHORT.resultToJava(fieldType, results, results.findColumn(SHORT_COLUMN)));
 		assertFalse(DataType.SHORT.isValidGeneratedType());
 	}
@@ -149,7 +152,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalInt.class.getDeclaredField(INT_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalInt.class.getDeclaredField(INT_COLUMN));
 		assertEquals(integer, DataType.INTEGER.resultToJava(fieldType, results, results.findColumn(INT_COLUMN)));
 		assertTrue(DataType.INTEGER.isValidGeneratedType());
 	}
@@ -168,7 +172,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalLong.class.getDeclaredField(LONG_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalLong.class.getDeclaredField(LONG_COLUMN));
 		assertEquals(longInt, DataType.LONG.resultToJava(fieldType, results, results.findColumn(LONG_COLUMN)));
 		assertTrue(DataType.LONG.isValidGeneratedType());
 	}
@@ -187,7 +192,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalFloat.class.getDeclaredField(FLOAT_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalFloat.class.getDeclaredField(FLOAT_COLUMN));
 		assertEquals(floatField, DataType.FLOAT.resultToJava(fieldType, results, results.findColumn(FLOAT_COLUMN)));
 		assertFalse(DataType.FLOAT.isValidGeneratedType());
 	}
@@ -206,7 +212,8 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
-				FieldType.createFieldType(databaseType, "table", LocalDouble.class.getDeclaredField(DOUBLE_COLUMN));
+				FieldType.createFieldType(connectionSource.getDatabaseType(), "table",
+						LocalDouble.class.getDeclaredField(DOUBLE_COLUMN));
 		assertEquals(doubleField, DataType.DOUBLE.resultToJava(fieldType, results, results.findColumn(DOUBLE_COLUMN)));
 		assertFalse(DataType.DOUBLE.isValidGeneratedType());
 	}
@@ -221,7 +228,7 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 
 		Field[] fields = LocalEnum.class.getDeclaredFields();
 		assertTrue(fields.length > 0);
-		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, fields[0]);
+		FieldType fieldType = FieldType.createFieldType(connectionSource.getDatabaseType(), TABLE_NAME, fields[0]);
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
@@ -242,7 +249,7 @@ public class DataTypeTest extends BaseOrmLiteJdbcTest {
 
 		Field[] fields = LocalEnum.class.getDeclaredFields();
 		assertTrue(fields.length > 0);
-		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME, fields[0]);
+		FieldType fieldType = FieldType.createFieldType(connectionSource.getDatabaseType(), TABLE_NAME, fields[0]);
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,

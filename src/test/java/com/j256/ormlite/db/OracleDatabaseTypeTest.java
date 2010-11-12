@@ -21,12 +21,13 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class OracleDatabaseTypeTest extends BaseDatabaseTest {
+public class OracleDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:oracle:ormliteoracle";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new OracleDatabaseType();
 	}
 
 	@Override

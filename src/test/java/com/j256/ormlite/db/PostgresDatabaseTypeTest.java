@@ -21,12 +21,13 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class PostgresDatabaseTypeTest extends BaseDatabaseTest {
+public class PostgresDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:postgresql:ormlitepostgres";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new PostgresDatabaseType();
 	}
 
 	@Override

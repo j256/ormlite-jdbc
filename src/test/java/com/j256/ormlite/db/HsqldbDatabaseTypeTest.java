@@ -25,7 +25,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
-public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
+public class HsqldbDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	private final static String GENERATED_ID_SEQ = "genId_seq";
 
@@ -33,6 +33,7 @@ public class HsqldbDatabaseTypeTest extends BaseDatabaseTest {
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:hsqldb:ormlite";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new HsqldbDatabaseType();
 	}
 
 	@Override

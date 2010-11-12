@@ -12,7 +12,7 @@ import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class H2DatabaseTypeTest extends BaseDatabaseTest {
+public class H2DatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	private final static String DATABASE_NAME = "ormlite";
 	private final String DB_DIRECTORY = "target/" + getClass().getSimpleName();
@@ -20,6 +20,7 @@ public class H2DatabaseTypeTest extends BaseDatabaseTest {
 	@Override
 	protected void setDatabaseParams() {
 		databaseUrl = "jdbc:h2:mem:" + DATABASE_NAME;
+		databaseType = new H2DatabaseType();
 	}
 
 	@Test

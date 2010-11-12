@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseOrmLiteJdbcTest;
+import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.support.DatabaseConnection;
 
 public class DataSourceConnectionSourceTest extends BaseOrmLiteJdbcTest {
@@ -50,7 +51,7 @@ public class DataSourceConnectionSourceTest extends BaseOrmLiteJdbcTest {
 		expect(dataSource.getConnection()).andReturn(null);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.setDataSource(dataSource);
-		dcs.setDatabaseType(databaseType);
+		dcs.setDatabaseType(new H2DatabaseType());
 		dcs.initialize();
 		replay(dataSource);
 		dcs.getReadOnlyConnection();
@@ -66,9 +67,9 @@ public class DataSourceConnectionSourceTest extends BaseOrmLiteJdbcTest {
 	@Test
 	public void testDscsDoubleInit() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
-		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, databaseType);
+		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, connectionSource.getDatabaseType());
 		dcs.initialize();
-		assertEquals(databaseType, dcs.getDatabaseType());
+		assertEquals(connectionSource.getDatabaseType(), dcs.getDatabaseType());
 		dcs.releaseConnection(createMock(DatabaseConnection.class));
 		dcs.close();
 	}
@@ -154,7 +155,7 @@ public class DataSourceConnectionSourceTest extends BaseOrmLiteJdbcTest {
 	@Test
 	public void testDscsGetReadOnlyAndClose() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
-		DataSourceConnectionSource dscs = new DataSourceConnectionSource(dataSource, databaseType);
+		DataSourceConnectionSource dscs = new DataSourceConnectionSource(dataSource, new H2DatabaseType());
 		Connection conn = createMock(Connection.class);
 		conn.close();
 		expect(dataSource.getConnection()).andReturn(conn);

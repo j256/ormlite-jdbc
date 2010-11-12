@@ -15,12 +15,13 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class SqliteDatabaseTypeTest extends BaseDatabaseTest {
+public class SqliteDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:sqlite:";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new SqliteDatabaseType();
 	}
 
 	@Override

@@ -14,12 +14,13 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
 
-public class MysqlDatabaseTypeTest extends BaseDatabaseTest {
+public class MysqlDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:mysql:ormlite";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new MysqlDatabaseType();
 	}
 
 	@Override

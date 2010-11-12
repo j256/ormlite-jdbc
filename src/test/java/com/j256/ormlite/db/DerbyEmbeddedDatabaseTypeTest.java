@@ -26,13 +26,14 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableInfo;
 
-public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTest {
+public class DerbyEmbeddedDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		databaseUrl = "jdbc:derby:target/ormlitederby;create=true";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new DerbyEmbeddedDatabaseType();
 	}
 
 	@Override

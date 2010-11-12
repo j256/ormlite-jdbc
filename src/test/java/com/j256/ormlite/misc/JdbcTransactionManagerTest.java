@@ -21,12 +21,12 @@ public class JdbcTransactionManagerTest extends BaseOrmLiteJdbcTest {
 	@Override
 	@Before
 	public void before() throws Exception {
-		if (databaseType != null) {
+		if (connectionSource != null) {
 			return;
 		}
 		super.before();
 		if (connectionSource != null) {
-			connectionSource = new JdbcPooledConnectionSource(databaseUrl, userName, password, databaseType);
+			connectionSource = new JdbcPooledConnectionSource(databaseUrl, userName, password);
 		}
 	}
 

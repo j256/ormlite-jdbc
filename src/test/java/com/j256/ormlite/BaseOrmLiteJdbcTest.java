@@ -22,8 +22,6 @@ import org.junit.runners.model.Statement;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -44,22 +42,19 @@ public abstract class BaseOrmLiteJdbcTest {
 
 	protected static JdbcConnectionSource connectionSource = null;
 	protected static DatabaseConnection databaseConnection = null;
-	protected DatabaseType databaseType = null;
 	protected boolean isConnectionExpected = false;
 
 	private Set<DatabaseTableConfig<?>> dropClassSet = new HashSet<DatabaseTableConfig<?>>();
 
 	@Before
 	public void before() throws Exception {
-		if (databaseType != null) {
+		if (connectionSource != null) {
 			return;
 		}
 		// do this for everyone
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		setDatabaseParams();
-		databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		if (connectionSource == null) {
-			Class.forName(databaseType.getDriverClassName());
 			isConnectionExpected = isConnectionExpected();
 			if (isConnectionExpected) {
 				connectionSource = new JdbcConnectionSource(databaseUrl, userName, password);
@@ -112,11 +107,10 @@ public abstract class BaseOrmLiteJdbcTest {
 			connectionSource.close();
 			connectionSource = null;
 		}
-		databaseType = null;
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(Class<T> clazz, boolean createTable) throws Exception {
-		return createDao(DatabaseTableConfig.fromClass(databaseType, clazz), createTable);
+		return createDao(DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), clazz), createTable);
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
@@ -126,7 +120,7 @@ public abstract class BaseOrmLiteJdbcTest {
 	}
 
 	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws Exception {
-		createTable(DatabaseTableConfig.fromClass(databaseType, clazz), dropAtEnd);
+		createTable(DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), clazz), dropAtEnd);
 	}
 
 	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws Exception {

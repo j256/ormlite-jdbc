@@ -18,12 +18,13 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
-public class SqlServerDatabaseTypeTest extends BaseDatabaseTest {
+public class SqlServerDatabaseTypeTest extends BaseDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() throws SQLException {
 		databaseUrl = "jdbc:sqlserver:db";
 		connectionSource = new JdbcConnectionSource(DEFAULT_DATABASE_URL);
+		databaseType = new SqlServerDatabaseType();
 	}
 
 	@Override
