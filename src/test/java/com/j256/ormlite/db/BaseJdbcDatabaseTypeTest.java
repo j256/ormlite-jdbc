@@ -29,8 +29,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 	private final String DB_DIRECTORY = "target/" + getClass().getSimpleName();
 
 	protected final static String GENERATED_ID_SEQ = "genId_seq";
-	protected DatabaseType databaseType;
-	
+
 	@Test
 	public void testCommentLinePrefix() throws Exception {
 		assertEquals("-- ", databaseType.getCommentLinePrefix());

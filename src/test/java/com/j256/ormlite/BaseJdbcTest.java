@@ -22,6 +22,7 @@ import org.junit.runners.model.Statement;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
@@ -43,6 +44,7 @@ public abstract class BaseJdbcTest {
 	protected static JdbcConnectionSource connectionSource = null;
 	protected static DatabaseConnection databaseConnection = null;
 	protected boolean isConnectionExpected = false;
+	protected DatabaseType databaseType = null;
 
 	private Set<DatabaseTableConfig<?>> dropClassSet = new HashSet<DatabaseTableConfig<?>>();
 
@@ -59,6 +61,11 @@ public abstract class BaseJdbcTest {
 			if (isConnectionExpected) {
 				connectionSource = new JdbcConnectionSource(databaseUrl, userName, password);
 				databaseConnection = connectionSource.getReadWriteConnection();
+			}
+		}
+		if (databaseType == null) {
+			if (connectionSource != null) {
+				databaseType = connectionSource.getDatabaseType();
 			}
 		}
 	}
@@ -110,10 +117,16 @@ public abstract class BaseJdbcTest {
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(Class<T> clazz, boolean createTable) throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException(DATASOURCE_ERROR);
+		}
 		return createDao(DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), clazz), createTable);
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException(DATASOURCE_ERROR);
+		}
 		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
 		};
 		return configDao(tableConfig, createTable, dao);
