@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,7 +33,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
-public class BaseJdbcDaoImplTest extends BaseJdbcTest {
+public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private final boolean CLOSE_IS_NOOP = false;
 	private final boolean UPDATE_ROWS_RETURNS_ONE = false;
@@ -1672,29 +1673,29 @@ public class BaseJdbcDaoImplTest extends BaseJdbcTest {
 	@Test
 	public void testDateAsId() throws Exception {
 		// no milliseconds
-		testTypeAsId(DateId.class, new DateId(), new Date(1232312313000L), new Date(1232312783000L));
+		checkTypeAsId(DateId.class, new Date(1232312313000L), new Date(1232312783000L));
 	}
 
 	@Test
 	public void testDateLongAsId() throws Exception {
 		// no milliseconds
-		testTypeAsId(DateLongId.class, new DateLongId(), new Date(1232312313000L), new Date(1232312783000L));
+		checkTypeAsId(DateLongId.class, new Date(1232312313000L), new Date(1232312783000L));
 	}
 
 	@Test
 	public void testDateStringAsId() throws Exception {
 		// no milliseconds
-		testTypeAsId(DateStringId.class, new DateStringId(), new Date(1232312313000L), new Date(1232312783000L));
+		checkTypeAsId(DateStringId.class, new Date(1232312313000L), new Date(1232312783000L));
 	}
 
 	@Test
 	public void testEnumStringAsId() throws Exception {
-		testTypeAsId(EnumStringId.class, new EnumStringId(), OurEnum.SECOND, OurEnum.FIRST);
+		checkTypeAsId(EnumStringId.class, OurEnum.SECOND, OurEnum.FIRST);
 	}
 
 	@Test
 	public void testEnumIntegerAsId() throws Exception {
-		testTypeAsId(EnumIntegerId.class, new EnumIntegerId(), OurEnum.SECOND, OurEnum.FIRST);
+		checkTypeAsId(EnumIntegerId.class, OurEnum.SECOND, OurEnum.FIRST);
 	}
 
 	@Test
@@ -1705,22 +1706,25 @@ public class BaseJdbcDaoImplTest extends BaseJdbcTest {
 		SerialData id1 = new SerialData();
 		id1.stuff = "stuff1";
 		SerialData id2 = new SerialData();
-		id2.stuff = "stiff2";
-		testTypeAsId(SerializableId.class, new SerializableId(), id1, id2);
+		id2.stuff = "stuff2";
+		checkTypeAsId(SerializableId.class, id1, id2);
 	}
 
 	/* ==================================================================================== */
 
-	private <T extends TestableType<ID>, ID> void testTypeAsId(Class<T> clazz, T data1, ID id1, ID id2)
-			throws Exception {
+	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
+		Constructor<T> constructor = clazz.getDeclaredConstructor();
 		Dao<T, ID> dao = createDao(clazz, true);
 
 		String s1 = "stuff";
+		T data1 = constructor.newInstance();
 		data1.setId(id1);
 		data1.setStuff(s1);
 
+		// create it
 		assertEquals(1, dao.create(data1));
-		assertEquals(s1, data1.getStuff());
+		// refresh it
+		assertEquals(1, dao.refresh(data1));
 
 		// now we query for foo from the database to make sure it was persisted right
 		T data2 = dao.queryForId(id1);
@@ -1728,23 +1732,54 @@ public class BaseJdbcDaoImplTest extends BaseJdbcTest {
 		assertEquals(data1.getId(), data2.getId());
 		assertEquals(s1, data2.getStuff());
 
+		// now we update 1 row in a the database after changing stuff
 		String s2 = "stuff2";
 		data2.setStuff(s2);
-
-		// now we update 1 row in a the database after changing foo
 		assertEquals(1, dao.update(data2));
 
 		// now we get it from the db again to make sure it was updated correctly
-		T enumId3 = dao.queryForId(id1);
-		assertEquals(s2, enumId3.getStuff());
+		T data3 = dao.queryForId(id1);
+		assertEquals(s2, data3.getStuff());
 
+		// change its id
 		assertEquals(1, dao.updateId(data2, id2));
-		T enumId4 = dao.queryForId(id2);
-		assertNotNull(enumId4);
-		assertEquals(s2, enumId4.getStuff());
-
-		assertEquals(1, dao.delete(data2));
+		// the old id should not exist
 		assertNull(dao.queryForId(id1));
+		T data4 = dao.queryForId(id2);
+		assertNotNull(data4);
+		assertEquals(s2, data4.getStuff());
+
+		// delete it
+		assertEquals(1, dao.delete(data2));
+		// should not find it
+		assertNull(dao.queryForId(id1));
+		assertNull(dao.queryForId(id2));
+
+		// create data1 and data2
+		data1.setId(id1);
+		assertEquals(1, dao.create(data1));
+		data2 = constructor.newInstance();
+		data2.setId(id2);
+		assertEquals(1, dao.create(data2));
+
+		// delete a collection of ids
+		List<ID> idList = new ArrayList<ID>();
+		idList.add(id1);
+		idList.add(id2);
+		assertEquals(2, dao.deleteIds(idList));
+		assertNull(dao.queryForId(id1));
+		assertNull(dao.queryForId(id2));
+
+		// delete a collection of objects
+		assertEquals(1, dao.create(data1));
+		assertEquals(1, dao.create(data2));
+		List<T> dataList = new ArrayList<T>();
+		dataList.add(data1);
+		dataList.add(data2);
+		assertEquals(2, dao.delete(dataList));
+
+		assertNull(dao.queryForId(id1));
+		assertNull(dao.queryForId(id2));
 	}
 
 	private interface TestableType<ID> {
