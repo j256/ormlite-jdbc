@@ -1,10 +1,7 @@
 package com.j256.ormlite.db;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
 /**
  * Utility class which helps with managing database specific classes.
@@ -34,31 +31,6 @@ public class DatabaseTypeUtils {
 	 * For static methods only.
 	 */
 	private DatabaseTypeUtils() {
-	}
-
-	/**
-	 * @deprecated The {@link JdbcConnectionSource} does this automatically now.
-	 */
-	@Deprecated
-	public static void loadDriver(String databaseUrl) throws ClassNotFoundException {
-		// does nothing since the JdbcConnectionSource does it now
-	}
-
-	/**
-	 * @deprecated Use {@link JdbcConnectionSource#JdbcConnectionSource(String)}
-	 */
-	@Deprecated
-	public static JdbcConnectionSource createJdbcConnectionSource(String databaseUrl) throws SQLException {
-		return new JdbcConnectionSource(databaseUrl);
-	}
-
-	/**
-	 * @deprecated Use {@link JdbcConnectionSource#JdbcConnectionSource(String, String, String)}
-	 */
-	@Deprecated
-	public static JdbcConnectionSource createJdbcConnectionSource(String databaseUrl, String userName, String password)
-			throws SQLException {
-		return new JdbcConnectionSource(databaseUrl, userName, password);
 	}
 
 	/**

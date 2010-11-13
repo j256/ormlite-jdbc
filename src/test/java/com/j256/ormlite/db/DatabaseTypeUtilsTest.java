@@ -3,10 +3,10 @@ package com.j256.ormlite.db;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Constructor;
-import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 
 public class DatabaseTypeUtilsTest {
@@ -18,24 +18,6 @@ public class DatabaseTypeUtilsTest {
 		assertEquals(1, constructors.length);
 		constructors[0].setAccessible(true);
 		constructors[0].newInstance();
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testLoadDriver() throws Exception {
-		DatabaseTypeUtils.loadDriver("jdbc:h2:mem:ormlitetest");
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testSimpleDataSource() throws Exception {
-		DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:mem:ormlitetest").getReadOnlyConnection().close();
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test(expected = SQLException.class)
-	public void testSimpleDataSourceBadDriverArgs() throws Exception {
-		DatabaseTypeUtils.createJdbcConnectionSource("jdbc:h2:").getReadOnlyConnection();
 	}
 
 	@Test
@@ -58,14 +40,12 @@ public class DatabaseTypeUtilsTest {
 		DatabaseTypeUtils.createDatabaseType("jdbc:");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testCreateDbTypeDataSource() throws Exception {
 		ConnectionSource dataSource = null;
 		try {
 			String dbUrl = "jdbc:h2:mem:ormlitetest";
-			dataSource = DatabaseTypeUtils.createJdbcConnectionSource(dbUrl);
-			DatabaseTypeUtils.createDatabaseType(dbUrl);
+			dataSource = new JdbcConnectionSource(dbUrl, new H2DatabaseType());
 		} finally {
 			if (dataSource != null) {
 				dataSource.getReadOnlyConnection().close();
