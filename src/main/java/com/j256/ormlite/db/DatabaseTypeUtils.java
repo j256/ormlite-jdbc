@@ -1,9 +1,8 @@
 package com.j256.ormlite.db;
 
-import java.lang.reflect.Constructor;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
@@ -14,21 +13,21 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
  */
 public class DatabaseTypeUtils {
 
-	private static Map<String, Constructor<? extends DatabaseType>> constructorMap =
-			new HashMap<String, Constructor<? extends DatabaseType>>();
+	private static List<DatabaseType> databaseTypes = new ArrayList<DatabaseType>();
 
 	static {
 		// new drivers need to be added here
-		addDriver(MysqlDatabaseType.class);
-		addDriver(PostgresDatabaseType.class);
-		addDriver(H2DatabaseType.class);
-		addDriver(DerbyEmbeddedDatabaseType.class);
-		addDriver(SqliteDatabaseType.class);
-		addDriver(HsqldbDatabaseType.class);
-		addDriver(OracleDatabaseType.class);
-		addDriver(SqlServerDatabaseType.class);
-		addDriver(SqlServerJtdsDatabaseType.class);
-		addDriver(Db2DatabaseType.class);
+		databaseTypes.add(new Db2DatabaseType());
+		databaseTypes.add(new DerbyClientServerDatabaseType());
+		databaseTypes.add(new DerbyEmbeddedDatabaseType());
+		databaseTypes.add(new H2DatabaseType());
+		databaseTypes.add(new HsqldbDatabaseType());
+		databaseTypes.add(new MysqlDatabaseType());
+		databaseTypes.add(new OracleDatabaseType());
+		databaseTypes.add(new PostgresDatabaseType());
+		databaseTypes.add(new SqliteDatabaseType());
+		databaseTypes.add(new SqlServerDatabaseType());
+		databaseTypes.add(new SqlServerJtdsDatabaseType());
 	}
 
 	/**
@@ -71,30 +70,12 @@ public class DatabaseTypeUtils {
 	 */
 	public static DatabaseType createDatabaseType(String databaseUrl) {
 		String dbTypePart = extractDbType(databaseUrl);
-		Constructor<? extends DatabaseType> constructor = constructorMap.get(dbTypePart);
-		if (constructor == null) {
-			throw new IllegalArgumentException("Unknown database-type url part '" + dbTypePart + "' in: " + databaseUrl);
+		for (DatabaseType databaseType : databaseTypes) {
+			if (databaseType.isDatabaseUrlThisType(databaseUrl, dbTypePart)) {
+				return databaseType;
+			}
 		}
-		try {
-			return constructor.newInstance();
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Problems calling constructor " + constructor, e);
-		}
-	}
-
-	private static void addDriver(Class<? extends DatabaseType> dbClass) {
-		DatabaseType driverType;
-		Constructor<? extends DatabaseType> constructor;
-		try {
-			constructor = dbClass.getConstructor();
-			driverType = constructor.newInstance();
-		} catch (Exception e) {
-			throw new IllegalStateException("Could not construct driver class " + dbClass, e);
-		}
-		String urlPart = driverType.getDriverUrlPart();
-		if (!constructorMap.containsKey(urlPart)) {
-			constructorMap.put(urlPart, constructor);
-		}
+		throw new IllegalArgumentException("Unknown database-type url part '" + dbTypePart + "' in: " + databaseUrl);
 	}
 
 	private static String extractDbType(String databaseUrl) {

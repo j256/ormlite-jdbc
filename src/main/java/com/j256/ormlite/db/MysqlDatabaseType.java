@@ -28,8 +28,8 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 
 	private String createTableSuffix = DEFAULT_CREATE_TABLE_SUFFIX;
 
-	public String getDriverUrlPart() {
-		return DATABASE_URL_PORTION;
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
 	public String getDriverClassName() {

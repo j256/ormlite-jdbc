@@ -25,8 +25,8 @@ public class SqlServerJtdsDatabaseType extends SqlServerDatabaseType implements 
 	private final static String DRIVER_CLASS_NAME = "net.sourceforge.jtds.jdbc.Driver";
 
 	@Override
-	public String getDriverUrlPart() {
-		return DATABASE_URL_PORTION;
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
 	@Override

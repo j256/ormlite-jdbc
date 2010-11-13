@@ -24,14 +24,19 @@ import com.j256.ormlite.support.DatabaseResults;
  */
 public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements DatabaseType {
 
-	private final static String DATABASE_URL_PORTION = "derby";
+	protected final static String DATABASE_URL_PORTION = "derby";
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private final static FieldConverter objectConverter = new ObjectFieldConverter();
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
-	public String getDriverUrlPart() {
-		return DATABASE_URL_PORTION;
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+		if (!DATABASE_URL_PORTION.equals(dbTypePart)) {
+			return false;
+		}
+		// jdbc:derby:sample;
+		String[] parts = url.split(":");
+		return (parts.length >= 3 && !parts[2].startsWith("//"));
 	}
 
 	public String getDriverClassName() {

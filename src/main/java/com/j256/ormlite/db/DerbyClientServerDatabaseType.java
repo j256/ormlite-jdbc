@@ -11,6 +11,16 @@ public class DerbyClientServerDatabaseType extends DerbyEmbeddedDatabaseType imp
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.ClientDriver";
 
 	@Override
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+		if (!DATABASE_URL_PORTION.equals(dbTypePart)) {
+			return false;
+		}
+		// jdbc:derby://localhost:1527/MyDbTest;create=true';
+		String[] parts = url.split(":");
+		return (parts.length >= 3 && parts[2].startsWith("//"));
+	}
+
+	@Override
 	public String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
 	}

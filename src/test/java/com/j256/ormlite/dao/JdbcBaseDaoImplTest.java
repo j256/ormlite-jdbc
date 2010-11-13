@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -319,11 +320,18 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testIteratePageSize() throws Exception {
-		for (int i = 0; i < 1000; i++) {
-			Foo foo = new Foo();
-			foo.stuff = Integer.toString(i);
-			assertEquals(1, fooDao.create(foo));
-		}
+		// do a mass insert of 1000 items
+		fooDao.callBatchTasks(new Callable<Void>() {
+			public Void call() throws Exception {
+				for (int i = 0; i < 1000; i++) {
+					Foo foo = new Foo();
+					foo.stuff = Integer.toString(i);
+					assertEquals(1, fooDao.create(foo));
+				}
+				return null;
+			}
+		});
+		// now delete them with the iterator to test page-size
 		Iterator<Foo> iterator = fooDao.iterator();
 		while (iterator.hasNext()) {
 			iterator.next();
@@ -359,12 +367,17 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeleteIds() throws Exception {
-		List<Integer> fooIdList = new ArrayList<Integer>();
-		for (int i = 0; i < 100; i++) {
-			Foo foo = new Foo();
-			assertEquals(1, fooDao.create(foo));
-			fooIdList.add(foo.id);
-		}
+		final List<Integer> fooIdList = new ArrayList<Integer>();
+		fooDao.callBatchTasks(new Callable<Void>() {
+			public Void call() throws Exception {
+				for (int i = 0; i < 100; i++) {
+					Foo foo = new Foo();
+					assertEquals(1, fooDao.create(foo));
+					fooIdList.add(foo.id);
+				}
+				return null;
+			}
+		});
 
 		int deleted = fooDao.deleteIds(fooIdList);
 		if (UPDATE_ROWS_RETURNS_ONE) {

@@ -20,8 +20,8 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	private final static String DATABASE_URL_PORTION = "db2";
 	private final static String DRIVER_CLASS_NAME = "COM.ibm.db2.jdbc.app.DB2Driver";
 
-	public String getDriverUrlPart() {
-		return DATABASE_URL_PORTION;
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
 	public String getDriverClassName() {

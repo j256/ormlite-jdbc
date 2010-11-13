@@ -26,8 +26,8 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	private final static FieldConverter byteConverter = new ByteFieldConverter();
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
-	public String getDriverUrlPart() {
-		return DATABASE_URL_PORTION;
+	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
+		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
 	public String getDriverClassName() {
