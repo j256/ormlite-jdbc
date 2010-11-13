@@ -74,4 +74,9 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 		sb.append(createTableSuffix);
 		sb.append(' ');
 	}
+
+	@Override
+	public boolean isSerializableIdAllowed() {
+		return false;
+	}
 }
