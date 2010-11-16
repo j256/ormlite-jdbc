@@ -32,7 +32,8 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
-	public String getDriverClassName() {
+	@Override
+	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
 	}
 

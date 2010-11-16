@@ -41,11 +41,6 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		return false;
 	}
 
-	@Test
-	public void testGetDriverClassName() {
-		assertEquals("org.hsqldb.jdbcDriver", databaseType.getDriverClassName());
-	}
-
 	@Override
 	@Test
 	public void testEscapedEntityName() throws Exception {

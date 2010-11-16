@@ -34,11 +34,6 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testGetDriverClassName() {
-		assertEquals("com.mysql.jdbc.Driver", databaseType.getDriverClassName());
-	}
-
-	@Test
 	public void testBoolean() throws Exception {
 		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);

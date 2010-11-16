@@ -23,11 +23,6 @@ public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		databaseType = new H2DatabaseType();
 	}
 
-	@Test
-	public void testGetDriverClassName() {
-		assertEquals("org.h2.Driver", databaseType.getDriverClassName());
-	}
-
 	@Test(expected = IllegalStateException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =

@@ -132,11 +132,6 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testGetDriverClassName() {
-		assertEquals("oracle.jdbc.driver.OracleDriver", databaseType.getDriverClassName());
-	}
-
-	@Test
 	public void testUnique() throws Exception {
 		OracleDatabaseType dbType = new OracleDatabaseType();
 		StringBuilder sb = new StringBuilder();

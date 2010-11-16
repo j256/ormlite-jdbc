@@ -37,11 +37,6 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testGetDriverClassName() {
-		assertEquals("COM.ibm.db2.jdbc.app.DB2Driver", databaseType.getDriverClassName());
-	}
-
-	@Test
 	public void testBoolean() throws Exception {
 		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);

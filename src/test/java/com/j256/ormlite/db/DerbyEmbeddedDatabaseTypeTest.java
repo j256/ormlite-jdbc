@@ -41,11 +41,6 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		return false;
 	}
 
-	@Test
-	public void testGetDriverClassName() {
-		assertEquals("org.apache.derby.jdbc.EmbeddedDriver", databaseType.getDriverClassName());
-	}
-
 	@Override
 	@Test
 	public void testEscapedEntityName() throws Exception {

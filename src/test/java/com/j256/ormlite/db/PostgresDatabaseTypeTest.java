@@ -137,9 +137,4 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		databaseType.appendColumnArg(sb, byteField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("SMALLINT"));
 	}
-
-	@Test
-	public void testGetDriverClassName() {
-		assertEquals("org.postgresql.Driver", databaseType.getDriverClassName());
-	}
 }

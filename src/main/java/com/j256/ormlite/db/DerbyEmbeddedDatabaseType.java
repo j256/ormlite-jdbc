@@ -39,7 +39,8 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		return (parts.length >= 3 && !parts[2].startsWith("//"));
 	}
 
-	public String getDriverClassName() {
+	@Override
+	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
 	}
 

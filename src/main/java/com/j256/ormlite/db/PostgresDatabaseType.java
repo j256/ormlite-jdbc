@@ -18,7 +18,8 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
 
-	public String getDriverClassName() {
+	@Override
+	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
 	}
 

@@ -32,11 +32,6 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		return false;
 	}
 
-	@Test
-	public void testGetDriverClassName() {
-		assertEquals("com.microsoft.sqlserver.jdbc.SQLServerDriver", databaseType.getDriverClassName());
-	}
-
 	@Override
 	@Test
 	public void testEscapedEntityName() throws Exception {
