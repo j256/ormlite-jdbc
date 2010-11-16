@@ -1779,7 +1779,11 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		List<ID> idList = new ArrayList<ID>();
 		idList.add(id1);
 		idList.add(id2);
-		assertEquals(2, dao.deleteIds(idList));
+		if (UPDATE_ROWS_RETURNS_ONE) {
+			assertEquals(1, dao.deleteIds(idList));
+		} else {
+			assertEquals(2, dao.deleteIds(idList));
+		}
 		assertNull(dao.queryForId(id1));
 		assertNull(dao.queryForId(id2));
 
@@ -1789,7 +1793,11 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		List<T> dataList = new ArrayList<T>();
 		dataList.add(data1);
 		dataList.add(data2);
-		assertEquals(2, dao.delete(dataList));
+		if (UPDATE_ROWS_RETURNS_ONE) {
+			assertEquals(1, dao.delete(dataList));
+		} else {
+			assertEquals(2, dao.delete(dataList));
+		}
 
 		assertNull(dao.queryForId(id1));
 		assertNull(dao.queryForId(id2));

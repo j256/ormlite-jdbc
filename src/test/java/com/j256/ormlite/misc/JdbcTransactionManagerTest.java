@@ -30,6 +30,8 @@ public class JdbcTransactionManagerTest extends BaseJdbcTest {
 		}
 	}
 
+	/* ============================================================================================================== */
+
 	@Test
 	public void testDaoTransactionManagerCommitted() throws Exception {
 		if (connectionSource == null) {
