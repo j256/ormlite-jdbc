@@ -956,45 +956,32 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, allDao.refresh(allTypes));
 		// queries on all fields
 		QueryBuilder<AllTypes, Integer> qb = allDao.queryBuilder();
-		checkQueryResult(allDao, qb, allTypes, AllTypes.STRING_FIELD_NAME, stringVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.BOOLEAN_FIELD_NAME, boolVal);
-		// date tested below
-		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_LONG_FIELD_NAME, dateLongVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_STRING_FIELD_NAME, dateStringVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.BYTE_FIELD_NAME, byteVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.SHORT_FIELD_NAME, shortVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.INT_FIELD_NAME, intVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.LONG_FIELD_NAME, longVal);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.STRING_FIELD_NAME, stringVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.BOOLEAN_FIELD_NAME, boolVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_FIELD_NAME, dateVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_LONG_FIELD_NAME, dateLongVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_STRING_FIELD_NAME, dateStringVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.BYTE_FIELD_NAME, byteVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.SHORT_FIELD_NAME, shortVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.INT_FIELD_NAME, intVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.LONG_FIELD_NAME, longVal, true);
 		// float tested below
-		checkQueryResult(allDao, qb, allTypes, AllTypes.DOUBLE_FIELD_NAME, doubleVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_FIELD_NAME, enumVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_STRING_FIELD_NAME, enumVal);
-		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_INTEGER_FIELD_NAME, enumVal);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.DOUBLE_FIELD_NAME, doubleVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_FIELD_NAME, enumVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_STRING_FIELD_NAME, enumVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_INTEGER_FIELD_NAME, enumVal, true);
 	}
 
-	@Test
-	public void testAllTypesDate() throws Exception {
-		Dao<AllTypes, Integer> allDao = createDao(AllTypes.class, true);
-		AllTypes allTypes = new AllTypes();
-		// we have to round this because the db may not be storing millis
-		long millis = (System.currentTimeMillis() / 1000) * 1000;
-		Date dateVal = new Date(millis);
-		allTypes.dateField = dateVal;
-		assertEquals(1, allDao.create(allTypes));
-		List<AllTypes> allTypesList = allDao.queryForAll();
-		assertEquals(1, allTypesList.size());
-		assertTrue(allDao.objectsEqual(allTypes, allTypesList.get(0)));
-		assertEquals(1, allDao.refresh(allTypes));
-		// queries on all fields
-		QueryBuilder<AllTypes, Integer> qb = allDao.queryBuilder();
-		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_FIELD_NAME, dateVal);
-	}
-
+	/**
+	 * This is special because comparing floats may not work as expected.
+	 */
 	@Test
 	public void testAllTypesFloat() throws Exception {
 		Dao<AllTypes, Integer> allDao = createDao(AllTypes.class, true);
 		AllTypes allTypes = new AllTypes();
 		float floatVal = 123.13F;
+		float floatLowVal = floatVal * 0.9F;
+		float floatHighVal = floatVal * 1.1F;
 		allTypes.floatField = floatVal;
 		assertEquals(1, allDao.create(allTypes));
 		List<AllTypes> allTypesList = allDao.queryForAll();
@@ -1003,7 +990,14 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, allDao.refresh(allTypes));
 		// queries on all fields
 		QueryBuilder<AllTypes, Integer> qb = allDao.queryBuilder();
-		checkQueryResult(allDao, qb, allTypes, AllTypes.FLOAT_FIELD_NAME, floatVal);
+
+		// float comparisons are not exactly right so we switch to a low -> high query instead
+		if (!checkQueryResult(allDao, qb, allTypes, AllTypes.FLOAT_FIELD_NAME, floatVal, false)) {
+			qb.where().gt(AllTypes.FLOAT_FIELD_NAME, floatLowVal).and().lt(AllTypes.FLOAT_FIELD_NAME, floatHighVal);
+			List<AllTypes> results = allDao.query(qb.prepare());
+			assertEquals(1, results.size());
+			assertTrue(allDao.objectsEqual(allTypes, results.get(0)));
+		}
 	}
 
 	@Test
@@ -1872,12 +1866,29 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertNull(dao.queryForId(id2));
 	}
 
-	private void checkQueryResult(Dao<AllTypes, Integer> allDao, QueryBuilder<AllTypes, Integer> qb, AllTypes allTypes,
-			String fieldName, Object value) throws SQLException {
+	/**
+	 * Returns the object if the query failed or null otherwise.
+	 */
+	private boolean checkQueryResult(Dao<AllTypes, Integer> allDao, QueryBuilder<AllTypes, Integer> qb,
+			AllTypes allTypes, String fieldName, Object value, boolean required) throws SQLException {
 		qb.where().eq(fieldName, value);
 		List<AllTypes> results = allDao.query(qb.prepare());
+		if (required) {
+			assertEquals(1, results.size());
+			assertTrue(allDao.objectsEqual(allTypes, results.get(0)));
+		} else if (results.size() == 1) {
+			assertTrue(allDao.objectsEqual(allTypes, results.get(0)));
+		} else {
+			return false;
+		}
+
+		SelectArg selectArg = new SelectArg();
+		qb.where().eq(fieldName, selectArg);
+		selectArg.setValue(value);
+		results = allDao.query(qb.prepare());
 		assertEquals(1, results.size());
 		assertTrue(allDao.objectsEqual(allTypes, results.get(0)));
+		return true;
 	}
 
 	private interface TestableType<ID> {
