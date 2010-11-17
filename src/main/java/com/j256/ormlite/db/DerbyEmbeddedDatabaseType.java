@@ -133,9 +133,4 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	public boolean isEntityNamesMustBeUpCase() {
 		return true;
 	}
-
-	@Override
-	public boolean isSerializableIdAllowed() {
-		return false;
-	}
 }
