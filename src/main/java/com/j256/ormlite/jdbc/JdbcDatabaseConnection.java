@@ -101,10 +101,6 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		statementSetArgs(stmt, args, argFieldTypes);
 		int rowN = stmt.executeUpdate();
 		JdbcDatabaseResults results = new JdbcDatabaseResults(stmt, stmt.getGeneratedKeys());
-		if (results == null) {
-			// may never happen but let's be careful
-			throw new SQLException("No generated key results returned from update: " + statement);
-		}
 		int colN = results.getColumnCount();
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
