@@ -1730,6 +1730,21 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testStringAsId() throws Exception {
+		checkTypeAsId(StringId.class, "foo", "bar");
+	}
+
+	@Test
+	public void testBooleanAsId() throws Exception {
+		checkTypeAsId(BooleanId.class, true, false);
+	}
+
+	@Test
+	public void testBooleanObjAsId() throws Exception {
+		checkTypeAsId(BooleanObjId.class, true, false);
+	}
+
+	@Test
 	public void testDateAsId() throws Exception {
 		// no milliseconds
 		checkTypeAsId(DateId.class, new Date(1232312313000L), new Date(1232312783000L));
@@ -1745,6 +1760,71 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testDateStringAsId() throws Exception {
 		// no milliseconds
 		checkTypeAsId(DateStringId.class, new Date(1232312313000L), new Date(1232312783000L));
+	}
+
+	@Test
+	public void testByteAsId() throws Exception {
+		checkTypeAsId(ByteId.class, (byte) 1, (byte) 2);
+	}
+
+	@Test
+	public void testByteObjAsId() throws Exception {
+		checkTypeAsId(ByteObjId.class, (byte) 1, (byte) 2);
+	}
+
+	@Test
+	public void testShortAsId() throws Exception {
+		checkTypeAsId(ShortId.class, (short) 1, (short) 2);
+	}
+
+	@Test
+	public void testShortObjAsId() throws Exception {
+		checkTypeAsId(ShortObjId.class, (short) 1, (short) 2);
+	}
+
+	@Test
+	public void testIntAsId() throws Exception {
+		checkTypeAsId(IntId.class, (int) 1, (int) 2);
+	}
+
+	@Test
+	public void testIntObjAsId() throws Exception {
+		checkTypeAsId(IntObjId.class, (int) 1, (int) 2);
+	}
+
+	@Test
+	public void testLongAsId() throws Exception {
+		checkTypeAsId(LongId.class, (long) 1, (long) 2);
+	}
+
+	@Test
+	public void testLongObjAsId() throws Exception {
+		checkTypeAsId(LongObjId.class, (long) 1, (long) 2);
+	}
+
+	@Test
+	public void testFloatAsId() throws Exception {
+		checkTypeAsId(FloatId.class, (float) 1, (float) 2);
+	}
+
+	@Test
+	public void testFloatObjAsId() throws Exception {
+		checkTypeAsId(FloatObjId.class, (float) 1, (float) 2);
+	}
+
+	@Test
+	public void testDoubleAsId() throws Exception {
+		checkTypeAsId(DoubleId.class, (double) 1, (double) 2);
+	}
+
+	@Test
+	public void testDoubleObjAsId() throws Exception {
+		checkTypeAsId(DoubleObjId.class, (double) 1, (double) 2);
+	}
+
+	@Test
+	public void testEnumAsId() throws Exception {
+		checkTypeAsId(EnumId.class, OurEnum.SECOND, OurEnum.FIRST);
 	}
 
 	@Test
@@ -2373,16 +2453,76 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@DatabaseTable
+	protected static class StringId implements TestableType<String> {
+		@DatabaseField(id = true)
+		String id;
+		@DatabaseField
+		String stuff;
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class BooleanId implements TestableType<Boolean> {
+		@DatabaseField(id = true)
+		boolean id;
+		@DatabaseField
+		String stuff;
+		public Boolean getId() {
+			return id;
+		}
+		public void setId(Boolean bool) {
+			this.id = bool;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class BooleanObjId implements TestableType<Boolean> {
+		@DatabaseField(id = true)
+		Boolean id;
+		@DatabaseField
+		String stuff;
+		public Boolean getId() {
+			return id;
+		}
+		public void setId(Boolean bool) {
+			this.id = bool;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
 	protected static class DateId implements TestableType<Date> {
 		@DatabaseField(id = true)
-		Date date;
+		Date id;
 		@DatabaseField
 		String stuff;
 		public Date getId() {
-			return date;
+			return id;
 		}
 		public void setId(Date id) {
-			this.date = id;
+			this.id = id;
 		}
 		public String getStuff() {
 			return stuff;
@@ -2395,14 +2535,14 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@DatabaseTable
 	protected static class DateLongId implements TestableType<Date> {
 		@DatabaseField(id = true, dataType = DataType.JAVA_DATE_LONG)
-		Date date;
+		Date id;
 		@DatabaseField
 		String stuff;
 		public Date getId() {
-			return date;
+			return id;
 		}
 		public void setId(Date id) {
-			this.date = id;
+			this.id = id;
 		}
 		public String getStuff() {
 			return stuff;
@@ -2415,14 +2555,274 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@DatabaseTable
 	protected static class DateStringId implements TestableType<Date> {
 		@DatabaseField(id = true, dataType = DataType.JAVA_DATE_STRING)
-		Date date;
+		Date id;
 		@DatabaseField
 		String stuff;
 		public Date getId() {
-			return date;
+			return id;
 		}
 		public void setId(Date id) {
-			this.date = id;
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class ByteId implements TestableType<Byte> {
+		@DatabaseField(id = true)
+		byte id;
+		@DatabaseField
+		String stuff;
+		public Byte getId() {
+			return id;
+		}
+		public void setId(Byte id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class ByteObjId implements TestableType<Byte> {
+		@DatabaseField(id = true)
+		Byte id;
+		@DatabaseField
+		String stuff;
+		public Byte getId() {
+			return id;
+		}
+		public void setId(Byte id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class ShortId implements TestableType<Short> {
+		@DatabaseField(id = true)
+		short id;
+		@DatabaseField
+		String stuff;
+		public Short getId() {
+			return id;
+		}
+		public void setId(Short id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class ShortObjId implements TestableType<Short> {
+		@DatabaseField(id = true)
+		Short id;
+		@DatabaseField
+		String stuff;
+		public Short getId() {
+			return id;
+		}
+		public void setId(Short id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class IntId implements TestableType<Integer> {
+		@DatabaseField(id = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		public Integer getId() {
+			return id;
+		}
+		public void setId(Integer id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class IntObjId implements TestableType<Integer> {
+		@DatabaseField(id = true)
+		Integer id;
+		@DatabaseField
+		String stuff;
+		public Integer getId() {
+			return id;
+		}
+		public void setId(Integer id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class LongId implements TestableType<Long> {
+		@DatabaseField(id = true)
+		long id;
+		@DatabaseField
+		String stuff;
+		public Long getId() {
+			return id;
+		}
+		public void setId(Long id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class LongObjId implements TestableType<Long> {
+		@DatabaseField(id = true)
+		Long id;
+		@DatabaseField
+		String stuff;
+		public Long getId() {
+			return id;
+		}
+		public void setId(Long id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class FloatId implements TestableType<Float> {
+		@DatabaseField(id = true)
+		float id;
+		@DatabaseField
+		String stuff;
+		public Float getId() {
+			return id;
+		}
+		public void setId(Float id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class FloatObjId implements TestableType<Float> {
+		@DatabaseField(id = true)
+		Float id;
+		@DatabaseField
+		String stuff;
+		public Float getId() {
+			return id;
+		}
+		public void setId(Float id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class DoubleId implements TestableType<Double> {
+		@DatabaseField(id = true)
+		double id;
+		@DatabaseField
+		String stuff;
+		public Double getId() {
+			return id;
+		}
+		public void setId(Double id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class DoubleObjId implements TestableType<Double> {
+		@DatabaseField(id = true)
+		Double id;
+		@DatabaseField
+		String stuff;
+		public Double getId() {
+			return id;
+		}
+		public void setId(Double id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class EnumId implements TestableType<OurEnum> {
+		@DatabaseField(id = true)
+		OurEnum ourEnum;
+		@DatabaseField
+		String stuff;
+		public OurEnum getId() {
+			return ourEnum;
+		}
+		public void setId(OurEnum id) {
+			this.ourEnum = id;
 		}
 		public String getStuff() {
 			return stuff;
@@ -2434,7 +2834,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@DatabaseTable
 	protected static class EnumStringId implements TestableType<OurEnum> {
-		@DatabaseField(id = true)
+		@DatabaseField(id = true, dataType = DataType.ENUM_STRING)
 		OurEnum ourEnum;
 		@DatabaseField
 		String stuff;
