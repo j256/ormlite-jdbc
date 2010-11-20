@@ -38,7 +38,7 @@ public class MappedPreparedQueryTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, new FieldType[0], new FieldType[0]);
 
 		DatabaseResults results = stmt.executeQuery();
 		while (results.next()) {

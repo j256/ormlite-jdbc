@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 
@@ -52,7 +52,7 @@ public class JdbcDatabaseConnectionImplTest extends BaseJdbcTest {
 		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
 		createDao(Foo.class, true);
 		GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-		databaseConnection.insert("insert into foo (id) values (1)", new Object[0], new SqlType[0], keyHolder);
+		databaseConnection.insert("insert into foo (id) values (1)", new Object[0], new FieldType[0], keyHolder);
 	}
 
 	protected static class Foo {

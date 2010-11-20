@@ -34,6 +34,7 @@ public class DataTypeTest extends BaseJdbcTest {
 	private static final String FLOAT_COLUMN = "floatField";
 	private static final String DOUBLE_COLUMN = "doubleField";
 	private static final String ENUM_COLUMN = "enum";
+	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	@Test
 	public void testString() throws Exception {
@@ -45,7 +46,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(string, DataType.STRING.resultToJava(null, results, results.findColumn(STRING_COLUMN)));
@@ -62,7 +63,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -85,7 +86,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(date, DataType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
@@ -94,8 +95,8 @@ public class DataTypeTest extends BaseJdbcTest {
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		FieldType fieldType = FieldType.createFieldType(connectionSource.getDatabaseType(), TABLE_NAME, dateField);
-		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.parseDefaultString(fieldType,
-				dateFormat.format(date)));
+		assertEquals(new Timestamp(date.getTime()),
+				DataType.JAVA_DATE.parseDefaultString(fieldType, dateFormat.format(date)));
 	}
 
 	@Test
@@ -108,7 +109,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -128,7 +129,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -148,7 +149,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -168,7 +169,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -188,7 +189,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -208,7 +209,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
@@ -232,7 +233,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, DataType.ENUM_STRING.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
@@ -253,7 +254,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, DataType.ENUM_INTEGER.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
@@ -268,7 +269,7 @@ public class DataTypeTest extends BaseJdbcTest {
 
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
-						StatementType.SELECT);
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.executeQuery();
 		assertTrue(results.next());
 

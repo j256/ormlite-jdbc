@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
 
-import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -24,7 +24,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	private static Object[] noArgs = new Object[0];
-	private static SqlType[] noArgTypes = new SqlType[0];
+	private static FieldType[] noArgTypes = new FieldType[0];
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
 	private final Connection connection;
@@ -74,7 +74,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public CompiledStatement compileStatement(String statement, StatementType type) throws SQLException {
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
+			FieldType[] resultFieldTypes) throws SQLException {
 		return new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
 				ResultSet.CONCUR_READ_ONLY), type);
 	}
@@ -90,12 +91,12 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return connection.isClosed();
 	}
 
-	public int insert(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
+	public int insert(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// it's a call to executeUpdate
 		return update(statement, args, argFieldTypes);
 	}
 
-	public int insert(String statement, Object[] args, SqlType[] argFieldTypes, GeneratedKeyHolder keyHolder)
+	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 		statementSetArgs(stmt, args, argFieldTypes);
@@ -112,18 +113,18 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return rowN;
 	}
 
-	public int update(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
+	public int update(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement);
 		statementSetArgs(stmt, args, argFieldTypes);
 		return stmt.executeUpdate();
 	}
 
-	public int delete(String statement, Object[] args, SqlType[] argFieldTypes) throws SQLException {
+	public int delete(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// it's a call to executeUpdate
 		return update(statement, args, argFieldTypes);
 	}
 
-	public <T> Object queryForOne(String statement, Object[] args, SqlType[] argFieldTypes,
+	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -152,10 +153,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	private void statementSetArgs(PreparedStatement stmt, Object[] args, SqlType[] argFieldTypes) throws SQLException {
+	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
-			int typeVal = TypeValMapper.getTypeValForSqlType(argFieldTypes[i]);
+			int typeVal = TypeValMapper.getTypeValForSqlType(argFieldTypes[i].getSqlType());
 			if (arg == null) {
 				stmt.setNull(i + 1, typeVal);
 			} else {
