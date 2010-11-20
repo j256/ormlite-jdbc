@@ -282,30 +282,30 @@ public class JdbcPooledConnectionSourceTest {
 			pooled.close();
 		}
 	}
-	
+
 	@Test(expected = IllegalStateException.class)
 	public void testSaveOtherConnection() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
 			JdbcDatabaseConnection conn1 =
-				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
 			JdbcDatabaseConnection conn2 =
-				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
 			pooled.saveSpecialConnection(conn1);
 			pooled.saveSpecialConnection(conn2);
 		} finally {
 			pooled.close();
 		}
 	}
-	
+
 	@Test
 	public void testClearOtherConnection() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
 			JdbcDatabaseConnection conn1 =
-				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
 			JdbcDatabaseConnection conn2 =
-				new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
+					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
 			pooled.saveSpecialConnection(conn1);
 			pooled.clearSpecialConnection(conn2);
 		} finally {

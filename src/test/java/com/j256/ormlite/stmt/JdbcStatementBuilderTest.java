@@ -80,8 +80,8 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 
 		// test Or of ands
 		where = qb.where();
-		where.or(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.VAL_COLUMN_NAME, foo1.val)), where.eq(
-				Foo.ID_COLUMN_NAME, foo2.id).and().eq(Foo.VAL_COLUMN_NAME, foo2.val));
+		where.or(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.VAL_COLUMN_NAME, foo1.val)),
+				where.eq(Foo.ID_COLUMN_NAME, foo2.id).and().eq(Foo.VAL_COLUMN_NAME, foo2.val));
 		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));

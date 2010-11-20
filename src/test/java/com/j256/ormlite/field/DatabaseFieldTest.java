@@ -15,7 +15,7 @@ public class DatabaseFieldTest extends BaseJdbcTest {
 		Sub sub = new Sub();
 		String stuff = "djeqpodjewdopjed";
 		sub.stuff = stuff;
-		
+
 		Dao<Sub, Object> subDao = createDao(Sub.class, true);
 		assertEquals(0, sub.id);
 		assertEquals(1, subDao.create(sub));

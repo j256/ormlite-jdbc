@@ -194,7 +194,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.clearSpecialConnection(conn1);
 		sds.releaseConnection(conn1);
 	}
-	
+
 	@Test
 	public void testSetDatabaseType() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
@@ -204,4 +204,3 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		assertTrue(sds.getDatabaseType() instanceof H2DatabaseType);
 	}
 }
-
