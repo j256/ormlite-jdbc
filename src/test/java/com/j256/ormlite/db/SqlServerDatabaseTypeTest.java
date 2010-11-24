@@ -10,12 +10,10 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
@@ -48,29 +46,13 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Override
 	@Test
 	public void testLimitFormat() throws Exception {
-		ConnectionSource connectionSource = new ConnectionSource() {
-			public void close() throws SQLException {
-			}
-			public DatabaseType getDatabaseType() {
-				return databaseType;
-			}
-			public DatabaseConnection getReadOnlyConnection() {
-				return null;
-			}
-			public DatabaseConnection getReadWriteConnection() {
-				return null;
-			}
-			public void releaseConnection(DatabaseConnection connection) {
-			}
-			public boolean saveSpecialConnection(DatabaseConnection connection) {
-				return true;
-			}
-			public void clearSpecialConnection(DatabaseConnection connection) {
-			}
-		};
-		BaseDaoImpl<Foo, String> dao = new BaseDaoImpl<Foo, String>(connectionSource, Foo.class) {
-		};
-		dao.initialize();
+		Dao<Foo, String> dao;
+		try {
+			connectionSource.setDatabaseType(databaseType);
+			dao = createDao(Foo.class, true);
+		} finally {
+			connectionSource.setDatabaseType(new H2DatabaseType());
+		}
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		int limit = 1232;
 		qb.limit(limit);
