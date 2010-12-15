@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1934,6 +1935,18 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(i, fooN / 2);
 	}
 
+	@Test
+	public void testRawBytes() throws Exception {
+		Dao<RawBytes, Integer> rawDao = createDao(RawBytes.class, true);
+		RawBytes raw1 = new RawBytes();
+		raw1.bytes = new byte[] { 1, 25, 3, 124, 10 };
+		assertEquals(1, rawDao.create(raw1));
+		RawBytes raw2 = rawDao.queryForId(raw1.id);
+		assertNotNull(raw2);
+		assertEquals(raw1.id, raw2.id);
+		assertTrue(Arrays.equals(raw1.bytes, raw2.bytes));
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -2974,6 +2987,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(foreign = true)
 		Recursive foreign;
 		public Recursive() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class RawBytes {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		byte[] bytes;
+		public RawBytes() {
 		}
 	}
 
