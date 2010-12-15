@@ -91,7 +91,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		String fieldName = "id";
 		Field field = Foo.class.getDeclaredField(fieldName);
 		String tableName = "foo";
-		FieldType fieldType = FieldType.createFieldType(dbType, tableName, field);
+		FieldType fieldType = FieldType.createFieldType(dbType, tableName, field, 0);
 		dbType.appendUnique(sb, fieldType, after);
 		assertEquals(0, sb.length());
 		assertEquals(1, after.size());

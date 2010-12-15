@@ -57,7 +57,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		expect(mockDb.convertColumnName(isA(String.class))).andReturn("id");
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(true);
 		replay(mockDb);
-		FieldType fieldType = FieldType.createFieldType(mockDb, "foo", field);
+		FieldType fieldType = FieldType.createFieldType(mockDb, "foo", field, 0);
 		verify(mockDb);
 		StringBuilder sb = new StringBuilder();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testDropSequence() throws Exception {
 		Field field = GeneratedId.class.getField("id");
-		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field, 0);
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		databaseType.dropColumnArg(fieldType, statementsBefore, statementsAfter);

@@ -1848,6 +1848,19 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testRecursiveForeign() throws Exception {
+		Dao<Recursive, Integer> recursiveDao = createDao(Recursive.class, true);
+		Recursive recursive1 = new Recursive();
+		Recursive recursive2 = new Recursive();
+		recursive2.foreign = recursive1;
+		assertEquals(recursiveDao.create(recursive1), 1);
+		assertEquals(recursiveDao.create(recursive2), 1);
+		Recursive recursive3 = recursiveDao.queryForId(recursive2.id);
+		assertNotNull(recursive3);
+		assertEquals(recursive1.id, recursive3.foreign.id);
+	}
+
+	@Test
 	public void testSerializableWhere() throws Exception {
 		Dao<AllTypes, Object> allDao = createDao(AllTypes.class, true);
 		try {
@@ -2889,6 +2902,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
+	protected static class Recursive {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true)
+		Recursive foreign;
+		public Recursive() {
 		}
 	}
 
