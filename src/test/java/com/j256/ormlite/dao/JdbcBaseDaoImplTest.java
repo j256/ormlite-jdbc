@@ -1872,6 +1872,68 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
+	@Test
+	public void testQueryForAllRaw() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		int valSum = 0;
+		for (int i = 0; i < 20; i++) {
+			Foo foo = new Foo();
+			foo.val = i;
+			assertEquals(1, fooDao.create(foo));
+			valSum += foo.val;
+		}
+		String colName = "XYZ";
+		StringBuilder sb = new StringBuilder();
+		sb.append("select sum(");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_FIELD_NAME);
+		sb.append(") as ").append(colName);
+		sb.append(" from ").append(FOO_TABLE_NAME);
+		RawResults rawResults = fooDao.queryForAllRaw(sb.toString());
+		String[] cols = rawResults.getColumnNames();
+		assertEquals(1, cols.length);
+		assertEquals(colName, cols[0]);
+		List<String[]> results = rawResults.getResults();
+		assertEquals(1, results.size());
+		String[] resultArray = results.get(0);
+		assertEquals(1, resultArray.length);
+		assertEquals(Integer.toString(valSum), resultArray[0]);
+	}
+
+	@Test
+	public void testInteratorForAllRaw() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		int valSum = 0;
+		int fooN = 20;
+		for (int i = 0; i < fooN; i++) {
+			Foo foo = new Foo();
+			foo.val = i / 2;
+			assertEquals(1, fooDao.create(foo));
+			valSum += foo.val;
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_FIELD_NAME);
+		sb.append(" from ").append(FOO_TABLE_NAME);
+		sb.append(" group by ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_FIELD_NAME);
+		sb.append(" order by ");
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_FIELD_NAME);
+		RawResults rawResults = fooDao.iteratorRaw(sb.toString());
+		String[] cols = rawResults.getColumnNames();
+		assertEquals(1, cols.length);
+		// on android, the quotes are exposed
+		if (cols[0].compareToIgnoreCase(Foo.VAL_FIELD_NAME) != 0) {
+			assertTrue(cols[0].contains(Foo.VAL_FIELD_NAME));
+		}
+		int i = 0;
+		for (String[] resultArray : rawResults) {
+			assertEquals(1, resultArray.length);
+			assertEquals(Integer.toString(i), resultArray[0]);
+			i++;
+		}
+		assertEquals(i, fooN / 2);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
