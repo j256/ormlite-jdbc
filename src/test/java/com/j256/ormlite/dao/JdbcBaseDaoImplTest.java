@@ -1947,6 +1947,19 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertTrue(Arrays.equals(raw1.bytes, raw2.bytes));
 	}
 
+	@Test
+	public void testSuperClassAnnotations() throws Exception {
+		Dao<Sub, Integer> subDao = createDao(Sub.class, true);
+		Sub sub1 = new Sub();
+		String stuff = "doepqjdpqdq";
+		sub1.stuff = stuff;
+		assertEquals(1, subDao.create(sub1));
+		Sub sub2 = subDao.queryForId(sub1.id);
+		assertNotNull(sub2);
+		assertEquals(sub1.id, sub2.id);
+		assertEquals(sub1.stuff, sub2.stuff);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -2064,6 +2077,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		void setStuff(String stuff);
 		ID getId();
 		void setId(ID id);
+	}
+
+	private static class Mapper implements RawRowMapper<Foo> {
+		public Foo mapRow(String[] columnNames, String[] resultColumns) {
+			Foo foo = new Foo();
+			for (int i = 0; i < columnNames.length; i++) {
+				if (columnNames[i].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
+					foo.id = Integer.parseInt(resultColumns[i]);
+				} else if (columnNames[i].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+					foo.stuff = resultColumns[i];
+				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+					foo.val = Integer.parseInt(resultColumns[i]);
+				}
+			}
+			return foo;
+		}
 	}
 
 	/* ==================================================================================== */
@@ -3000,19 +3029,19 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
-	private static class Mapper implements RawRowMapper<Foo> {
-		public Foo mapRow(String[] columnNames, String[] resultColumns) {
-			Foo foo = new Foo();
-			for (int i = 0; i < columnNames.length; i++) {
-				if (columnNames[i].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
-					foo.id = Integer.parseInt(resultColumns[i]);
-				} else if (columnNames[i].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
-					foo.stuff = resultColumns[i];
-				} else if (columnNames[i].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
-					foo.val = Integer.parseInt(resultColumns[i]);
-				}
-			}
-			return foo;
+	protected static class Base {
+		@DatabaseField(id = true)
+		int id;
+		public Base() {
+			// for ormlite
+		}
+	}
+
+	protected static class Sub extends Base {
+		@DatabaseField
+		String stuff;
+		public Sub() {
+			// for ormlite
 		}
 	}
 }
