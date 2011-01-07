@@ -132,6 +132,10 @@
 					<additionalparam>-tag inheritDoc:X</additionalparam>
 					<excludePackageNames>com.j256.ormlite.stmt.query,com.j256.ormlite.stmt.mapped
 					</excludePackageNames>
+					<includeDependencySources>true</includeDependencySources>
+					<dependencySourceIncludes>
+						<dependencySourceInclude>com.j256.ormlite:*</dependencySourceInclude>
+					</dependencySourceIncludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -226,6 +230,12 @@
 			<groupId>com.j256.ormlite</groupId>
 			<artifactId>ormlite-core</artifactId>
 			<version>${ormlite-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.j256.ormlite</groupId>
+			<artifactId>ormlite-core</artifactId>
+			<version>${ormlite-version}</version>
+			<classifier>sources</classifier>
 		</dependency>
 		<!-- =================================================================== -->
 		<!-- test dependencies -->
