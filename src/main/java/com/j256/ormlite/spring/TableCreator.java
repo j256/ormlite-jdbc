@@ -27,7 +27,7 @@ import com.j256.ormlite.table.TableUtils;
  * 
  * <pre>
  * &lt;!-- our database type factory-bean --&gt;
- * &lt;bean id="tableCreator" class="com.j256.ormlite.db.TableCreator" init-method="initialize"&gt;
+ * &lt;bean id="tableCreator" class="com.j256.ormlite.spring.TableCreator" init-method="initialize"&gt;
  * 	&lt;property name="connectionSource" ref="connectionSource" /&gt;
  * 	&lt;property name="configuredDaos"&gt;
  * 		&lt;list&gt;
@@ -74,6 +74,7 @@ public class TableCreator {
 			} catch (Exception e) {
 				// we don't stop because the table might already exist
 				System.err.println("Was unable to auto-create table for " + clazz);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -88,6 +89,7 @@ public class TableCreator {
 			} catch (Exception e) {
 				// we don't stop because the table might already exist
 				System.err.println("Was unable to auto-drop table for " + tableConfig.getDataClass());
+				e.printStackTrace();
 			}
 		}
 		createdClasses.clear();
