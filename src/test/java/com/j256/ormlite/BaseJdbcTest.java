@@ -41,8 +41,8 @@ public abstract class BaseJdbcTest {
 	protected String userName = null;
 	protected String password = null;
 
-	protected static JdbcConnectionSource connectionSource = null;
-	protected static DatabaseConnection databaseConnection = null;
+	protected JdbcConnectionSource connectionSource = null;
+	protected DatabaseConnection databaseConnection = null;
 	protected boolean isConnectionExpected = false;
 	protected DatabaseType databaseType = null;
 

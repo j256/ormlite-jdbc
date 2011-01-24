@@ -31,6 +31,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
@@ -752,9 +753,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false));
+				false, null, false, null, false, null, false, null));
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false, null, false));
+				null, false, null, false, null, false, null, false, null));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
 		NoAnno noa = new NoAnno();
@@ -770,9 +771,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfigForeign() throws Exception {
 		List<DatabaseFieldConfig> noAnnotationsFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", DataType.UNKNOWN, null, 0, false,
-				false, true, null, false, null, false, null, false, null, false));
+				false, true, null, false, null, false, null, false, null, false, null));
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false,
-				false, false, null, false, null, false, null, false, null, false));
+				false, false, null, false, null, false, null, false, null, false, null));
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(noAnnotationsTableConfig, true);
@@ -784,9 +785,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
-				false, false, true, null, false, null, false, null, false, null, false));
+				false, false, true, null, false, null, false, null, false, null, false, null));
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", DataType.UNKNOWN,
-				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false, null, false));
+				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false, null, false,
+				null));
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
 				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
 
@@ -1892,7 +1894,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		RawResults rawResults = fooDao.queryForAllRaw(sb.toString());
 		String[] cols = rawResults.getColumnNames();
 		assertEquals(1, cols.length);
-		assertEquals(colName, cols[0]);
+		assertTrue(colName.equalsIgnoreCase(cols[0]));
 		List<String[]> results = rawResults.getResults();
 		assertEquals(1, results.size());
 		String[] resultArray = results.get(0);
@@ -1937,11 +1939,11 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testRawBytes() throws Exception {
-		Dao<RawBytes, Integer> rawDao = createDao(RawBytes.class, true);
+		Dao<RawBytes, Integer> dao = createDao(RawBytes.class, true);
 		RawBytes raw1 = new RawBytes();
 		raw1.bytes = new byte[] { 1, 25, 3, 124, 10 };
-		assertEquals(1, rawDao.create(raw1));
-		RawBytes raw2 = rawDao.queryForId(raw1.id);
+		assertEquals(1, dao.create(raw1));
+		RawBytes raw2 = dao.queryForId(raw1.id);
 		assertNotNull(raw2);
 		assertEquals(raw1.id, raw2.id);
 		assertTrue(Arrays.equals(raw1.bytes, raw2.bytes));
@@ -1949,15 +1951,59 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testSuperClassAnnotations() throws Exception {
-		Dao<Sub, Integer> subDao = createDao(Sub.class, true);
+		Dao<Sub, Integer> dao = createDao(Sub.class, true);
 		Sub sub1 = new Sub();
 		String stuff = "doepqjdpqdq";
 		sub1.stuff = stuff;
-		assertEquals(1, subDao.create(sub1));
-		Sub sub2 = subDao.queryForId(sub1.id);
+		assertEquals(1, dao.create(sub1));
+		Sub sub2 = dao.queryForId(sub1.id);
 		assertNotNull(sub2);
 		assertEquals(sub1.id, sub2.id);
 		assertEquals(sub1.stuff, sub2.stuff);
+	}
+
+	@Test
+	public void testFieldIndex() throws Exception {
+		Dao<Index, Integer> dao = createDao(Index.class, true);
+		Index index1 = new Index();
+		String stuff = "doepqjdpqdq";
+		index1.stuff = stuff;
+		assertEquals(1, dao.create(index1));
+		Index index2 = dao.queryForId(index1.id);
+		assertNotNull(index2);
+		assertEquals(index1.id, index2.id);
+		assertEquals(index1.stuff, index2.stuff);
+
+		PreparedQuery<Index> query = dao.queryBuilder().where().eq("stuff", index1.stuff).prepare();
+		List<Index> results = dao.query(query);
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(index1.id, results.get(0).id);
+		assertEquals(index1.stuff, results.get(0).stuff);
+	}
+
+	@Test
+	public void testComboFieldIndex() throws Exception {
+		Dao<ComboIndex, Integer> dao = createDao(ComboIndex.class, true);
+		ComboIndex index1 = new ComboIndex();
+		String stuff = "doepqjdpqdq";
+		long junk = 131234124213213L;
+		index1.stuff = stuff;
+		index1.junk = junk;
+		assertEquals(1, dao.create(index1));
+		ComboIndex index2 = dao.queryForId(index1.id);
+		assertNotNull(index2);
+		assertEquals(index1.id, index2.id);
+		assertEquals(index1.stuff, index2.stuff);
+		assertEquals(index1.junk, index2.junk);
+
+		PreparedQuery<ComboIndex> query = dao.queryBuilder().where().eq("stuff", index1.stuff).prepare();
+		List<ComboIndex> results = dao.query(query);
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(index1.id, results.get(0).id);
+		assertEquals(index1.stuff, results.get(0).stuff);
+		assertEquals(index1.junk, results.get(0).junk);
 	}
 
 	/* ==================================================================================== */
@@ -3026,6 +3072,28 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField
 		byte[] bytes;
 		public RawBytes() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class Index {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(index = true)
+		String stuff;
+		public Index() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class ComboIndex {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(indexName = "stuffjunk")
+		String stuff;
+		@DatabaseField(indexName = "stuffjunk")
+		long junk;
+		public ComboIndex() {
 		}
 	}
 

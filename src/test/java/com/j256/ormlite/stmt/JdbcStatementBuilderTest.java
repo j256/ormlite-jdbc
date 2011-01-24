@@ -42,7 +42,7 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 		assertEquals(foo1, results.get(0));
 
 		// test And + Eq not inline
-		Where where = qb.where();
+		Where<Foo, String> where = qb.where();
 		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
 		where.and();
 		where.eq(Foo.VAL_COLUMN_NAME, foo2.val);
@@ -70,7 +70,7 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 		assertEquals(foo1, results.get(0));
 
 		// test Or + Eq not inline
-		Where where = qb.where();
+		Where<Foo, String> where = qb.where();
 		where.eq(Foo.ID_COLUMN_NAME, foo2.id);
 		where.or();
 		where.eq(Foo.VAL_COLUMN_NAME, foo2.val);
@@ -199,7 +199,7 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 	public void testNotNotComparison() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
-		Where where = qb.where();
+		Where<Foo, String> where = qb.where();
 		try {
 			where.not(where.and(where.eq(Foo.ID_COLUMN_NAME, foo1.id), where.eq(Foo.ID_COLUMN_NAME, foo1.id)));
 			fail("expected exception");
@@ -212,7 +212,7 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 	public void testNotArg() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
-		Where where = qb.where();
+		Where<Foo, String> where = qb.where();
 		where.not(where.eq(Foo.ID_COLUMN_NAME, foo1.id));
 		List<Foo> results = fooDao.query(qb.prepare());
 		assertEquals(1, results.size());
@@ -682,7 +682,7 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 	public void testSetWhere() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
-		Where where = qb.where();
+		Where<Foo, String> where = qb.where();
 		where.eq(Foo.ID_COLUMN_NAME, foo1.id);
 		List<Foo> list = fooDao.query(qb.prepare());
 		assertEquals(1, list.size());
@@ -699,7 +699,7 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 	public void testQueryForStringInt() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
-		Where where = qb.where();
+		Where<Foo, String> where = qb.where();
 		// testing the val column with a integer as a string
 		where.eq(Foo.VAL_COLUMN_NAME, Integer.toString(foo1.val));
 		List<Foo> list = fooDao.query(qb.prepare());
