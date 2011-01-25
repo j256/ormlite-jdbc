@@ -753,9 +753,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false, null));
+				false, null, false, null, false, null, false, null, null));
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false, null, false, null));
+				null, false, null, false, null, false, null, false, null, null));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
 		NoAnno noa = new NoAnno();
@@ -771,9 +771,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfigForeign() throws Exception {
 		List<DatabaseFieldConfig> noAnnotationsFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", DataType.UNKNOWN, null, 0, false,
-				false, true, null, false, null, false, null, false, null, false, null));
+				false, true, null, false, null, false, null, false, null, false, null, null));
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false,
-				false, false, null, false, null, false, null, false, null, false, null));
+				false, false, null, false, null, false, null, false, null, false, null, null));
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(noAnnotationsTableConfig, true);
@@ -785,10 +785,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
-				false, false, true, null, false, null, false, null, false, null, false, null));
+				false, false, true, null, false, null, false, null, false, null, false, null, null));
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", DataType.UNKNOWN,
 				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false, null, false,
-				null));
+				null, null));
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
 				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
 
@@ -1972,14 +1972,50 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Index index2 = dao.queryForId(index1.id);
 		assertNotNull(index2);
 		assertEquals(index1.id, index2.id);
-		assertEquals(index1.stuff, index2.stuff);
+		assertEquals(stuff, index2.stuff);
+		// this should work
+		assertEquals(1, dao.create(index1));
 
 		PreparedQuery<Index> query = dao.queryBuilder().where().eq("stuff", index1.stuff).prepare();
 		List<Index> results = dao.query(query);
 		assertNotNull(results);
+		assertEquals(2, results.size());
+		assertEquals(stuff, results.get(0).stuff);
+		assertEquals(stuff, results.get(1).stuff);
+	}
+
+	@Test
+	public void testFieldUniqueIndex() throws Exception {
+		Dao<UniqueIndex, Integer> dao = createDao(UniqueIndex.class, true);
+		UniqueIndex index1 = new UniqueIndex();
+		String stuff1 = "doepqjdpqdq";
+		index1.stuff = stuff1;
+		assertEquals(1, dao.create(index1));
+		UniqueIndex index2 = dao.queryForId(index1.id);
+		assertNotNull(index2);
+		assertEquals(index1.id, index2.id);
+		assertEquals(stuff1, index2.stuff);
+		try {
+			dao.create(index1);
+			fail("This should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
+		String stuff2 = "fewofwgwgwee";
+		index1.stuff = stuff2;
+		assertEquals(1, dao.create(index1));
+
+		PreparedQuery<UniqueIndex> query = dao.queryBuilder().where().eq("stuff", stuff1).prepare();
+		List<UniqueIndex> results = dao.query(query);
+		assertNotNull(results);
 		assertEquals(1, results.size());
-		assertEquals(index1.id, results.get(0).id);
-		assertEquals(index1.stuff, results.get(0).stuff);
+		assertEquals(stuff1, results.get(0).stuff);
+
+		query = dao.queryBuilder().where().eq("stuff", stuff2).prepare();
+		results = dao.query(query);
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(stuff2, results.get(0).stuff);
 	}
 
 	@Test
@@ -1987,23 +2023,65 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Dao<ComboIndex, Integer> dao = createDao(ComboIndex.class, true);
 		ComboIndex index1 = new ComboIndex();
 		String stuff = "doepqjdpqdq";
-		long junk = 131234124213213L;
+		long junk1 = 131234124213213L;
 		index1.stuff = stuff;
-		index1.junk = junk;
+		index1.junk = junk1;
 		assertEquals(1, dao.create(index1));
 		ComboIndex index2 = dao.queryForId(index1.id);
 		assertNotNull(index2);
 		assertEquals(index1.id, index2.id);
-		assertEquals(index1.stuff, index2.stuff);
-		assertEquals(index1.junk, index2.junk);
+		assertEquals(stuff, index2.stuff);
+		assertEquals(junk1, index2.junk);
+		assertEquals(1, dao.create(index1));
 
 		PreparedQuery<ComboIndex> query = dao.queryBuilder().where().eq("stuff", index1.stuff).prepare();
 		List<ComboIndex> results = dao.query(query);
 		assertNotNull(results);
+		assertEquals(2, results.size());
+		assertEquals(stuff, results.get(0).stuff);
+		assertEquals(junk1, results.get(0).junk);
+		assertEquals(stuff, results.get(1).stuff);
+		assertEquals(junk1, results.get(1).junk);
+	}
+
+	@Test
+	public void testComboUniqueFieldIndex() throws Exception {
+		Dao<ComboUniqueIndex, Integer> dao = createDao(ComboUniqueIndex.class, true);
+		ComboUniqueIndex index1 = new ComboUniqueIndex();
+		String stuff1 = "doepqjdpqdq";
+		long junk = 131234124213213L;
+		index1.stuff = stuff1;
+		index1.junk = junk;
+		assertEquals(1, dao.create(index1));
+		ComboUniqueIndex index2 = dao.queryForId(index1.id);
+		assertNotNull(index2);
+		assertEquals(index1.id, index2.id);
+		assertEquals(index1.stuff, index2.stuff);
+		assertEquals(index1.junk, index2.junk);
+		try {
+			dao.create(index1);
+			fail("This should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
+		String stuff2 = "fpeowjfewpf";
+		index1.stuff = stuff2;
+		// same junk
+		assertEquals(1, dao.create(index1));
+
+		PreparedQuery<ComboUniqueIndex> query = dao.queryBuilder().where().eq("stuff", stuff1).prepare();
+		List<ComboUniqueIndex> results = dao.query(query);
+		assertNotNull(results);
 		assertEquals(1, results.size());
-		assertEquals(index1.id, results.get(0).id);
-		assertEquals(index1.stuff, results.get(0).stuff);
-		assertEquals(index1.junk, results.get(0).junk);
+		assertEquals(stuff1, results.get(0).stuff);
+		assertEquals(junk, results.get(0).junk);
+
+		query = dao.queryBuilder().where().eq("stuff", stuff2).prepare();
+		results = dao.query(query);
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(stuff2, results.get(0).stuff);
+		assertEquals(junk, results.get(0).junk);
 	}
 
 	/* ==================================================================================== */
@@ -3086,6 +3164,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@DatabaseTable
+	protected static class UniqueIndex {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(uniqueIndex = true)
+		String stuff;
+		public UniqueIndex() {
+		}
+	}
+
+	@DatabaseTable
 	protected static class ComboIndex {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -3094,6 +3182,18 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(indexName = "stuffjunk")
 		long junk;
 		public ComboIndex() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class ComboUniqueIndex {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(uniqueIndexName = "stuffjunk")
+		String stuff;
+		@DatabaseField(uniqueIndexName = "stuffjunk")
+		long junk;
+		public ComboUniqueIndex() {
 		}
 	}
 
