@@ -707,6 +707,22 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 		assertEquals(foo1, list.get(0));
 	}
 
+	@Test
+	public void testWherePrepare() throws Exception {
+		Dao<Foo, String> fooDao = createTestData();
+		List<Foo> results =
+				fooDao.query(fooDao.queryBuilder()
+						.where()
+						.eq(Foo.ID_COLUMN_NAME, foo1.id)
+						.and()
+						.eq(Foo.VAL_COLUMN_NAME, foo1.val)
+						.prepare());
+		assertEquals(1, results.size());
+		assertEquals(foo1, results.get(0));
+	}
+
+	/* ============================================================== */
+
 	protected void checkPartialIterator(Iterator<PartialData> iterator, List<Integer> ids, List<String> firsts,
 			List<String> lasts, boolean firstNull, boolean lastNull) throws SQLException {
 		int i = 0;
