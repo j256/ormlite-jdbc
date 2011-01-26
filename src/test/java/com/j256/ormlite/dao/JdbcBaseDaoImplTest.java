@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
@@ -42,14 +41,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private final boolean CLOSE_IS_NOOP = false;
 	private final boolean UPDATE_ROWS_RETURNS_ONE = false;
-
-	@Before
-	@Override
-	public void before() throws Exception {
-		super.before();
-		fooDao = createDao(Foo.class, true);
-		assertEquals(Foo.class, ((BaseDaoImpl<Foo, Integer>) fooDao).getDataClass());
-	}
 
 	/* ======================================================================================== */
 
@@ -80,11 +71,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	private final static String DEFAULT_ENUM_VALUE = "FIRST";
 	private final static String DEFAULT_ENUM_NUMBER_VALUE = "1";
 
-	// needs to be protected for test base classes
-	protected Dao<Foo, Integer> fooDao;
-
 	@Test
 	public void testCreateDaoStatic() throws Exception {
+		createTable(Foo.class, true);
 		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(connectionSource, Foo.class);
 		String stuff = "stuff";
 		Foo foo = new Foo();
@@ -100,6 +89,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateUpdateDelete() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		String s1 = "stuff";
 		Foo foo1 = new Foo();
 		foo1.stuff = s1;
@@ -147,6 +137,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testIterateRemove() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		List<Foo> acctList = fooDao.queryForAll();
 		int initialSize = acctList.size();
 
@@ -192,6 +183,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testGeneratedField() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		assertEquals(0, foo1.id);
@@ -201,6 +193,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testGeneratedIdNotNullField() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		assertEquals(0, foo1.id);
@@ -210,6 +203,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testObjectToString() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		String stuff = "foo123231";
 		Foo foo1 = new Foo();
 		foo1.stuff = stuff;
@@ -220,26 +214,31 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateNull() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		assertEquals(0, fooDao.create(null));
 	}
 
 	@Test
 	public void testUpdateNull() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		assertEquals(0, fooDao.update((Foo) null));
 	}
 
 	@Test
 	public void testUpdateIdNull() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		assertEquals(0, fooDao.updateId(null, null));
 	}
 
 	@Test
 	public void testDeleteNull() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		assertEquals(0, fooDao.delete((Foo) null));
 	}
 
 	@Test
 	public void testCloseInIterator() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -259,6 +258,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCloseIteratorFirst() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -273,6 +273,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCloseIteratorBeforeNext() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -292,6 +293,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCloseIteratorBeforeRemove() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -310,6 +312,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testNoNextBeforeRemove() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
@@ -324,6 +327,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testIteratePageSize() throws Exception {
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		// do a mass insert of 1000 items
 		fooDao.callBatchTasks(new Callable<Void>() {
 			public Void call() throws Exception {
@@ -345,6 +349,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeleteObjects() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		List<Foo> fooList = new ArrayList<Foo>();
 		for (int i = 0; i < 100; i++) {
 			Foo foo = new Foo();
@@ -364,6 +369,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeleteObjectsNone() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		List<Foo> fooList = new ArrayList<Foo>();
 		assertEquals(fooList.size(), fooDao.delete(fooList));
 		assertEquals(0, fooDao.queryForAll().size());
@@ -371,6 +377,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeleteIds() throws Exception {
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		final List<Integer> fooIdList = new ArrayList<Integer>();
 		fooDao.callBatchTasks(new Callable<Void>() {
 			public Void call() throws Exception {
@@ -394,6 +401,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeleteIdsNone() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		List<Integer> fooIdList = new ArrayList<Integer>();
 		assertEquals(fooIdList.size(), fooDao.deleteIds(fooIdList));
 		assertEquals(0, fooDao.queryForAll().size());
@@ -401,6 +409,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeletePreparedStmtIn() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		List<Integer> fooIdList = new ArrayList<Integer>();
 		for (int i = 0; i < 100; i++) {
 			Foo foo = new Foo();
@@ -422,6 +431,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testDeleteAllPreparedStmt() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		int fooN = 100;
 		for (int i = 0; i < fooN; i++) {
 			Foo foo = new Foo();
@@ -441,6 +451,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testHasNextAfterDone() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Iterator<Foo> iterator = fooDao.iterator();
 		while (iterator.hasNext()) {
 		}
@@ -449,6 +460,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testNextWithoutHasNext() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Iterator<Foo> iterator = fooDao.iterator();
 		try {
 			iterator.next();
@@ -460,6 +472,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testRemoveAfterDone() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Iterator<Foo> iterator = fooDao.iterator();
 		assertFalse(iterator.hasNext());
 		try {
@@ -472,6 +485,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testIteratorNoResults() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Iterator<Foo> iterator = fooDao.iterator();
 		assertFalse(iterator.hasNext());
 		assertNull(iterator.next());
@@ -526,6 +540,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testJustIdRefresh() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		String stuff1 = "just-id-refresh-1";
 		Foo foo1 = new Foo();
 		foo1.stuff = stuff1;
@@ -552,6 +567,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testSpringConstruction() throws Exception {
+		createTable(Foo.class, true);
 		BaseDaoImpl<Foo, Integer> fooDao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
 		try {
@@ -703,6 +719,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testRefreshNull() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		// this should be a noop
 		assertEquals(0, fooDao.refresh(null));
 	}
@@ -1634,6 +1651,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueString() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		String stuff = "dqedqdq";
 		foo.stuff = stuff;
@@ -1655,6 +1673,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		foo.val = 123213;
 		assertEquals(1, fooDao.create(foo));
@@ -1675,6 +1694,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueExpression() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		foo.val = 123213;
 		assertEquals(1, fooDao.create(foo));
@@ -1701,6 +1721,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testPrepareStatementUpdateValueWhere() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.val = 78582351;
 		assertEquals(1, fooDao.create(foo1));
@@ -1978,6 +1999,29 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		PreparedQuery<Index> query = dao.queryBuilder().where().eq("stuff", index1.stuff).prepare();
 		List<Index> results = dao.query(query);
+		assertNotNull(results);
+		assertEquals(2, results.size());
+		assertEquals(stuff, results.get(0).stuff);
+		assertEquals(stuff, results.get(1).stuff);
+	}
+
+	@Test
+	public void testFieldIndexColumnName() throws Exception {
+		Dao<IndexColumnName, Integer> dao = createDao(IndexColumnName.class, true);
+		IndexColumnName index1 = new IndexColumnName();
+		String stuff = "doepqjdpqdq";
+		index1.stuff = stuff;
+		assertEquals(1, dao.create(index1));
+		IndexColumnName index2 = dao.queryForId(index1.id);
+		assertNotNull(index2);
+		assertEquals(index1.id, index2.id);
+		assertEquals(stuff, index2.stuff);
+		// this should work
+		assertEquals(1, dao.create(index1));
+
+		PreparedQuery<IndexColumnName> query =
+				dao.queryBuilder().where().eq(IndexColumnName.STUFF_COLUMN_NAME, index1.stuff).prepare();
+		List<IndexColumnName> results = dao.query(query);
 		assertNotNull(results);
 		assertEquals(2, results.size());
 		assertEquals(stuff, results.get(0).stuff);
@@ -3160,6 +3204,17 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(index = true)
 		String stuff;
 		public Index() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class IndexColumnName {
+		public static final String STUFF_COLUMN_NAME = "notStuff";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(index = true, columnName = STUFF_COLUMN_NAME)
+		String stuff;
+		public IndexColumnName() {
 		}
 	}
 
