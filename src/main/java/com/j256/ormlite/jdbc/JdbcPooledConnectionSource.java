@@ -9,6 +9,7 @@ import java.util.Map;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -168,7 +169,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	public boolean saveSpecialConnection(DatabaseConnection connection) {
 		checkInitializedIllegalStateException();
 		boolean saved = saveSpecial(connection);
-		if (logger.isDebugEnabled()) {
+		if (logger.isLevelEnabled(Level.DEBUG)) {
 			ConnectionMetaData meta = connectionMap.get(connection);
 			logger.debug("saved special connection {}", meta);
 		}
@@ -178,10 +179,14 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		checkInitializedIllegalStateException();
-		clearSpecial(connection, logger);
-		if (logger.isDebugEnabled()) {
+		boolean cleared = clearSpecial(connection, logger);
+		if (logger.isLevelEnabled(Level.DEBUG)) {
 			ConnectionMetaData meta = connectionMap.get(connection);
-			logger.debug("cleared special connection {}", meta);
+			if (cleared) {
+				logger.debug("cleared special connection {}", meta);
+			} else {
+				logger.debug("special connection {} not saved", meta);
+			}
 		}
 		// release should then called after the clear
 	}
