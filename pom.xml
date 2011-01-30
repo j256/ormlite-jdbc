@@ -132,31 +132,7 @@
 					<additionalparam>-tag inheritDoc:X</additionalparam>
 					<excludePackageNames>com.j256.ormlite.stmt.query,com.j256.ormlite.stmt.mapped
 					</excludePackageNames>
-					<includeDependencySources>true</includeDependencySources>
-					<dependencySourceIncludes>
-						<dependencySourceInclude>com.j256.ormlite:*</dependencySourceInclude>
-					</dependencySourceIncludes>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-5</version>
-				<configuration>
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attached</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
