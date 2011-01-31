@@ -50,7 +50,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {
-		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
+		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -63,7 +63,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testBoolean() throws Exception {
-		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(databaseType, AllTypes.class);
+		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
 		assertEquals("booleanField", booleanField.getDbColumnName());
@@ -76,7 +76,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testByte() throws Exception {
-		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(databaseType, AllTypes.class);
+		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
 		assertEquals("byteField", byteField.getDbColumnName());

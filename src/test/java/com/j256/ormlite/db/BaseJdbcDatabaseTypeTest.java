@@ -52,7 +52,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> moreStmts = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
+		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
 		FieldType fieldType = tableInfo.getIdField();
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendColumnArg(sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
@@ -97,7 +97,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		if (!databaseType.isLimitSqlSupported()) {
 			return;
 		}
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(databaseType, Foo.class);
+		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo);
 		int limit = 1232;
 		qb.limit(limit);
@@ -117,7 +117,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 	@Test(expected = IllegalStateException.class)
 	public void testGeneratedIdSequence() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
-				new TableInfo<GeneratedIdSequence>(databaseType, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();

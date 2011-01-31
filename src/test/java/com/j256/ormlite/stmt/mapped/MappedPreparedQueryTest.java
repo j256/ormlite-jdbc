@@ -30,7 +30,7 @@ public class MappedPreparedQueryTest extends BaseJdbcTest {
 		Foo foo1 = new Foo();
 		fooDao.create(foo1);
 
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource.getDatabaseType(), Foo.class);
+		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
 		MappedPreparedStmt<Foo, Integer> rowMapper =
 				new MappedPreparedStmt<Foo, Integer>(tableInfo, null, new ArrayList<FieldType>(),
 						Arrays.asList(tableInfo.getFieldTypes()), new ArrayList<SelectArg>(), null,
@@ -60,7 +60,7 @@ public class MappedPreparedQueryTest extends BaseJdbcTest {
 		fooDao.create(foo);
 		foos.add(foo);
 
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource.getDatabaseType(), Foo.class);
+		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
 		MappedPreparedStmt<Foo, Integer> preparedQuery =
 				new MappedPreparedStmt<Foo, Integer>(tableInfo, "select * from " + TABLE_NAME,
 						new ArrayList<FieldType>(), Arrays.asList(tableInfo.getFieldTypes()),
@@ -96,16 +96,16 @@ public class MappedPreparedQueryTest extends BaseJdbcTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testObjectNoConstructor() throws SQLException {
-		new MappedPreparedStmt<NoConstructor, Void>(new TableInfo<NoConstructor>(connectionSource.getDatabaseType(),
-				NoConstructor.class), null, new ArrayList<FieldType>(), new ArrayList<FieldType>(),
-				new ArrayList<SelectArg>(), null, StatementType.SELECT);
+		new MappedPreparedStmt<NoConstructor, Void>(
+				new TableInfo<NoConstructor>(connectionSource, NoConstructor.class), null, new ArrayList<FieldType>(),
+				new ArrayList<FieldType>(), new ArrayList<SelectArg>(), null, StatementType.SELECT);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testDifferentArgSizes() throws SQLException {
 		ArrayList<SelectArg> selectArgList = new ArrayList<SelectArg>();
 		selectArgList.add(new SelectArg());
-		new MappedPreparedStmt<Foo, Integer>(new TableInfo<Foo>(connectionSource.getDatabaseType(), Foo.class), null,
+		new MappedPreparedStmt<Foo, Integer>(new TableInfo<Foo>(connectionSource, Foo.class), null,
 				new ArrayList<FieldType>(), new ArrayList<FieldType>(), selectArgList, null, StatementType.SELECT);
 	}
 

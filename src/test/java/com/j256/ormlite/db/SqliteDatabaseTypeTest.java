@@ -32,7 +32,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test(expected = IllegalStateException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
-				new TableInfo<GeneratedIdSequence>(databaseType, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();
@@ -42,7 +42,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {
-		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(databaseType, GeneratedId.class);
+		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -54,7 +54,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testGeneratedIdLong() throws Exception {
-		TableInfo<GeneratedIdLong> tableInfo = new TableInfo<GeneratedIdLong>(databaseType, GeneratedIdLong.class);
+		TableInfo<GeneratedIdLong> tableInfo = new TableInfo<GeneratedIdLong>(connectionSource, GeneratedIdLong.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -80,7 +80,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testSerialField() throws Exception {
-		TableInfo<SerialField> tableInfo = new TableInfo<SerialField>(databaseType, SerialField.class);
+		TableInfo<SerialField> tableInfo = new TableInfo<SerialField>(connectionSource, SerialField.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();

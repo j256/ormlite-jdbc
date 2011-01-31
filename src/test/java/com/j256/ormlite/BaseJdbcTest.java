@@ -67,6 +67,10 @@ public abstract class BaseJdbcTest {
 			if (connectionSource != null) {
 				databaseType = connectionSource.getDatabaseType();
 			}
+		} else {
+			if (connectionSource != null) {
+				connectionSource.setDatabaseType(databaseType);
+			}
 		}
 	}
 
@@ -120,7 +124,7 @@ public abstract class BaseJdbcTest {
 		if (connectionSource == null) {
 			throw new SQLException(DATASOURCE_ERROR);
 		}
-		return createDao(DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), clazz), createTable);
+		return createDao(DatabaseTableConfig.fromClass(connectionSource, clazz), createTable);
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
@@ -133,7 +137,7 @@ public abstract class BaseJdbcTest {
 	}
 
 	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws Exception {
-		createTable(DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), clazz), dropAtEnd);
+		createTable(DatabaseTableConfig.fromClass(connectionSource, clazz), dropAtEnd);
 	}
 
 	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws Exception {

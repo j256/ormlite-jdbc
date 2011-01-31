@@ -130,7 +130,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		try {
 			doubleDao.create(foo);
 			fail("expected exception");
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// expected
 		}
 	}
@@ -770,9 +770,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false, null, null));
+				false, null, false, null, false, null, false, null, null, false));
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false, null, false, null, null));
+				null, false, null, false, null, false, null, false, null, null, false));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
 		NoAnno noa = new NoAnno();
@@ -788,9 +788,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfigForeign() throws Exception {
 		List<DatabaseFieldConfig> noAnnotationsFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", DataType.UNKNOWN, null, 0, false,
-				false, true, null, false, null, false, null, false, null, false, null, null));
+				false, true, null, false, null, false, null, false, null, false, null, null, false));
 		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false,
-				false, false, null, false, null, false, null, false, null, false, null, null));
+				false, false, null, false, null, false, null, false, null, false, null, null, false));
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(noAnnotationsTableConfig, true);
@@ -802,10 +802,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
-				false, false, true, null, false, null, false, null, false, null, false, null, null));
+				false, false, true, null, false, null, false, null, false, null, false, null, null, false));
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", DataType.UNKNOWN,
 				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false, null, false,
-				null, null));
+				null, null, false));
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
 				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
 
@@ -873,7 +873,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		try {
 			fooDao.create(foo1);
 			fail("expected exception");
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// expected
 		}
 	}
@@ -896,7 +896,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		try {
 			defValDao.create(notNull);
 			fail("expected exception");
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// expected
 		}
 	}
@@ -1586,7 +1586,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		try {
 			dao.create(unique);
 			fail("Should have thrown");
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// expected
 			return;
 		}
