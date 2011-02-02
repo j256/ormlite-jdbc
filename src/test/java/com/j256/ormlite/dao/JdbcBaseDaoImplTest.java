@@ -348,6 +348,37 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testIteratorPreparedQuery() throws Exception {
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		// do an insert of 100 items
+		final int numItems = 100;
+		fooDao.callBatchTasks(new Callable<Void>() {
+			public Void call() throws Exception {
+				for (int i = 0; i < numItems; i++) {
+					Foo foo = new Foo();
+					foo.val = i;
+					assertEquals(1, fooDao.create(foo));
+				}
+				return null;
+			}
+		});
+
+		int lastX = 10;
+		PreparedQuery<Foo> preparedQuery =
+				fooDao.queryBuilder().where().ge(Foo.VAL_FIELD_NAME, numItems - lastX).prepare();
+
+		// now delete them with the iterator to test page-size
+		Iterator<Foo> iterator = fooDao.iterator(preparedQuery);
+		int itemC = 0;
+		while (iterator.hasNext()) {
+			Foo foo = iterator.next();
+			System.out.println("Foo = " + foo.val);
+			itemC++;
+		}
+		assertEquals(lastX, itemC);
+	}
+
+	@Test
 	public void testDeleteObjects() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		List<Foo> fooList = new ArrayList<Foo>();
@@ -1378,7 +1409,185 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testQueryRaw() throws Exception {
+	public void testQueryRawStrings() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String stuff = "eprjpejrre";
+		foo.stuff = stuff;
+
+		GenericRawResults<String[]> results = fooDao.queryRaw("select * from " + FOO_TABLE_NAME);
+		assertEquals(0, results.getResults().size());
+		assertEquals(1, fooDao.create(foo));
+
+		results = fooDao.queryRaw("select * from " + FOO_TABLE_NAME);
+		int colN = results.getNumberColumns();
+		String[] colNames = results.getColumnNames();
+		assertEquals(3, colNames.length);
+		boolean gotId = false;
+		boolean gotStuff = false;
+		boolean gotVal = false;
+		// all this crap is here because of android column order
+		for (int colC = 0; colC < 3; colC++) {
+			if (colNames[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
+				gotId = true;
+			} else if (colNames[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+				gotStuff = true;
+			} else if (colNames[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+				gotVal = true;
+			}
+		}
+		assertTrue(gotId);
+		assertTrue(gotStuff);
+		assertTrue(gotVal);
+		List<String[]> resultList = results.getResults();
+		assertEquals(1, resultList.size());
+		String[] result = resultList.get(0);
+		assertEquals(colN, result.length);
+		for (int colC = 0; colC < results.getNumberColumns(); colC++) {
+			if (results.getColumnNames()[colC] == "id") {
+				assertEquals(Integer.toString(foo.id), result[colC]);
+			}
+			if (results.getColumnNames()[colC] == "stuff") {
+				assertEquals(stuff, result[1]);
+			}
+		}
+	}
+
+	@Test
+	public void testQueryRawStringsIterator() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String stuff = "eprjpejrre";
+		int val = 12321411;
+		foo.stuff = stuff;
+		foo.val = val;
+
+		GenericRawResults<String[]> results = fooDao.queryRaw("select * from " + FOO_TABLE_NAME);
+		CloseableIterator<String[]> iterator = results.iterator();
+		try {
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
+		}
+		assertEquals(1, fooDao.create(foo));
+
+		results = fooDao.queryRaw("select * from " + FOO_TABLE_NAME);
+		int colN = results.getNumberColumns();
+		String[] colNames = results.getColumnNames();
+		assertEquals(3, colNames.length);
+		iterator = results.iterator();
+		try {
+			assertTrue(iterator.hasNext());
+			String[] result = iterator.next();
+			assertEquals(colN, result.length);
+			boolean foundId = false;
+			boolean foundStuff = false;
+			boolean foundVal = false;
+			for (int colC = 0; colC < results.getNumberColumns(); colC++) {
+				if (results.getColumnNames()[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
+					assertEquals(Integer.toString(foo.id), result[colC]);
+					foundId = true;
+				}
+				if (results.getColumnNames()[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+					assertEquals(stuff, result[colC]);
+					foundStuff = true;
+				}
+				if (results.getColumnNames()[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+					assertEquals(Integer.toString(val), result[colC]);
+					foundVal = true;
+				}
+			}
+			assertTrue(foundId);
+			assertTrue(foundStuff);
+			assertTrue(foundVal);
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
+		}
+	}
+
+	@Test
+	public void testQueryRawMappedIterator() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		final Foo foo = new Foo();
+		String stuff = "eprjpejrre";
+		foo.stuff = stuff;
+
+		Mapper mapper = new Mapper();
+		GenericRawResults<Foo> rawResults = fooDao.queryRaw("select * from " + FOO_TABLE_NAME, mapper);
+		assertEquals(0, rawResults.getResults().size());
+		assertEquals(1, fooDao.create(foo));
+		rawResults = fooDao.queryRaw("select * from " + FOO_TABLE_NAME, mapper);
+		Iterator<Foo> iterator = rawResults.iterator();
+		assertTrue(iterator.hasNext());
+		Foo foo2 = iterator.next();
+		assertEquals(foo.id, foo2.id);
+		assertEquals(foo.stuff, foo2.stuff);
+		assertEquals(foo.val, foo2.val);
+		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void testQueryRawObjectsIterator() throws Exception {
+		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		String stuff = "eprjpejrre";
+		int val = 213123;
+		foo.stuff = stuff;
+		foo.val = val;
+
+		GenericRawResults<Object[]> results =
+				fooDao.queryRaw("select * from " + FOO_TABLE_NAME, new DataType[] { DataType.INTEGER, DataType.STRING,
+						DataType.INTEGER });
+		CloseableIterator<Object[]> iterator = results.iterator();
+		try {
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
+		}
+		assertEquals(1, fooDao.create(foo));
+
+		results =
+				fooDao.queryRaw("select * from " + FOO_TABLE_NAME, new DataType[] { DataType.INTEGER, DataType.STRING,
+						DataType.INTEGER });
+		int colN = results.getNumberColumns();
+		String[] colNames = results.getColumnNames();
+		assertEquals(3, colNames.length);
+		iterator = results.iterator();
+		try {
+			assertTrue(iterator.hasNext());
+			Object[] result = iterator.next();
+			assertEquals(colN, result.length);
+			String[] columnNames = results.getColumnNames();
+			boolean foundId = false;
+			boolean foundStuff = false;
+			boolean foundVal = false;
+			for (int colC = 0; colC < results.getNumberColumns(); colC++) {
+				if (columnNames[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
+					assertEquals(foo.id, result[colC]);
+					foundId = true;
+				}
+				if (columnNames[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+					assertEquals(stuff, result[colC]);
+					foundStuff = true;
+				}
+				if (columnNames[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+					assertEquals(val, result[colC]);
+					foundVal = true;
+				}
+			}
+			assertTrue(foundId);
+			assertTrue(foundStuff);
+			assertTrue(foundVal);
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testRawResults() throws Exception {
 		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		String stuff = "eprjpejrre";
@@ -1398,13 +1607,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		// all this crap is here because of android column order
 		for (int colC = 0; colC < 3; colC++) {
 			if (colNames[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
-				assertFalse(gotId);
 				gotId = true;
 			} else if (colNames[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
-				assertFalse(gotStuff);
 				gotStuff = true;
 			} else if (colNames[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
-				assertFalse(gotVal);
 				gotVal = true;
 			}
 		}
@@ -1412,21 +1618,26 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertTrue(gotStuff);
 		assertTrue(gotVal);
 		List<String[]> resultList = results.getResults();
-		assertEquals(1, results.getResults().size());
+		assertEquals(1, resultList.size());
 		String[] result = resultList.get(0);
 		assertEquals(colN, result.length);
+		String[] columnNames = results.getColumnNames();
 		for (int colC = 0; colC < results.getNumberColumns(); colC++) {
-			if (results.getColumnNames()[colC] == "id") {
+			if (columnNames[colC].equalsIgnoreCase(Foo.ID_FIELD_NAME)) {
 				assertEquals(Integer.toString(foo.id), result[colC]);
-			}
-			if (results.getColumnNames()[colC] == "stuff") {
-				assertEquals(stuff, result[1]);
+			} else if (columnNames[colC].equalsIgnoreCase(Foo.STUFF_FIELD_NAME)) {
+				assertEquals(stuff, result[colC]);
+			} else if (columnNames[colC].equalsIgnoreCase(Foo.VAL_FIELD_NAME)) {
+				assertEquals(Integer.toString(foo.val), result[colC]);
+			} else {
+				fail("Unknown column: " + columnNames[colC]);
 			}
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
-	public void testQueryRawIterator() throws Exception {
+	public void testRawResultsIterator() throws Exception {
 		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
 		Foo foo = new Foo();
 		String stuff = "eprjpejrre";
@@ -1464,8 +1675,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
-	public void testQueryRawMapped() throws Exception {
+	public void testRawResultsMappedList() throws Exception {
 		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
 		final Foo foo = new Foo();
 		String stuff = "eprjpejrre";
@@ -1483,8 +1695,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(foo.val, foo2.val);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
-	public void testIteratorRawMapped() throws Exception {
+	public void testRawResultsMappedIterator() throws Exception {
 		Dao<Foo, Object> fooDao = createDao(Foo.class, true);
 		final Foo foo = new Foo();
 		String stuff = "eprjpejrre";
@@ -1896,33 +2109,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
-	@Test
-	public void testQueryForAllRaw() throws Exception {
-		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		int valSum = 0;
-		for (int i = 0; i < 20; i++) {
-			Foo foo = new Foo();
-			foo.val = i;
-			assertEquals(1, fooDao.create(foo));
-			valSum += foo.val;
-		}
-		String colName = "XYZ";
-		StringBuilder sb = new StringBuilder();
-		sb.append("select sum(");
-		databaseType.appendEscapedEntityName(sb, Foo.VAL_FIELD_NAME);
-		sb.append(") as ").append(colName);
-		sb.append(" from ").append(FOO_TABLE_NAME);
-		RawResults rawResults = fooDao.queryForAllRaw(sb.toString());
-		String[] cols = rawResults.getColumnNames();
-		assertEquals(1, cols.length);
-		assertTrue(colName.equalsIgnoreCase(cols[0]));
-		List<String[]> results = rawResults.getResults();
-		assertEquals(1, results.size());
-		String[] resultArray = results.get(0);
-		assertEquals(1, resultArray.length);
-		assertEquals(Integer.toString(valSum), resultArray[0]);
-	}
-
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testInteratorForAllRaw() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
