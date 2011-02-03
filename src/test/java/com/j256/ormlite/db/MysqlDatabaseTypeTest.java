@@ -3,7 +3,6 @@ package com.j256.ormlite.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +24,6 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	protected boolean isDriverClassExpected() {
-		return false;
-	}
-
-	@Override
-	protected boolean isConnectionExpected() throws IOException {
 		return false;
 	}
 
