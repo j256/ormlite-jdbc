@@ -139,7 +139,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		}
 		if (connection != null) {
 			connection.close();
-			logger.debug("closed connection {}", connection);
+			logger.debug("closed connection #{}", connection.hashCode());
 			connection = null;
 		}
 	}
