@@ -1934,7 +1934,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(2, results.size());
 		assertEquals(stuff1, results.get(0).stringField);
 		assertEquals(stuff2, results.get(1).stringField);
-		
+
 		ArrayList<ForeignWrapper> wrapperList = new ArrayList<ForeignWrapper>();
 		wrapperList.add(wrapper1);
 		wrapperList.add(wrapper2);
@@ -1942,7 +1942,130 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(2, results.size());
 		assertEquals(stuff1, results.get(0).stringField);
 		assertEquals(stuff2, results.get(1).stringField);
-}
+	}
+
+	@Test
+	public void testInSubQuery() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<Basic, String> basicDao = createDao(Basic.class, true);
+
+		Basic basic1 = new Basic();
+		String string1 = "ewpofjewgprgrg";
+		basic1.id = string1;
+		assertEquals(1, basicDao.create(basic1));
+		Basic basic2 = new Basic();
+		String string2 = "e2432423432wpofjewgprgrg";
+		basic2.id = string2;
+		assertEquals(1, basicDao.create(basic2));
+
+		Foo foo1 = new Foo();
+		foo1.stuff = basic1.id;
+		Foo foo2 = new Foo();
+		foo2.stuff = basic2.id;
+		Foo foo3 = new Foo();
+		String string3 = "neither of the others";
+		foo3.stuff = string3;
+
+		int num1 = 7;
+		for (int i = 0; i < num1; i++) {
+			assertEquals(1, fooDao.create(foo1));
+		}
+		int num2 = 17;
+		for (int i = 0; i < num2; i++) {
+			assertEquals(1, fooDao.create(foo2));
+		}
+		int num3 = 29;
+		long maxId = 0;
+		for (int i = 0; i < num3; i++) {
+			assertEquals(1, fooDao.create(foo3));
+			if (foo3.id > maxId) {
+				maxId = foo3.id;
+			}
+		}
+
+		QueryBuilder<Basic, String> bqb = basicDao.queryBuilder();
+		bqb.selectColumns(Basic.ID_FIELD);
+
+		// string1
+		bqb.where().eq(Basic.ID_FIELD, string1);
+		List<Foo> results = fooDao.query(fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(num1, results.size());
+
+		// string2
+		bqb.where().eq(Basic.ID_FIELD, string2);
+		results = fooDao.query(fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(num2, results.size());
+
+		// ! string2 with not().in(...)
+		bqb.where().eq(Basic.ID_FIELD, string2);
+		results = fooDao.query(fooDao.queryBuilder().where().not().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(num1 + num3, results.size());
+
+		// string3 which there should be none
+		bqb.where().eq(Basic.ID_FIELD, string3);
+		results = fooDao.query(fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(0, results.size());
+
+		// string1 OR string2
+		bqb.where().eq(Basic.ID_FIELD, string1).or().eq(Basic.ID_FIELD, string2);
+		results = fooDao.query(fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(num1 + num2, results.size());
+
+		// all strings IN
+		bqb.where().in(Basic.ID_FIELD, string1, string2, string3);
+		results = fooDao.query(fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(num1 + num2, results.size());
+
+		// string1 AND string2 which there should be none
+		bqb.where().eq(Basic.ID_FIELD, string1).and().eq(Basic.ID_FIELD, string2);
+		results = fooDao.query(fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).prepare());
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testInSubQuerySelectArgs() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		Dao<Basic, String> basicDao = createDao(Basic.class, true);
+
+		Basic basic1 = new Basic();
+		String string1 = "ewpofjewgprgrg";
+		basic1.id = string1;
+		assertEquals(1, basicDao.create(basic1));
+		Basic basic2 = new Basic();
+		String string2 = "e2432423432wpofjewgprgrg";
+		basic2.id = string2;
+		assertEquals(1, basicDao.create(basic2));
+
+		Foo foo1 = new Foo();
+		foo1.stuff = basic1.id;
+		Foo foo2 = new Foo();
+		foo2.stuff = basic2.id;
+
+		int num1 = 7;
+		for (int i = 0; i < num1; i++) {
+			assertEquals(1, fooDao.create(foo1));
+		}
+		int num2 = 17;
+		long maxId = 0;
+		for (int i = 0; i < num2; i++) {
+			assertEquals(1, fooDao.create(foo2));
+			if (foo2.id > maxId) {
+				maxId = foo2.id;
+			}
+		}
+		// using seletArgs
+		SelectArg arg1 = new SelectArg();
+		SelectArg arg2 = new SelectArg();
+		QueryBuilder<Basic, String> bqb = basicDao.queryBuilder();
+		bqb.where().eq(Basic.ID_FIELD, arg1);
+		PreparedQuery<Foo> preparedQuery =
+				fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).and().lt(Foo.ID_FIELD_NAME, arg2).prepare();
+		arg1.setValue(string1);
+		// this should get none
+		arg2.setValue(0);
+		List<Foo> results = fooDao.query(preparedQuery);
+		assertEquals(0, results.size());
+	}
 
 	@Test
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
@@ -2614,7 +2737,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	protected static class Basic {
-		@DatabaseField(id = true)
+		public final static String ID_FIELD = "id";
+		@DatabaseField(id = true, columnName = ID_FIELD)
 		String id;
 	}
 
