@@ -11,7 +11,7 @@ import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class StatementExecutorTest extends BaseJdbcTest {
+public class JdbcStatementExecutorTest extends BaseJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testUpdateIdNoId() throws Exception {

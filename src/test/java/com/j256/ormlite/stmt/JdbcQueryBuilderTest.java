@@ -21,7 +21,7 @@ import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
-public class JdbcStatementBuilderTest extends BaseJdbcTest {
+public class JdbcQueryBuilderTest extends BaseJdbcTest {
 
 	private final static String ID_PREFIX = "id";
 	private final static int LOW_VAL = 21114;
@@ -719,6 +719,19 @@ public class JdbcStatementBuilderTest extends BaseJdbcTest {
 						.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
+	}
+
+	@Test
+	public void testIdEq() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+
+		Foo foo = new Foo();
+		foo.id = "wow id wow";
+		assertEquals(1, fooDao.create(foo));
+
+		List<Foo> results = fooDao.query(fooDao.queryBuilder().where().idEq(fooDao, foo).prepare());
+		assertEquals(1, results.size());
+		assertEquals(foo.id, results.get(0).id);
 	}
 
 	/* ============================================================== */
