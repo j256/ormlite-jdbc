@@ -1885,6 +1885,66 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testForeignFieldIdQuery() throws Exception {
+		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
+		Dao<AllTypes, Integer> foreignDao = createDao(AllTypes.class, true);
+
+		AllTypes foreign = new AllTypes();
+		String stuff1 = "stuff1";
+		foreign.stringField = stuff1;
+		assertEquals(1, foreignDao.create(foreign));
+
+		ForeignWrapper wrapper = new ForeignWrapper();
+		wrapper.foreign = foreign;
+		// this sets the wrapper id
+		assertEquals(1, wrapperDao.create(wrapper));
+
+		QueryBuilder<AllTypes, Integer> qb = foreignDao.queryBuilder();
+
+		List<AllTypes> results = foreignDao.query(qb.where().foreignIdEq(wrapperDao, wrapper).prepare());
+		assertEquals(1, results.size());
+		assertEquals(stuff1, results.get(0).stringField);
+	}
+
+	@Test
+	public void testForeignFieldIdIn() throws Exception {
+		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
+		Dao<AllTypes, Integer> foreignDao = createDao(AllTypes.class, true);
+
+		AllTypes foreign1 = new AllTypes();
+		String stuff1 = "stuff1";
+		foreign1.stringField = stuff1;
+		assertEquals(1, foreignDao.create(foreign1));
+
+		AllTypes foreign2 = new AllTypes();
+		String stuff2 = "qwdwq3133";
+		foreign2.stringField = stuff2;
+		assertEquals(1, foreignDao.create(foreign2));
+
+		ForeignWrapper wrapper1 = new ForeignWrapper();
+		wrapper1.foreign = foreign1;
+		assertEquals(1, wrapperDao.create(wrapper1));
+		ForeignWrapper wrapper2 = new ForeignWrapper();
+		wrapper2.foreign = foreign2;
+		assertEquals(1, wrapperDao.create(wrapper2));
+
+		QueryBuilder<AllTypes, Integer> qb = foreignDao.queryBuilder();
+
+		List<AllTypes> results = foreignDao.query(qb.where().foreignIdIn(wrapperDao, wrapper1, wrapper2).prepare());
+		assertEquals(2, results.size());
+		assertEquals(stuff1, results.get(0).stringField);
+		assertEquals(stuff2, results.get(1).stringField);
+		
+		ArrayList<ForeignWrapper> wrapperList = new ArrayList<ForeignWrapper>();
+		wrapperList.add(wrapper1);
+		wrapperList.add(wrapper2);
+		results = foreignDao.query(qb.where().foreignIdIn(wrapperDao, wrapperList).prepare());
+		assertEquals(2, results.size());
+		assertEquals(stuff1, results.get(0).stringField);
+		assertEquals(stuff2, results.get(1).stringField);
+}
+
+	@Test
 	public void testPrepareStatementUpdateValueNumber() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo = new Foo();
