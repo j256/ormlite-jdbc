@@ -286,7 +286,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 		@Override
 		public String toString() {
-			return "@" + Integer.toHexString(hashCode());
+			return "#" + hashCode();
 		}
 	}
 }

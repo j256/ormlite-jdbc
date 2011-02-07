@@ -2057,6 +2057,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		SelectArg arg1 = new SelectArg();
 		SelectArg arg2 = new SelectArg();
 		QueryBuilder<Basic, String> bqb = basicDao.queryBuilder();
+		bqb.selectColumns(Basic.ID_FIELD);
 		bqb.where().eq(Basic.ID_FIELD, arg1);
 		PreparedQuery<Foo> preparedQuery =
 				fooDao.queryBuilder().where().in(Foo.STUFF_FIELD_NAME, bqb).and().lt(Foo.ID_FIELD_NAME, arg2).prepare();
