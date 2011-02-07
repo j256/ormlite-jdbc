@@ -172,6 +172,44 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testExists() throws Exception {
+		Dao<Foo, String> fooDao = createTestData();
+		QueryBuilder<Foo, String> innerQb = fooDao.queryBuilder();
+		innerQb.where().idEq(foo1.id);
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
+
+		qb.where().exists(innerQb);
+		List<Foo> results = fooDao.query(qb.prepare());
+		assertEquals(2, results.size());
+		assertEquals(foo1, results.get(0));
+		assertEquals(foo2, results.get(1));
+	}
+
+	@Test
+	public void testExistsNoEntries() throws Exception {
+		Dao<Foo, String> fooDao = createTestData();
+		QueryBuilder<Foo, String> innerQb = fooDao.queryBuilder();
+		innerQb.where().idEq("no id by this name");
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
+
+		qb.where().exists(innerQb);
+		List<Foo> results = fooDao.query(qb.prepare());
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testNotExists() throws Exception {
+		Dao<Foo, String> fooDao = createTestData();
+		QueryBuilder<Foo, String> innerQb = fooDao.queryBuilder();
+		innerQb.where().idEq(foo1.id);
+		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
+
+		qb.where().not().exists(innerQb);
+		List<Foo> results = fooDao.query(qb.prepare());
+		assertEquals(0, results.size());
+	}
+
+	@Test
 	public void testNotIn() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
