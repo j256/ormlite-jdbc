@@ -39,19 +39,26 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return metaData.getColumnName(column);
 	}
 
-	public int executeUpdate() throws SQLException {
+	public int runUpdate() throws SQLException {
+		// this can be a UPDATE, DELETE, or ... just not a SELECT
 		if (type == StatementType.SELECT) {
-			throw new IllegalArgumentException("Cannot call execute on a " + type + " statement");
+			throw new IllegalArgumentException("Cannot call update on a " + type + " statement");
 		}
 		return preparedStatement.executeUpdate();
 	}
 
-	public DatabaseResults executeQuery() throws SQLException {
-		// this can be a UPDATE, DELETE, or ... just not a SELECT
+	public DatabaseResults runQuery() throws SQLException {
 		if (type != StatementType.SELECT) {
-			throw new IllegalArgumentException("Cannot call executeQuery on a " + type + " statement");
+			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
 		}
 		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery());
+	}
+
+	public boolean runExecute() throws SQLException {
+		if (type != StatementType.SELECT) {
+			throw new IllegalArgumentException("Cannot call execute on a " + type + " statement");
+		}
+		return preparedStatement.execute();
 	}
 
 	public DatabaseResults getGeneratedKeys() throws SQLException {
