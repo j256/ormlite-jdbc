@@ -54,11 +54,12 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery());
 	}
 
-	public boolean runExecute() throws SQLException {
-		if (type != StatementType.SELECT) {
+	public int runExecute() throws SQLException {
+		if (type != StatementType.EXECUTE) {
 			throw new IllegalArgumentException("Cannot call execute on a " + type + " statement");
 		}
-		return preparedStatement.execute();
+		preparedStatement.execute();
+		return preparedStatement.getUpdateCount();
 	}
 
 	public DatabaseResults getGeneratedKeys() throws SQLException {
