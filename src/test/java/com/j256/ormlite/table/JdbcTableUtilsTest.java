@@ -59,7 +59,8 @@ public class JdbcTableUtilsTest extends BaseJdbcTest {
 		} else {
 			databaseType.appendEscapedEntityName(sb, "foo");
 		}
-		assertEquals(0, fooDao.executeRaw(sb.toString()));
+		// can't check the return value because of sql-server
+		fooDao.executeRaw(sb.toString());
 		fooDao.queryForAll();
 	}
 
