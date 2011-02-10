@@ -56,13 +56,13 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 	public void testExecuteUpdateWithSelectType() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
-		stmt.executeUpdate();
+		stmt.runUpdate();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testExecuteQueryWithNonSelectType() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.INSERT);
-		stmt.executeQuery();
+		stmt.runQuery();
 	}
 }

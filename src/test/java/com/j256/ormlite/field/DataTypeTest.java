@@ -47,7 +47,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		assertEquals(string, DataType.STRING.resultToJava(null, results, results.findColumn(STRING_COLUMN)));
 		assertFalse(DataType.STRING.isValidGeneratedType());
@@ -64,7 +64,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table",
@@ -87,7 +87,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		assertEquals(date, DataType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
 		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.javaToSqlArg(null, date));
@@ -110,7 +110,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table", LocalByte.class.getDeclaredField(BYTE_COLUMN), 0);
@@ -129,7 +129,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table", LocalShort.class.getDeclaredField(SHORT_COLUMN), 0);
@@ -148,7 +148,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table", LocalInt.class.getDeclaredField(INT_COLUMN), 0);
@@ -167,7 +167,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table", LocalLong.class.getDeclaredField(LONG_COLUMN), 0);
@@ -186,7 +186,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table", LocalFloat.class.getDeclaredField(FLOAT_COLUMN), 0);
@@ -205,7 +205,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, "table", LocalDouble.class.getDeclaredField(DOUBLE_COLUMN),
@@ -229,7 +229,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, DataType.ENUM_STRING.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
 		assertFalse(DataType.ENUM_STRING.isValidGeneratedType());
@@ -250,7 +250,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 		assertEquals(ourEnum, DataType.ENUM_INTEGER.resultToJava(fieldType, results, results.findColumn(ENUM_COLUMN)));
 		assertFalse(DataType.ENUM_INTEGER.isValidGeneratedType());
@@ -265,7 +265,7 @@ public class DataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt =
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
 
 		assertNull(DataType.UNKNOWN.resultToJava(null, results, 1));

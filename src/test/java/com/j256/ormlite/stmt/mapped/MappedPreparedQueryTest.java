@@ -40,7 +40,7 @@ public class MappedPreparedQueryTest extends BaseJdbcTest {
 				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
 						StatementType.SELECT, new FieldType[0], new FieldType[0]);
 
-		DatabaseResults results = stmt.executeQuery();
+		DatabaseResults results = stmt.runQuery();
 		while (results.next()) {
 			Foo foo2 = rowMapper.mapRow(results);
 			assertEquals(foo1.id, foo2.id);
@@ -79,7 +79,7 @@ public class MappedPreparedQueryTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = preparedQuery.compile(databaseConnection);
-			DatabaseResults results = stmt.executeQuery();
+			DatabaseResults results = stmt.runQuery();
 			int fooC = 0;
 			while (results.next()) {
 				Foo foo2 = preparedQuery.mapRow(results);
