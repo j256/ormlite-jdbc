@@ -138,7 +138,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		return new JdbcDatabaseConnection(dataSource.getConnection(username, password));
 	}
 
-	public boolean saveSpecialConnection(DatabaseConnection connection) {
+	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 		/*
 		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
 		 * or have it synchronized in over time.

@@ -283,7 +283,7 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testSaveOtherConnection() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {

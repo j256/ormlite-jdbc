@@ -166,7 +166,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public boolean saveSpecialConnection(DatabaseConnection connection) {
+	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 		checkInitializedIllegalStateException();
 		boolean saved = saveSpecial(connection);
 		if (logger.isLevelEnabled(Level.DEBUG)) {
