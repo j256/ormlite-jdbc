@@ -6,12 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import com.j256.ormlite.examples.common.Account;
-import com.j256.ormlite.examples.common.AccountDao;
-import com.j256.ormlite.examples.common.AccountDaoImpl;
-import com.j256.ormlite.examples.common.Order;
-import com.j256.ormlite.examples.common.OrderDao;
-import com.j256.ormlite.examples.common.OrderDaoImpl;
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
@@ -25,8 +21,8 @@ public class Main {
 	// we are using the in-memory H2 database
 	private final static String DATABASE_URL = "jdbc:h2:mem:account";
 
-	private AccountDao accountDao;
-	private OrderDao orderDao;
+	private Dao<Account,Integer> accountDao;
+	private Dao<Order,Integer> orderDao;
 
 	public static void main(String[] args) throws Exception {
 		// turn our static method into an instance of Main
@@ -55,11 +51,8 @@ public class Main {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		AccountDaoImpl accountJdbcDao = new AccountDaoImpl(connectionSource);
-		accountDao = accountJdbcDao;
-
-		OrderDaoImpl orderJdbcDao = new OrderDaoImpl(connectionSource);
-		orderDao = orderJdbcDao;
+		accountDao = BaseDaoImpl.createDao(connectionSource, Account.class);
+		orderDao = BaseDaoImpl.createDao(connectionSource, Order.class);
 
 		// if you need to create the table
 		TableUtils.createTable(connectionSource, Account.class);

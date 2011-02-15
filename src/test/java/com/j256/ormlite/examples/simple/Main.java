@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.j256.ormlite.examples.common.Account;
-import com.j256.ormlite.examples.common.AccountDao;
-import com.j256.ormlite.examples.common.AccountDaoImpl;
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -26,16 +25,16 @@ import com.j256.ormlite.table.TableUtils;
 /**
  * Main sample routine to show how to do basic operations with the package.
  */
-public class BasicMain {
+public class Main {
 
 	// we are using the in-memory H2 database
 	private final static String DATABASE_URL = "jdbc:h2:mem:account";
 
-	private AccountDao accountDao;
+	private Dao<Account, Integer> accountDao;
 
 	public static void main(String[] args) throws Exception {
 		// turn our static method into an instance of Main
-		new BasicMain().doMain(args);
+		new Main().doMain(args);
 	}
 
 	private void doMain(String[] args) throws Exception {
@@ -66,8 +65,7 @@ public class BasicMain {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		AccountDaoImpl accountJdbcDao = new AccountDaoImpl(connectionSource);
-		accountDao = accountJdbcDao;
+		accountDao = BaseDaoImpl.createDao(connectionSource, Account.class);
 
 		// if you need to create the table
 		TableUtils.createTable(connectionSource, Account.class);

@@ -1,4 +1,4 @@
-package com.j256.ormlite.examples.common;
+package com.j256.ormlite.examples.foreign;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

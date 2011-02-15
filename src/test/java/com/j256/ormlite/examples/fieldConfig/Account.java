@@ -1,25 +1,17 @@
-package com.j256.ormlite.examples.common;
+package com.j256.ormlite.examples.fieldConfig;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Example account object that is persisted to disk by the DAO and other example classes.
  */
-@DatabaseTable(tableName = "accounts")
 public class Account {
 
 	// for QueryBuilder to be able to find the fields
 	public static final String NAME_FIELD_NAME = "name";
 	public static final String PASSWORD_FIELD_NAME = "passwd";
 
-	@DatabaseField(generatedId = true)
 	private int id;
-
-	@DatabaseField(columnName = NAME_FIELD_NAME, canBeNull = false)
 	private String name;
-
-	@DatabaseField(columnName = PASSWORD_FIELD_NAME)
 	private String password;
 
 	Account() {

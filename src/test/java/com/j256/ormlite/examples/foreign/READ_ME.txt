@@ -15,4 +15,6 @@ Account so would have an foreign Account field:
 		...
 	}
  
-See the Main.java for an example of how to work with foreign objects.
+See the documentation for more information about foreign objects:
+
+	http://ormlite.com/docs/foreign

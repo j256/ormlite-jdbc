@@ -1,8 +1,7 @@
-package com.j256.ormlite.examples.common;
+package com.j256.ormlite.examples.fieldConfig;
 
 import java.util.Date;
 
-import com.j256.ormlite.examples.simple.FieldConfigMain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 

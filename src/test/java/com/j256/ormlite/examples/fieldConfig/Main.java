@@ -1,4 +1,4 @@
-package com.j256.ormlite.examples.simple;
+package com.j256.ormlite.examples.fieldConfig;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,12 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.j256.ormlite.examples.common.Account;
-import com.j256.ormlite.examples.common.AccountDao;
-import com.j256.ormlite.examples.common.AccountDaoImpl;
-import com.j256.ormlite.examples.common.Delivery;
-import com.j256.ormlite.examples.common.DeliveryDao;
-import com.j256.ormlite.examples.common.DeliveryDaoImpl;
+import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -22,17 +18,17 @@ import com.j256.ormlite.table.TableUtils;
 /**
  * Main sample routine to show how to do basic operations with the package.
  */
-public class FieldConfigMain {
+public class Main {
 
 	// we are using the in-memory H2 database
 	private final static String DATABASE_URL = "jdbc:h2:mem:account";
 
-	private AccountDao accountDao;
-	private DeliveryDao deliveryDao;
+	private Dao<Account, Integer> accountDao;
+	private Dao<Delivery, Integer> deliveryDao;
 
 	public static void main(String[] args) throws Exception {
 		// turn our static method into an instance of Main
-		new FieldConfigMain().doMain(args);
+		new Main().doMain(args);
 	}
 
 	private void doMain(String[] args) throws Exception {
@@ -57,19 +53,32 @@ public class FieldConfigMain {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
-		AccountDaoImpl accountJdbcDao = new AccountDaoImpl(connectionSource);
-		accountDao = accountJdbcDao;
+		DatabaseTableConfig<Account> accountTableConfig = buildAccountTableConfig();
+		accountDao = new BaseDaoImpl<Account, Integer>(connectionSource, accountTableConfig) {
+		};
 
-		DatabaseTableConfig<Delivery> tableConfig = buildTableConfig();
-		DeliveryDaoImpl deliveryJdbcDao = new DeliveryDaoImpl(connectionSource, tableConfig);
-		deliveryDao = deliveryJdbcDao;
+		DatabaseTableConfig<Delivery> deliveryTableConfig = buildDeliveryTableConfig(accountTableConfig);
+		deliveryDao = new BaseDaoImpl<Delivery, Integer>(connectionSource, deliveryTableConfig) {
+		};
 
 		// if you need to create the table
-		TableUtils.createTable(connectionSource, Account.class);
-		TableUtils.createTable(connectionSource, tableConfig);
+		TableUtils.createTable(connectionSource, accountTableConfig);
+		TableUtils.createTable(connectionSource, deliveryTableConfig);
 	}
 
-	private DatabaseTableConfig<Delivery> buildTableConfig() {
+	private DatabaseTableConfig<Account> buildAccountTableConfig() {
+		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
+		fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
+				false, null, false, null, false, null, false, null, null, false));
+		fieldConfigs.add(new DatabaseFieldConfig("name", Account.NAME_FIELD_NAME, DataType.UNKNOWN, null, 0, false,
+				false, false, null, false, null, false, null, false, null, false, null, null, false));
+		fieldConfigs.add(new DatabaseFieldConfig("password", Account.PASSWORD_FIELD_NAME, DataType.UNKNOWN, null, 0,
+				true, false, false, null, false, null, false, null, false, null, false, null, null, false));
+		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
+		return tableConfig;
+	}
+
+	private DatabaseTableConfig<Delivery> buildDeliveryTableConfig(DatabaseTableConfig<Account> accountTableConfig) {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
 				false, null, false, null, false, null, false, null, null, false));
@@ -78,7 +87,7 @@ public class FieldConfigMain {
 		fieldConfigs.add(new DatabaseFieldConfig("signedBy", null, DataType.UNKNOWN, null, 0, false, false, false,
 				null, false, null, false, null, false, null, false, null, null, false));
 		fieldConfigs.add(new DatabaseFieldConfig("account", null, DataType.UNKNOWN, null, 0, false, false, false, null,
-				true, null, false, null, false, null, false, null, null, false));
+				true, accountTableConfig, false, null, false, null, false, null, null, false));
 		DatabaseTableConfig<Delivery> tableConfig = new DatabaseTableConfig<Delivery>(Delivery.class, fieldConfigs);
 		return tableConfig;
 	}
