@@ -39,7 +39,6 @@ import com.j256.ormlite.table.TableUtils;
  * 
  * </blockquote>
  * 
- * 
  * @author graywatson
  */
 public class TableCreator {
@@ -68,7 +67,11 @@ public class TableCreator {
 			Class<?> clazz = dao.getDataClass();
 			try {
 				DatabaseTableConfig<?> tableConfig = dao.getTableConfig();
-				TableUtils.createTable(connectionSource, tableConfig);
+				if (tableConfig == null) {
+					TableUtils.createTable(connectionSource, dao.getDataClass());
+				} else {
+					TableUtils.createTable(connectionSource, tableConfig);
+				}
 				createdClasses.add(tableConfig);
 			} catch (Exception e) {
 				// we don't stop because the table might already exist
