@@ -14,7 +14,8 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 /**
- * Main sample routine to show how to do many-to-many type relationships.
+ * Main sample routine to show how to do many-to-many type relationships. It also demonstrates how we user inner queries
+ * as well foreign objects.
  */
 public class Main {
 
@@ -52,11 +53,16 @@ public class Main {
 	 */
 	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
 
+		/**
+		 * Creare our DAOs. One for each class and associated table.
+		 */
 		userDao = BaseDaoImpl.createDao(connectionSource, User.class);
 		postDao = BaseDaoImpl.createDao(connectionSource, Post.class);
 		userPostDao = BaseDaoImpl.createDao(connectionSource, UserPost.class);
 
-		// if you need to create the table
+		/**
+		 * Create the tables for our example. This would not be necessary if the tables already existed.
+		 */
 		TableUtils.createTable(connectionSource, User.class);
 		TableUtils.createTable(connectionSource, Post.class);
 		TableUtils.createTable(connectionSource, UserPost.class);
@@ -77,9 +83,11 @@ public class Main {
 
 		// have user1 post something
 		Post post1 = new Post("Wow is it cold outside!!");
+		// save the post to the post table
 		if (postDao.create(post1) != 1) {
 			throw new Exception("Could not create post in database");
 		}
+		// link the user and the post together in the join table
 		UserPost userPost1 = new UserPost(user1, post1);
 		if (userPostDao.create(userPost1) != 1) {
 			throw new Exception("Could not create userPost in database");
@@ -115,10 +123,10 @@ public class Main {
 		 * show me all of a user's posts:
 		 */
 		QueryBuilder<UserPost, Integer> userPostQb = userPostDao.queryBuilder();
-		userPostQb.selectColumns(UserPost.POST_FIELD_NAME);
+		userPostQb.selectColumns(UserPost.POST_ID_FIELD_NAME);
 		// you could also just pass in post1 here
 		SelectArg userSelectArg = new SelectArg();
-		userPostQb.where().eq(UserPost.USER_FIELD_NAME, userSelectArg);
+		userPostQb.where().eq(UserPost.USER_ID_FIELD_NAME, userSelectArg);
 
 		QueryBuilder<Post, Integer> postQb = postDao.queryBuilder();
 		postQb.where().in(Post.ID_FIELD_NAME, userPostQb);
@@ -131,7 +139,7 @@ public class Main {
 
 		// user2 should have only 1 post
 		userSelectArg.setValue(user2);
-//		posts = postDao.query(postQb.prepare());
+		// posts = postDao.query(postQb.prepare());
 		posts = postDao.query(postPrepared);
 		assertEquals(1, posts.size());
 
@@ -139,9 +147,9 @@ public class Main {
 		 * show me all of the users that have a post.
 		 */
 		userPostQb = userPostDao.queryBuilder();
-		userPostQb.selectColumns(UserPost.USER_FIELD_NAME);
+		userPostQb.selectColumns(UserPost.USER_ID_FIELD_NAME);
 		SelectArg postSelectArg = new SelectArg();
-		userPostQb.where().eq(UserPost.POST_FIELD_NAME, postSelectArg);
+		userPostQb.where().eq(UserPost.POST_ID_FIELD_NAME, postSelectArg);
 
 		QueryBuilder<User, Integer> userQb = userDao.queryBuilder();
 		userQb.where().in(Post.ID_FIELD_NAME, userPostQb);
