@@ -2840,9 +2840,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		boolean booleanField;
 		@DatabaseField(columnName = DATE_FIELD_NAME)
 		Date dateField;
-		@DatabaseField(columnName = DATE_LONG_FIELD_NAME, dataType = DataType.JAVA_DATE_LONG)
+		@DatabaseField(columnName = DATE_LONG_FIELD_NAME, dataType = DataType.DATE_LONG)
 		Date dateLongField;
-		@DatabaseField(columnName = DATE_STRING_FIELD_NAME, dataType = DataType.JAVA_DATE_STRING, format = DEFAULT_DATE_STRING_FORMAT)
+		@DatabaseField(columnName = DATE_STRING_FIELD_NAME, dataType = DataType.DATE_STRING, format = DEFAULT_DATE_STRING_FORMAT)
 		Date dateStringField;
 		@DatabaseField(columnName = BYTE_FIELD_NAME)
 		byte byteField;
@@ -2875,9 +2875,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String stringField;
 		@DatabaseField(defaultValue = DEFAULT_DATE_VALUE)
 		Date dateField;
-		@DatabaseField(dataType = DataType.JAVA_DATE_LONG, defaultValue = DEFAULT_DATE_LONG_VALUE)
+		@DatabaseField(dataType = DataType.DATE_LONG, defaultValue = DEFAULT_DATE_LONG_VALUE)
 		Date dateLongField;
-		@DatabaseField(dataType = DataType.JAVA_DATE_STRING, defaultValue = DEFAULT_DATE_STRING_VALUE, format = DEFAULT_DATE_STRING_FORMAT)
+		@DatabaseField(dataType = DataType.DATE_STRING, defaultValue = DEFAULT_DATE_STRING_VALUE, format = DEFAULT_DATE_STRING_FORMAT)
 		Date dateStringField;
 		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
 		boolean booleanField;
@@ -3261,7 +3261,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@DatabaseTable
 	protected static class DateLongId implements TestableType<Date> {
-		@DatabaseField(id = true, dataType = DataType.JAVA_DATE_LONG)
+		@DatabaseField(id = true, dataType = DataType.DATE_LONG)
 		Date id;
 		@DatabaseField
 		String stuff;
@@ -3281,7 +3281,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@DatabaseTable
 	protected static class DateStringId implements TestableType<Date> {
-		@DatabaseField(id = true, dataType = DataType.JAVA_DATE_STRING)
+		@DatabaseField(id = true, dataType = DataType.DATE_STRING)
 		Date id;
 		@DatabaseField
 		String stuff;

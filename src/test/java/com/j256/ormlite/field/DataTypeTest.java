@@ -89,14 +89,14 @@ public class DataTypeTest extends BaseJdbcTest {
 						StatementType.SELECT, noFieldTypes, noFieldTypes);
 		DatabaseResults results = stmt.runQuery();
 		assertTrue(results.next());
-		assertEquals(date, DataType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
-		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.javaToSqlArg(null, date));
-		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
+		assertEquals(date, DataType.DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
+		assertEquals(new Timestamp(date.getTime()), DataType.DATE.javaToSqlArg(null, date));
+		assertFalse(DataType.DATE.isValidGeneratedType());
 		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME, dateField, 0);
 		assertEquals(new Timestamp(date.getTime()),
-				DataType.JAVA_DATE.parseDefaultString(fieldType, dateFormat.format(date)));
+				DataType.DATE.parseDefaultString(fieldType, dateFormat.format(date)));
 	}
 
 	@Test
