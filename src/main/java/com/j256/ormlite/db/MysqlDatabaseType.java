@@ -59,11 +59,6 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	}
 
 	@Override
-	protected void appendObjectType(StringBuilder sb) {
-		sb.append("BLOB");
-	}
-
-	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		sb.append("AUTO_INCREMENT ");
