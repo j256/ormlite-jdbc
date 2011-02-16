@@ -79,7 +79,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testObject() throws Exception {
 		Db2DatabaseType dbType = new Db2DatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendObjectType(sb);
+		dbType.appendSerializableType(sb);
 		assertEquals("VARCHAR [] FOR BIT DATA", sb.toString());
 	}
 

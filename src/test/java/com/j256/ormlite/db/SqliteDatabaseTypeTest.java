@@ -85,7 +85,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
-		assertTrue(sb.toString().contains("VARBINARY"));
+		assertTrue(sb.toString().contains("BLOB"));
 	}
 
 	protected static class GeneratedIdLong {

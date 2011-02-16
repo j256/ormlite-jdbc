@@ -160,7 +160,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testObject() throws Exception {
 		OracleDatabaseType dbType = new OracleDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendObjectType(sb);
+		dbType.appendSerializableType(sb);
 		assertEquals("LONG RAW", sb.toString());
 	}
 

@@ -25,6 +25,9 @@ public class TypeValMapper {
 				case STRING :
 					typeToValMap.put(sqlType, new Integer[] { Types.VARCHAR });
 					break;
+				case LONG_STRING :
+					typeToValMap.put(sqlType, new Integer[] { Types.LONGVARCHAR });
+					break;
 				case DATE :
 					typeToValMap.put(sqlType, new Integer[] { Types.TIMESTAMP });
 					break;

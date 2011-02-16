@@ -59,6 +59,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
+	protected void appendLongStringType(StringBuilder sb) {
+		sb.append("LONG VARCHAR");
+	}
+
+	@Override
 	protected void appendBooleanType(StringBuilder sb) {
 		// I tried "char for bit data" and "char(1)" with no luck
 		sb.append("SMALLINT");
@@ -67,11 +72,6 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	@Override
 	protected void appendByteType(StringBuilder sb) {
 		sb.append("SMALLINT");
-	}
-
-	@Override
-	protected void appendObjectType(StringBuilder sb) {
-		sb.append("BLOB");
 	}
 
 	@Override

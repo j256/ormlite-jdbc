@@ -35,6 +35,11 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
+	protected void appendLongStringType(StringBuilder sb) {
+		sb.append("LONG");
+	}
+
+	@Override
 	protected void appendByteType(StringBuilder sb) {
 		sb.append("SMALLINT");
 	}
@@ -45,7 +50,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendObjectType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb) {
 		sb.append("LONG RAW");
 	}
 

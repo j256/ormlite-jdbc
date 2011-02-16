@@ -2161,13 +2161,33 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testLongStringAsId() throws Exception {
+		try {
+			createDao(LongStringId.class, true);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
+	}
+
+	@Test
 	public void testBooleanAsId() throws Exception {
-		checkTypeAsId(BooleanId.class, true, false);
+		try {
+			createDao(BooleanId.class, true);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
 	public void testBooleanObjAsId() throws Exception {
-		checkTypeAsId(BooleanObjId.class, true, false);
+		try {
+			createDao(BooleanObjId.class, true);
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -2502,6 +2522,23 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, results.size());
 		assertEquals(stuff2, results.get(0).stuff);
 		assertEquals(junk, results.get(0).junk);
+	}
+
+	@Test
+	public void testLongVarChar() throws Exception {
+		Dao<LongVarChar, Integer> dao = createDao(LongVarChar.class, true);
+		LongVarChar lvc = new LongVarChar();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 10240; i++) {
+			sb.append(".");
+		}
+		String stuff = sb.toString();
+		lvc.stuff = stuff;
+		assertEquals(1, dao.create(lvc));
+
+		LongVarChar lvc2 = dao.queryForId(lvc.id);
+		assertNotNull(lvc2);
+		assertEquals(stuff, lvc2.stuff);
 	}
 
 	/* ==================================================================================== */
@@ -3143,6 +3180,26 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@DatabaseTable
+	protected static class LongStringId implements TestableType<String> {
+		@DatabaseField(id = true, dataType = DataType.LONG_STRING)
+		String id;
+		@DatabaseField
+		String stuff;
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public String getStuff() {
+			return stuff;
+		}
+		public void setStuff(String stuff) {
+			this.stuff = stuff;
+		}
+	}
+
+	@DatabaseTable
 	protected static class BooleanId implements TestableType<Boolean> {
 		@DatabaseField(id = true)
 		boolean id;
@@ -3634,6 +3691,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(uniqueIndexName = "stuffjunk")
 		long junk;
 		public ComboUniqueIndex() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class LongVarChar {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(dataType = DataType.LONG_STRING)
+		String stuff;
+		public LongVarChar() {
 		}
 	}
 
