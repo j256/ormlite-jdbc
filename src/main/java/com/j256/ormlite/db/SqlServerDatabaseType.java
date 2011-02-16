@@ -69,7 +69,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	protected void appendObjectType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb) {
 		sb.append("IMAGE");
 	}
 
