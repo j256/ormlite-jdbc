@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-jdbc</artifactId>
-	<version>4.12-SNAPSHOT</version>
+	<version>4.12</version>
 	<packaging>jar</packaging>
 	<name>ORMLite JDBC</name>
 	<url>http://ormlite.sourceforge.net/</url>
@@ -22,9 +22,9 @@
 		<version>2</version>
 	</parent>
 	<scm>
-		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite-jdbc/trunk/</url>
-		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/trunk</connection>
-		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/trunk</developerConnection>
+		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite-jdbc/tags/ormlite-jdbc-4.12</url>
+		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-4.12</connection>
+		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/tags/ormlite-jdbc-4.12</developerConnection>
 	</scm>
 	<developers>
 		<developer>
