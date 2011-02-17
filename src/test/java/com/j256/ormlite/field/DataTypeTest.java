@@ -99,6 +99,33 @@ public class DataTypeTest extends BaseJdbcTest {
 				DataType.DATE.parseDefaultString(fieldType, dateFormat.format(date)));
 	}
 
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testJavaDate() throws Exception {
+		Dao<LocalDate, Object> fooDao = createDao(LocalDate.class, true);
+		Date date = new Date();
+		LocalDate foo = new LocalDate();
+		foo.date = date;
+		assertEquals(1, fooDao.create(foo));
+		Field[] fields = LocalDate.class.getDeclaredFields();
+		assertTrue(fields.length > 0);
+		Field dateField = fields[0];
+
+		CompiledStatement stmt =
+				connectionSource.getReadOnlyConnection().compileStatement("select * from " + TABLE_NAME,
+						StatementType.SELECT, noFieldTypes, noFieldTypes);
+		DatabaseResults results = stmt.runQuery();
+		assertTrue(results.next());
+		assertEquals(date, DataType.JAVA_DATE.resultToJava(null, results, results.findColumn(DATE_COLUMN)));
+		assertEquals(new Timestamp(date.getTime()), DataType.JAVA_DATE.javaToSqlArg(null, date));
+		assertFalse(DataType.JAVA_DATE.isValidGeneratedType());
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME, dateField, 0);
+		assertEquals(new Timestamp(date.getTime()),
+				DataType.JAVA_DATE.parseDefaultString(fieldType, dateFormat.format(date)));
+	}
+
 	@Test
 	public void testByte() throws Exception {
 		Dao<LocalByte, Object> fooDao = createDao(LocalByte.class, true);

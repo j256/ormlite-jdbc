@@ -30,11 +30,6 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	protected void appendLongStringType(StringBuilder sb) {
-		sb.append("LONG VARCHAR");
-	}
-
-	@Override
 	protected void appendBooleanType(StringBuilder sb) {
 		sb.append("SMALLINT");
 	}
