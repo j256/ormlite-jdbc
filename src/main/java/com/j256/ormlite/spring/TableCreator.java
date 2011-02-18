@@ -1,5 +1,6 @@
 package com.j256.ormlite.spring;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,16 +51,32 @@ public class TableCreator {
 	private List<BaseDaoImpl<?, ?>> configuredDaos;
 	private Set<DatabaseTableConfig<?>> createdClasses = new HashSet<DatabaseTableConfig<?>>();
 
+	public TableCreator() {
+		// for spring
+	}
+
+	public TableCreator(ConnectionSource connectionSource, List<BaseDaoImpl<?, ?>> configuredDaos) {
+		this.connectionSource = connectionSource;
+		this.configuredDaos = configuredDaos;
+	}
+
+	/**
+	 * Possibly create the tables is the {@link #AUTO_CREATE_TABLES} system property is set to "true".
+	 */
+	public void maybeCreateTables() throws SQLException {
+		initialize();
+	}
+
 	/**
 	 * If you are using the Spring type wiring, this should be called after all of the set methods.
 	 */
-	public void initialize() throws Exception {
+	public void initialize() throws SQLException {
 		if (!Boolean.parseBoolean(System.getProperty(AUTO_CREATE_TABLES))) {
 			return;
 		}
 
 		if (configuredDaos == null) {
-			throw new IllegalStateException("configuredDaos was not set in " + getClass().getSimpleName());
+			throw new SQLException("configuredDaos was not set in " + getClass().getSimpleName());
 		}
 
 		// find all of the daos and create the tables
@@ -81,7 +98,15 @@ public class TableCreator {
 		}
 	}
 
-	public void destroy() throws Exception {
+	/**
+	 * Possibly drop the tables that were previously created if the {@link #AUTO_DROP_TABLES} system property is set to
+	 * "true".
+	 */
+	public void maybeDropTables() throws SQLException {
+		destroy();
+	}
+
+	public void destroy() throws SQLException {
 		if (!Boolean.parseBoolean(System.getProperty(AUTO_DROP_TABLES))) {
 			return;
 		}
