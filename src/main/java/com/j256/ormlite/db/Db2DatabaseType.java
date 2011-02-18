@@ -18,6 +18,7 @@ import com.j256.ormlite.field.FieldType;
 public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "db2";
+	private final static String DATABASE_NAME = "DB2";
 	private final static String DRIVER_CLASS_NAME = "COM.ibm.db2.jdbc.app.DB2Driver";
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
@@ -27,6 +28,11 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	@Override

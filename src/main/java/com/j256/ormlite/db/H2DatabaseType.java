@@ -13,6 +13,7 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "h2";
 	private final static String DRIVER_CLASS_NAME = "org.h2.Driver";
+	private final static String DATABASE_NAME = "H2";
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -21,6 +22,11 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	@Override

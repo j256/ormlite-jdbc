@@ -20,6 +20,7 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 
 	private final static String DATABASE_URL_PORTION = "mysql";
 	private final static String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
+	private final static String DATABASE_NAME = "MySQL";
 
 	/**
 	 * Default suffix to the CREATE TABLE statement. Change with the {@link #setCreateTableSuffix} method.
@@ -35,6 +36,11 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	/**

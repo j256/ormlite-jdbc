@@ -14,6 +14,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 
 	private final static String DATABASE_URL_PORTION = "hsqldb";
 	private final static String DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";
+	private final static String DATABASE_NAME = "HSQLdb";
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -22,6 +23,11 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	@Override

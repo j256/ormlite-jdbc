@@ -9,6 +9,7 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 
 	private final static String DATABASE_URL_PORTION = "sqlite";
 	private final static String DRIVER_CLASS_NAME = "org.sqlite.JDBC";
+	private final static String DATABASE_NAME = "SQLite";
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -17,5 +18,10 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 }

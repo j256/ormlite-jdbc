@@ -19,6 +19,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 
 	private final static String DATABASE_URL_PORTION = "oracle";
 	private final static String DRIVER_CLASS_NAME = "oracle.jdbc.driver.OracleDriver";
+	private final static String DATABASE_NAME = "Oracle";
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -27,6 +28,11 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 
 	protected final static String DATABASE_URL_PORTION = "derby";
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
+	private final static String DATABASE_NAME = "Derby";
 
 	private final static FieldConverter objectConverter = new ObjectFieldConverter();
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
@@ -42,6 +43,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ package com.j256.ormlite.db;
 public class DerbyClientServerDatabaseType extends DerbyEmbeddedDatabaseType implements DatabaseType {
 
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.ClientDriver";
+	private final static String DATABASE_NAME = "Derby Client/Server";
 
 	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
@@ -23,5 +24,10 @@ public class DerbyClientServerDatabaseType extends DerbyEmbeddedDatabaseType imp
 	@Override
 	public String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 }

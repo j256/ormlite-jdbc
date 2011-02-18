@@ -13,6 +13,7 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 
 	private final static String DATABASE_URL_PORTION = "postgresql";
 	private final static String DRIVER_CLASS_NAME = "org.postgresql.Driver";
+	private final static String DATABASE_NAME = "Postgres";
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -21,6 +22,11 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 	@Override
 	protected String getDriverClassName() {
 		return DRIVER_CLASS_NAME;
+	}
+
+	@Override
+	public String getDatabaseName() {
+		return DATABASE_NAME;
 	}
 
 	@Override
