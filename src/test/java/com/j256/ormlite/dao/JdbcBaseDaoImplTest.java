@@ -36,11 +36,13 @@ import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.table.TableUtils;
 
 public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private final boolean CLOSE_IS_NOOP = false;
 	private final boolean UPDATE_ROWS_RETURNS_ONE = false;
+	private final boolean TABLE_EXISTS_WORKS = true;
 
 	/* ======================================================================================== */
 
@@ -2539,6 +2541,20 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		LongVarChar lvc2 = dao.queryForId(lvc.id);
 		assertNotNull(lvc2);
 		assertEquals(stuff, lvc2.stuff);
+	}
+
+	@Test
+	public void testTableExists() throws Exception {
+		if (!TABLE_EXISTS_WORKS) {
+			return;
+		}
+		Dao<Foo, Integer> dao = createDao(Foo.class, false);
+		assertFalse(dao.isTableExists());
+		TableUtils.createTable(connectionSource, Foo.class);
+		assertTrue(dao.isTableExists());
+
+		TableUtils.dropTable(connectionSource, Foo.class, false);
+		assertFalse(dao.isTableExists());
 	}
 
 	/* ==================================================================================== */

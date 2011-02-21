@@ -62,7 +62,7 @@ public class TableCreatorTest extends BaseJdbcTest {
 		tableCreator.initialize();
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testNoConfiguredDaos() throws Exception {
 		TableCreator tableCreator = new TableCreator();
 		tableCreator.setConnectionSource(connectionSource);

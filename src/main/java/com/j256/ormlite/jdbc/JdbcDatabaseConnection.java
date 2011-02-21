@@ -23,6 +23,8 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
  */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
+	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
+	
 	private static Object[] noArgs = new Object[0];
 	private static FieldType[] noArgTypes = new FieldType[0];
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
@@ -150,6 +152,30 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			throw new SQLException("More than 1 result returned in query-for-long: " + statement);
 		} else {
 			return (Long) result;
+		}
+	}
+
+	public boolean isTableExists(String tableName) throws SQLException {
+		DatabaseMetaData metaData = connection.getMetaData();
+		ResultSet results = null;
+		try {
+			results = metaData.getTables(null, null, "%", new String[] { "TABLE" });
+			// we do it this way because some result sets don't like us to findColumn if no results
+			if (!results.next()) {
+				return false;
+			}
+			int col = results.findColumn(JDBC_META_TABLE_NAME_COLUMN);
+			do {
+				String dbTableName =  results.getString(col);
+				if (tableName.equalsIgnoreCase(dbTableName)) {
+					return true;
+				}
+			} while (results.next());
+			return false;
+		} finally {
+			if (results != null) {
+				results.close();
+			}
 		}
 	}
 
