@@ -123,4 +123,9 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 		alterSb.append(");");
 		statementsAfter.add(alterSb.toString());
 	}
+
+	@Override
+	public String getPingStatement() {
+		return "SELECT 1 FROM DUAL";
+	}
 }

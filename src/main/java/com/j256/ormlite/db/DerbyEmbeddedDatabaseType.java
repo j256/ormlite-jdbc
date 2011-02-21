@@ -97,6 +97,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		return false;
 	}
 
+	@Override
+	public String getPingStatement() {
+		return "SELECT 1 FROM SYSIBM.SYSDUMMY1";
+	}
+
 	/**
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */

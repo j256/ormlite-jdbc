@@ -126,4 +126,9 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 		alterSb.append(");");
 		statementsAfter.add(alterSb.toString());
 	}
+
+	@Override
+	public String getPingStatement() {
+		return "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_TABLES";
+	}
 }

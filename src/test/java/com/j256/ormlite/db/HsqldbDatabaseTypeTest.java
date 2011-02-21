@@ -160,6 +160,11 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		assertTrue(sb.toString().contains("BIT"));
 	}
 
+	@Override
+	protected void testPingValue(long value) {
+		assertTrue(value >= 1);
+	}
+
 	private final static String LONG_SEQ_NAME = "longseq";
 
 	@Test

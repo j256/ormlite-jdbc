@@ -18,6 +18,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 /**
@@ -126,6 +127,24 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		List<String> queriesAfter = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore,
 				statementsAfter, queriesAfter);
+	}
+
+	/**
+	 * Return the ping value so we can test a connection.
+	 */
+	protected void testPingValue(long value) {
+		assertEquals(1, value);
+	}
+
+	@Test
+	public void testDatabasePing() throws Exception {
+		String ping = databaseType.getPingStatement();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		try {
+			testPingValue(conn.queryForLong(ping));
+		} finally {
+			conn.close();
+		}
 	}
 
 	protected static class Foo {
