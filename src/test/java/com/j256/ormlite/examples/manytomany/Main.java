@@ -122,13 +122,17 @@ public class Main {
 		/*
 		 * show me all of a user's posts:
 		 */
+		// build our inner query for UserPost objects
 		QueryBuilder<UserPost, Integer> userPostQb = userPostDao.queryBuilder();
+		// just select the post-id field
 		userPostQb.selectColumns(UserPost.POST_ID_FIELD_NAME);
-		// you could also just pass in post1 here
+		// you could also just pass in user1 here
 		SelectArg userSelectArg = new SelectArg();
 		userPostQb.where().eq(UserPost.USER_ID_FIELD_NAME, userSelectArg);
 
+		// build our outer query for Post objects
 		QueryBuilder<Post, Integer> postQb = postDao.queryBuilder();
+		// where the id matches in the post-id from the inner query
 		postQb.where().in(Post.ID_FIELD_NAME, userPostQb);
 		PreparedQuery<Post> postPrepared = postQb.prepare();
 
@@ -146,12 +150,16 @@ public class Main {
 		/*
 		 * show me all of the users that have a post.
 		 */
+		// build our next inner query
 		userPostQb = userPostDao.queryBuilder();
+		// this time selecting for the user-id field
 		userPostQb.selectColumns(UserPost.USER_ID_FIELD_NAME);
 		SelectArg postSelectArg = new SelectArg();
 		userPostQb.where().eq(UserPost.POST_ID_FIELD_NAME, postSelectArg);
 
+		// build our outer query
 		QueryBuilder<User, Integer> userQb = userDao.queryBuilder();
+		// where the user-id matches the inner query's user-id field
 		userQb.where().in(Post.ID_FIELD_NAME, userPostQb);
 		PreparedQuery<User> userPrepared = userQb.prepare();
 
