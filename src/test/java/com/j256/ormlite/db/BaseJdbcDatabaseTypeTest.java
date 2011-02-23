@@ -138,6 +138,9 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	@Test
 	public void testDatabasePing() throws Exception {
+		if (!isDriverClassExpected()) {
+			return;
+		}
 		String ping = databaseType.getPingStatement();
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
 		try {
