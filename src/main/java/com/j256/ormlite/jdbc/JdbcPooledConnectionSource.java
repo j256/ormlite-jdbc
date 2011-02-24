@@ -3,13 +3,15 @@ package com.j256.ormlite.jdbc;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -28,6 +30,14 @@ import com.j256.ormlite.support.DatabaseConnection;
  * set methods. In Spring XML, init-method="initialize" should be used.
  * </p>
  * 
+ * <p>
+ * <b> NOTE: </b> This class spawns a thread to test the pooled connections that are in the free-list as a keep-alive
+ * mechanism. It will test any dormant connections every so often to see if they are still valid. If this is not the
+ * behavior that you want then call {@link #setCheckConnectionsEveryMillis(long)} with 0 to disable the thread. You can
+ * also call {@link #setTestBeforeGet(boolean)} and set it to true to test the connection before it is handed back to
+ * you.
+ * </p>
+ * 
  * @author graywatson
  */
 public class JdbcPooledConnectionSource extends JdbcConnectionSource implements ConnectionSource {
@@ -36,6 +46,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private final static int DEFAULT_MAX_CONNECTIONS_FREE = 5;
 	// maximum age that a connection can be before being closed
 	private final static int DEFAULT_MAX_CONNECTION_AGE_MILLIS = 60 * 60 * 1000;
+	private final static int CHECK_CONNECTIONS_EVERY_MILLIS = 30 * 1000;
 
 	private int maxConnectionsFree = DEFAULT_MAX_CONNECTIONS_FREE;
 	private long maxConnectionAgeMillis = DEFAULT_MAX_CONNECTION_AGE_MILLIS;
@@ -43,30 +54,40 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private Map<DatabaseConnection, ConnectionMetaData> connectionMap =
 			new HashMap<DatabaseConnection, ConnectionMetaData>();
 	private final Object lock = new Object();
+	private ConnectionTester tester = null;
+	private String pingStatment;
 
 	private int openCount = 0;
 	private int closeCount = 0;
 	private int maxEverUsed = 0;
+	private long checkConnectionsEveryMillis = CHECK_CONNECTIONS_EVERY_MILLIS;
+	private boolean testBeforeGetFromPool = false;
 
 	public JdbcPooledConnectionSource() {
 		// for spring type wiring
 	}
 
 	public JdbcPooledConnectionSource(String url) throws SQLException {
-		super(url, null, null, null);
+		this(url, null, null, null);
 	}
 
 	public JdbcPooledConnectionSource(String url, DatabaseType databaseType) throws SQLException {
-		super(url, null, null, databaseType);
+		this(url, null, null, databaseType);
 	}
 
 	public JdbcPooledConnectionSource(String url, String username, String password) throws SQLException {
-		super(url, username, password, null);
+		this(url, username, password, null);
 	}
 
 	public JdbcPooledConnectionSource(String url, String username, String password, DatabaseType databaseType)
 			throws SQLException {
 		super(url, username, password, databaseType);
+	}
+
+	@Override
+	public void initialize() throws SQLException {
+		super.initialize();
+		pingStatment = databaseType.getPingStatement();
 	}
 
 	@Override
@@ -76,7 +97,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		synchronized (lock) {
 			// close the outstanding connections in the list
 			for (ConnectionMetaData connMetaData : connFreeList) {
-				closeConnection(connMetaData.connection);
+				closeConnectionQuietly(connMetaData);
 			}
 			connFreeList.clear();
 			connFreeList = null;
@@ -99,14 +120,14 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			return conn;
 		}
 		synchronized (lock) {
-			long now = System.currentTimeMillis();
 			while (connFreeList.size() > 0) {
 				// take the first one off of the list
-				ConnectionMetaData connMetaData = connFreeList.remove(0);
-				// is it already expired
-				if (connMetaData.isExpired(now)) {
+				ConnectionMetaData connMetaData = getFreeConnection();
+				if (connMetaData == null) {
+					// need to create a new one
+				} else if (testBeforeGetFromPool && !testConnection(connMetaData)) {
 					// close expired connection
-					closeConnection(connMetaData.connection);
+					closeConnectionQuietly(connMetaData);
 				} else {
 					logger.debug("reusing connection {}", connMetaData);
 					return connMetaData.connection;
@@ -123,6 +144,24 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			}
 			return connection;
 		}
+	}
+
+	private ConnectionMetaData getFreeConnection() {
+		synchronized (lock) {
+			long now = System.currentTimeMillis();
+			while (connFreeList.size() > 0) {
+				// take the first one off of the list
+				ConnectionMetaData connMetaData = connFreeList.remove(0);
+				// is it already expired
+				if (connMetaData.isExpired(now)) {
+					// close expired connection
+					closeConnectionQuietly(connMetaData);
+				} else {
+					return connMetaData;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -160,6 +199,12 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 					meta = connFreeList.remove(0);
 					logger.debug("cache too full, closing connection {}", meta);
 					closeConnection(meta.connection);
+				}
+				if (checkConnectionsEveryMillis > 0 && tester == null) {
+					tester = new ConnectionTester();
+					tester.setName(getClass().getSimpleName() + " connection tester");
+					tester.setDaemon(true);
+					tester.start();
 				}
 			}
 		}
@@ -240,6 +285,19 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		}
 	}
 
+	/**
+	 * There is an internal thread which checks each of the database connections as a keep-alive mechanism. This set the
+	 * number of milliseconds it sleeps between checks -- default is 30000. To disable the checking thread, set this to
+	 * 0 before you start using the connection source.
+	 */
+	public void setCheckConnectionsEveryMillis(long checkConnectionsEveryMillis) {
+		this.checkConnectionsEveryMillis = checkConnectionsEveryMillis;
+	}
+
+	public void setTestBeforeGet(boolean testBeforeGetFromPool) {
+		this.testBeforeGetFromPool = testBeforeGetFromPool;
+	}
+
 	private void checkInitializedSqlException() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
@@ -261,6 +319,30 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		connection.close();
 		logger.debug("closed connection {}", meta);
 		closeCount++;
+	}
+
+	/**
+	 * Must be called inside of synchronized(lock)
+	 */
+	private void closeConnectionQuietly(ConnectionMetaData connMetaData) {
+		try {
+			// close expired connection
+			closeConnection(connMetaData.connection);
+		} catch (SQLException e) {
+			// we ignore this
+		}
+	}
+
+	private boolean testConnection(ConnectionMetaData connMetaData) {
+		try {
+			// issue our ping statement
+			long result = connMetaData.connection.queryForLong(pingStatment);
+			logger.debug("tested connection {}, got {}", connMetaData, result);
+			return true;
+		} catch (Exception e) {
+			logger.debug(e, "testing connection {} threw exception: {}", connMetaData, e.getMessage());
+			return false;
+		}
 	}
 
 	/**
@@ -287,6 +369,85 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		@Override
 		public String toString() {
 			return "#" + hashCode();
+		}
+	}
+
+	/**
+	 * Tester thread that checks the connections that we have queued to make sure they are still good.
+	 */
+	private class ConnectionTester extends Thread {
+
+		private Set<ConnectionMetaData> testedSet = new HashSet<ConnectionMetaData>();
+
+		@Override
+		public void run() {
+			while (checkConnectionsEveryMillis > 0) {
+				try {
+					Thread.sleep(checkConnectionsEveryMillis);
+					if (!testConnections()) {
+						return;
+					}
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					// quit if we've been interrupted
+					return;
+				}
+			}
+		}
+
+		/**
+		 * Test the connections, returning true if we should continue.
+		 */
+		private boolean testConnections() {
+			// clear our tested set
+			testedSet.clear();
+			long now = System.currentTimeMillis();
+
+			ConnectionMetaData connMetaData = null;
+			while (true) {
+				synchronized (lock) {
+					if (connFreeList == null) {
+						if (connMetaData != null) {
+							closeConnectionQuietly(connMetaData);
+						}
+						// we're closed
+						return false;
+					}
+					if (connMetaData != null) {
+						// we do this so we don't have to double lock in the loop
+						connFreeList.add(connMetaData);
+					}
+					if (connFreeList.size() == 0) {
+						// nothing to do
+						continue;
+					}
+
+					connMetaData = connFreeList.get(0);
+					if (testedSet.contains(connMetaData)) {
+						// we are done if we've tested it before on this pass
+						return true;
+					}
+					// otherwise, take the first one off the list
+					connMetaData = connFreeList.remove(0);
+
+					if (connMetaData.isExpired(now)) {
+						// close expired connection
+						closeConnectionQuietly(connMetaData);
+						// don't return the connection to the free list
+						connMetaData = null;
+						continue;
+					}
+				}
+
+				if (testConnection(connMetaData)) {
+					testedSet.add(connMetaData);
+				} else {
+					synchronized (lock) {
+						closeConnectionQuietly(connMetaData);
+						connMetaData = null;
+					}
+				}
+			}
 		}
 	}
 }

@@ -313,4 +313,97 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
+	@Test(expected = SQLException.class)
+	public void testTestConnectionThatWasClosed() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		String pingStatement = pooled.getDatabaseType().getPingStatement();
+		try {
+			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			conn1.queryForLong(pingStatement);
+			pooled.releaseConnection(conn1);
+			// close it behind the pool's back, bad dog
+			conn1.close();
+			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			assertSame(conn1, conn2);
+			conn2.queryForLong(pingStatement);
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testAuthTestConnection() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		long delay = 100;
+		pooled.setCheckConnectionsEveryMillis(delay);
+		String pingStatement = pooled.getDatabaseType().getPingStatement();
+		try {
+			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			conn1.queryForLong(pingStatement);
+			pooled.releaseConnection(conn1);
+			// make it test ok once
+			Thread.sleep(delay * 2);
+			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			assertSame(conn1, conn2);
+			conn2.queryForLong(pingStatement);
+			pooled.releaseConnection(conn2);
+			// close it behind the pool's back, bad dog
+			conn2.close();
+			// now it should find out that the connection is bad and pull it
+			Thread.sleep(delay * 2);
+			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			assertNotSame(conn2, conn3);
+			// this should work
+			conn3.queryForLong(pingStatement);
+			pooled.releaseConnection(conn3);
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testAuthTestConnectionExpired() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		long delay = 100;
+		pooled.setCheckConnectionsEveryMillis(delay);
+		pooled.setMaxConnectionAgeMillis(delay);
+		String pingStatement = pooled.getDatabaseType().getPingStatement();
+		try {
+			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			conn1.queryForLong(pingStatement);
+			pooled.releaseConnection(conn1);
+			// make it test ok once
+			Thread.sleep(delay * 2);
+			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			assertNotSame(conn1, conn2);
+			conn2.queryForLong(pingStatement);
+			pooled.releaseConnection(conn2);
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testTestClosedConnectionWithTesting() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		String pingStatement = pooled.getDatabaseType().getPingStatement();
+		pooled.setTestBeforeGet(true);
+		try {
+			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			conn1.queryForLong(pingStatement);
+			pooled.releaseConnection(conn1);
+			// close it behind the pool's back, bad dog
+			conn1.close();
+			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			assertNotSame(conn1, conn2);
+			conn2.queryForLong(pingStatement);
+			pooled.releaseConnection(conn2);
+			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			assertSame(conn2, conn3);
+			conn3.queryForLong(pingStatement);
+			pooled.releaseConnection(conn3);
+		} finally {
+			pooled.close();
+		}
+	}
 }
