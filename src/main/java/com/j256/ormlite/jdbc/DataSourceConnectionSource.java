@@ -150,6 +150,10 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		clearSpecial(connection, logger);
 	}
 
+	/**
+	 * This typically closes the connection source but because there is not a close() method on the {@link DataSource}
+	 * (grrrr), this close method does _nothing_. You must close the underlying data-source yourself.
+	 */
 	public void close() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
