@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 
 import org.junit.Test;
 
@@ -61,37 +60,6 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertNull(results.getBlobStream(0));
 		verify(preparedStatement, resultSet);
-	}
-
-	@Test
-	public void testGetIdColumnData() throws SQLException {
-		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		ResultSet resultSet = createMock(ResultSet.class);
-		ResultSetMetaData metaData = createMock(ResultSetMetaData.class);
-		expect(resultSet.getMetaData()).andReturn(metaData);
-		int colType = Types.BIGINT;
-		int colN = 0;
-		expect(metaData.getColumnType(colN)).andReturn(colType);
-		long val = 123213213L;
-		expect(resultSet.getLong(colN)).andReturn(val);
-		replay(preparedStatement, resultSet, metaData);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
-		assertEquals(val, results.getIdColumnData(colN));
-		verify(preparedStatement, resultSet, metaData);
-	}
-
-	@Test(expected = SQLException.class)
-	public void testGetUnknownIdType() throws SQLException {
-		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		ResultSet resultSet = createMock(ResultSet.class);
-		ResultSetMetaData metaData = createMock(ResultSetMetaData.class);
-		expect(resultSet.getMetaData()).andReturn(metaData);
-		int colType = Types.VARCHAR;
-		int colN = 0;
-		expect(metaData.getColumnType(colN)).andReturn(colType);
-		replay(preparedStatement, resultSet, metaData);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
-		results.getIdColumnData(colN);
 	}
 
 	@Test

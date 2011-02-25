@@ -636,6 +636,32 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testOffsetWorks() throws Exception {
+		if (!databaseType.isLimitSqlSupported()) {
+			return;
+		}
+
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.id = "stuff2";
+		assertEquals(1, dao.create(foo2));
+
+		assertEquals(2, dao.queryForAll().size());
+
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		int offset = 1;
+		int limit = 2;
+		qb.offset(offset);
+		qb.limit(limit);
+		List<Foo> results = dao.query(qb.prepare());
+
+		assertEquals(1, results.size());
+	}
+
+	@Test
 	public void testLimitAfterSelect() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
