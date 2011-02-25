@@ -128,4 +128,10 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	public String getPingStatement() {
 		return "SELECT 1 FROM DUAL";
 	}
+
+	@Override
+	public boolean isLimitSqlSupported() {
+		// there is no easy way to do this in this database type
+		return false;
+	}
 }

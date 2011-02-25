@@ -95,9 +95,25 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public void appendLimitValue(StringBuilder sb, int limit) {
+	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
 		// the 0 is the offset, could also use TOP X
-		sb.append("LIMIT 0 ").append(limit).append(' ');
+		sb.append("LIMIT ");
+		if (offset == null) {
+			sb.append("0 ");
+		} else {
+			sb.append(offset).append(' ');
+		}
+		sb.append(limit).append(' ');
+	}
+
+	@Override
+	public boolean isOffsetLimitArgument() {
+		return true;
+	}
+
+	@Override
+	public void appendOffsetValue(StringBuilder sb, int offset) {
+		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
 	}
 
 	@Override

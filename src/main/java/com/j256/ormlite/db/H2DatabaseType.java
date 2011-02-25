@@ -40,4 +40,23 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 		sb.append("AUTO_INCREMENT ");
 		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 	}
+
+	@Override
+	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
+		sb.append("LIMIT ");
+		if (offset != null) {
+			sb.append(offset).append(',');
+		}
+		sb.append(limit).append(' ');
+	}
+
+	@Override
+	public boolean isOffsetLimitArgument() {
+		return true;
+	}
+
+	@Override
+	public void appendOffsetValue(StringBuilder sb, int offset) {
+		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
+	}
 }

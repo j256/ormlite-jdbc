@@ -70,6 +70,12 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
+	public void appendOffsetValue(StringBuilder sb, int offset) {
+		// I love the required ROWS prefix.  Hilarious.
+		sb.append("OFFSET ").append(offset).append(" ROWS ");
+	}
+
+	@Override
 	protected void appendBooleanType(StringBuilder sb) {
 		// I tried "char for bit data" and "char(1)" with no luck
 		sb.append("SMALLINT");

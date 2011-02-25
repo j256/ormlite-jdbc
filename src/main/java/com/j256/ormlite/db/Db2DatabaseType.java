@@ -72,4 +72,10 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 		alterSb.append(");");
 		statementsAfter.add(alterSb.toString());
 	}
+	
+	@Override
+	public boolean isLimitSqlSupported() {
+		// there is no easy way to do this in this database type
+		return false;
+	}
 }
