@@ -1,6 +1,5 @@
 package com.j256.ormlite.examples.fieldConfig;
 
-
 /**
  * Example account object that is persisted to disk by the DAO and other example classes.
  */

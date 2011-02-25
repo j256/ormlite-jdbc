@@ -21,8 +21,8 @@ public class Main {
 	// we are using the in-memory H2 database
 	private final static String DATABASE_URL = "jdbc:h2:mem:account";
 
-	private Dao<Account,Integer> accountDao;
-	private Dao<Order,Integer> orderDao;
+	private Dao<Account, Integer> accountDao;
+	private Dao<Order, Integer> orderDao;
 
 	public static void main(String[] args) throws Exception {
 		// turn our static method into an instance of Main
