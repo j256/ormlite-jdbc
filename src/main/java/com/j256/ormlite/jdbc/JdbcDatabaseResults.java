@@ -8,7 +8,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.support.GeneratedKeyHolder;
@@ -44,30 +43,14 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	}
 
 	/**
-	 * Return the id associated with the column. This is called from
+	 * Return the JDBC column type for the index. This is called from
 	 * {@link JdbcDatabaseConnection#insert(String, Object[], SqlType[], GeneratedKeyHolder)}
 	 */
-	Number getIdColumnData(int columnIndex) throws SQLException {
+	int getColumnType(int columnIndex) throws SQLException {
 		if (metaData == null) {
 			metaData = resultSet.getMetaData();
 		}
-		int typeVal = metaData.getColumnType(columnIndex);
-		DataType dataType = TypeValMapper.getDataTypeForIdTypeVal(typeVal);
-		if (dataType == null) {
-			throw new SQLException("Unknown DataType for typeVal " + typeVal + " in column " + columnIndex);
-		}
-		Number id = dataType.resultToId(this, columnIndex);
-		if (id == null) {
-			// may never happen but let's be careful
-			String colName = "unknown";
-			try {
-				colName = getColumnName(columnIndex);
-			} catch (SQLException e) {
-				// ignore it
-			}
-			throw new SQLException("Id column " + colName + " (#" + columnIndex + ") is invalid type " + dataType);
-		}
-		return id;
+		return metaData.getColumnType(columnIndex);
 	}
 
 	public int findColumn(String columnName) throws SQLException {

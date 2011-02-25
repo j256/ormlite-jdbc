@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -24,7 +25,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
-	
+
 	private static Object[] noArgs = new Object[0];
 	private static FieldType[] noArgTypes = new FieldType[0];
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
@@ -108,7 +109,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		while (results.next()) {
 			for (int colC = 1; colC <= colN; colC++) {
 				// get the id column data so we can pass it back to the caller thru the keyHolder
-				Number id = results.getIdColumnData(colC);
+				Number id = getIdColumnData(results, colC);
 				keyHolder.addKey(id);
 			}
 		}
@@ -166,7 +167,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			}
 			int col = results.findColumn(JDBC_META_TABLE_NAME_COLUMN);
 			do {
-				String dbTableName =  results.getString(col);
+				String dbTableName = results.getString(col);
 				if (tableName.equalsIgnoreCase(dbTableName)) {
 					return true;
 				}
@@ -177,6 +178,29 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 				results.close();
 			}
 		}
+	}
+
+	/**
+	 * Return the id associated with the column.
+	 */
+	private Number getIdColumnData(JdbcDatabaseResults results, int columnIndex) throws SQLException {
+		int typeVal = results.getColumnType(columnIndex);
+		DataType dataType = TypeValMapper.getDataTypeForIdTypeVal(typeVal);
+		if (dataType == null) {
+			throw new SQLException("Unknown DataType for typeVal " + typeVal + " in column " + columnIndex);
+		}
+		Number id = dataType.resultToId(results, columnIndex);
+		if (id == null) {
+			// may never happen but let's be careful
+			String colName = "unknown";
+			try {
+				colName = results.getColumnName(columnIndex);
+			} catch (SQLException e) {
+				// ignore it
+			}
+			throw new SQLException("Id column " + colName + " (#" + columnIndex + ") is invalid type " + dataType);
+		}
+		return id;
 	}
 
 	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes) throws SQLException {
