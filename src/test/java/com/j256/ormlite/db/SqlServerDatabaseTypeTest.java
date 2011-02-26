@@ -1,6 +1,7 @@
 package com.j256.ormlite.db;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -58,6 +59,12 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
 		assertTrue(query + " should start with stuff", query.startsWith("SELECT TOP " + limit + " "));
+	}
+
+	@Override
+	@Test
+	public void testOffsetSupport() throws Exception {
+		assertFalse(databaseType.isOffsetSqlSupported());
 	}
 
 	@Test

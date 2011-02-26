@@ -130,7 +130,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public boolean isLimitSqlSupported() {
+	public boolean isOffsetSqlSupported() {
 		// there is no easy way to do this in this database type
 		return false;
 	}

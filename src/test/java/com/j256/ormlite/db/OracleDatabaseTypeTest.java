@@ -6,6 +6,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -171,5 +172,11 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		String sequenceName = "stuff_seq";
 		dbType.appendSelectNextValFromSequence(sb, sequenceName);
 		assertEquals("SELECT \"" + sequenceName + "\".nextval FROM dual", sb.toString());
+	}
+
+	@Override
+	@Test
+	public void testOffsetSupport() throws Exception {
+		assertFalse(databaseType.isOffsetSqlSupported());
 	}
 }

@@ -106,6 +106,11 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + limit + " "));
 	}
 
+	@Test
+	public void testOffsetSupport() throws Exception {
+		assertTrue(databaseType.isOffsetSqlSupported());
+	}
+
 	@Test(expected = SQLException.class)
 	public void testLoadDriver() throws Exception {
 		if (isDriverClassExpected()) {
