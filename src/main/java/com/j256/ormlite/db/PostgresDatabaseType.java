@@ -35,7 +35,7 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb) {
 		sb.append("BYTEA");
 	}
 

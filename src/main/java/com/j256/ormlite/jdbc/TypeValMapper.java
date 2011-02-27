@@ -16,7 +16,6 @@ import com.j256.ormlite.field.SqlType;
 public class TypeValMapper {
 
 	private static final Map<SqlType, Integer[]> typeToValMap = new HashMap<SqlType, Integer[]>();
-	private static final Map<Integer, SqlType> valToTypeMap = new HashMap<Integer, SqlType>();
 	private static final Map<Integer, DataType> idValToDataTypeMap = new HashMap<Integer, DataType>();
 
 	static {
@@ -36,6 +35,9 @@ public class TypeValMapper {
 					break;
 				case BYTE :
 					typeToValMap.put(sqlType, new Integer[] { Types.TINYINT });
+					break;
+				case BYTE_ARRAY :
+					typeToValMap.put(sqlType, new Integer[] { Types.VARBINARY });
 					break;
 				case SHORT :
 					typeToValMap.put(sqlType, new Integer[] { Types.SMALLINT });
@@ -67,20 +69,15 @@ public class TypeValMapper {
 			}
 		}
 
-		for (Map.Entry<SqlType, Integer[]> entry : typeToValMap.entrySet()) {
-			SqlType sqlType = entry.getKey();
-			DataType dataType = DataType.dataTypeFromSqlType(sqlType);
-			for (int typeVal : entry.getValue()) {
-				if (valToTypeMap.containsKey(typeVal)) {
-					throw new IllegalArgumentException("Duplicate JDBC type value mapping for type " + typeVal
-							+ " and SqlType " + sqlType);
-				}
-				valToTypeMap.put(typeVal, sqlType);
-				if (dataType != null && dataType.isValidGeneratedType()) {
+		for (DataType dataType : DataType.values()) {
+			Integer[] types = typeToValMap.get(dataType.getSqlType());
+			if (dataType.isConvertableId()) {
+				for (int typeVal : types) {
 					idValToDataTypeMap.put(typeVal, dataType);
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -92,13 +89,6 @@ public class TypeValMapper {
 			throw new SQLException("SqlType does not have any JDBC type value mapping: " + sqlType);
 		}
 		return typeVals[0];
-	}
-
-	/**
-	 * Return the SqlType associated with the JDBC type value or null if none.
-	 */
-	public static SqlType getSqlTypeForTypeVal(int typeVal) {
-		return valToTypeMap.get(typeVal);
 	}
 
 	/**

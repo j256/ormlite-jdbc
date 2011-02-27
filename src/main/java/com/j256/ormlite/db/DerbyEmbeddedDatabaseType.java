@@ -113,7 +113,6 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	 */
 	private static class ObjectFieldConverter implements FieldConverter {
 		public SqlType getSqlType() {
-			// store it as a short
 			return SqlType.BLOB;
 		}
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {

@@ -153,7 +153,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testAppendObjectType() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		type.appendSerializableType(sb);
+		type.appendByteArrayType(sb);
 		assertEquals("BLOB", sb.toString());
 	}
 

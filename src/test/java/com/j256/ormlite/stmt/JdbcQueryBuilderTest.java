@@ -636,32 +636,6 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testOffsetWorks() throws Exception {
-		if (!databaseType.isLimitSqlSupported()) {
-			return;
-		}
-
-		Dao<Foo, Object> dao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		foo1.id = "stuff1";
-		assertEquals(1, dao.create(foo1));
-		Foo foo2 = new Foo();
-		foo2.id = "stuff2";
-		assertEquals(1, dao.create(foo2));
-
-		assertEquals(2, dao.queryForAll().size());
-
-		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
-		int offset = 1;
-		int limit = 2;
-		qb.offset(offset);
-		qb.limit(limit);
-		List<Foo> results = dao.query(qb.prepare());
-
-		assertEquals(1, results.size());
-	}
-
-	@Test
 	public void testLimitAfterSelect() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
@@ -680,6 +654,44 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		assertEquals(2, results.size());
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
+	}
+
+	@Test
+	public void testOffsetWithLimit() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.id = "stuff2";
+		assertEquals(1, dao.create(foo2));
+		assertEquals(2, dao.queryForAll().size());
+
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		int offset = 1;
+		int limit = 2;
+		qb.offset(offset);
+		qb.limit(limit);
+		List<Foo> results = dao.query(qb.prepare());
+
+		assertEquals(1, results.size());
+	}
+
+	@Test(expected = SQLException.class)
+	public void testOffsetNoLimit() throws Exception {
+		Dao<Foo, Object> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		foo1.id = "stuff1";
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		foo2.id = "stuff2";
+		assertEquals(1, dao.create(foo2));
+		assertEquals(2, dao.queryForAll().size());
+
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		int offset = 1;
+		qb.offset(offset);
+		dao.query(qb.prepare());
 	}
 
 	@Test
@@ -880,13 +892,16 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		public static final String NULL_COLUMN_NAME = "null";
 
 		@DatabaseField(id = true, columnName = ID_COLUMN_NAME)
-		String id;
+		public String id;
 		@DatabaseField(columnName = VAL_COLUMN_NAME)
-		int val;
+		public int val;
 		@DatabaseField(columnName = EQUAL_COLUMN_NAME)
-		int equal;
+		public int equal;
 		@DatabaseField(columnName = NULL_COLUMN_NAME)
-		String nullField;
+		public String nullField;
+		public Foo() {
+			// for ormlite
+		}
 		@Override
 		public String toString() {
 			return "Foo:" + id;

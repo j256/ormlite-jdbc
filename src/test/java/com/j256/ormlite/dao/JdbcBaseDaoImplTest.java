@@ -2357,15 +2357,27 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testRawBytes() throws Exception {
-		Dao<RawBytes, Integer> dao = createDao(RawBytes.class, true);
-		RawBytes raw1 = new RawBytes();
-		raw1.bytes = new byte[] { 1, 25, 3, 124, 10 };
-		assertEquals(1, dao.create(raw1));
-		RawBytes raw2 = dao.queryForId(raw1.id);
+	public void testSerializedBytes() throws Exception {
+		Dao<SerializedBytes, Integer> dao = createDao(SerializedBytes.class, true);
+		SerializedBytes serial = new SerializedBytes();
+		serial.bytes = new byte[] { 1, 25, 3, 124, 10 };
+		assertEquals(1, dao.create(serial));
+		SerializedBytes raw2 = dao.queryForId(serial.id);
 		assertNotNull(raw2);
-		assertEquals(raw1.id, raw2.id);
-		assertTrue(Arrays.equals(raw1.bytes, raw2.bytes));
+		assertEquals(serial.id, raw2.id);
+		assertTrue(Arrays.equals(serial.bytes, raw2.bytes));
+	}
+
+	@Test
+	public void testByteArray() throws Exception {
+		Dao<ByteArray, Integer> dao = createDao(ByteArray.class, true);
+		ByteArray foo = new ByteArray();
+		foo.bytes = new byte[] { 17, 25, 3, 124, 0, 127, 10 };
+		assertEquals(1, dao.create(foo));
+		ByteArray raw2 = dao.queryForId(foo.id);
+		assertNotNull(raw2);
+		assertEquals(foo.id, raw2.id);
+		assertTrue(Arrays.equals(foo.bytes, raw2.bytes));
 	}
 
 	@Test
@@ -3646,12 +3658,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@DatabaseTable
-	protected static class RawBytes {
+	protected static class SerializedBytes {
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		byte[] bytes;
-		public RawBytes() {
+		public SerializedBytes() {
+		}
+	}
+
+	@DatabaseTable
+	protected static class ByteArray {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(dataType = DataType.BYTE_ARRAY)
+		byte[] bytes;
+		public ByteArray() {
 		}
 	}
 
