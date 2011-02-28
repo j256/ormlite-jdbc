@@ -46,6 +46,11 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
+	protected void appendSerializableType(StringBuilder sb) {
+		sb.append("BINARY");
+	}
+
+	@Override
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		// needs to match dropColumnArg()

@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
@@ -98,7 +99,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	protected static class SerialField {
-		@DatabaseField
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		SerializedThing other;
 		public SerialField() {
 		}

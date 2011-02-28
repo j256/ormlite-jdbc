@@ -2884,7 +2884,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		float floatField;
 		@DatabaseField(columnName = DOUBLE_FIELD_NAME)
 		double doubleField;
-		@DatabaseField(columnName = SERIAL_FIELD_NAME)
+		@DatabaseField(columnName = SERIAL_FIELD_NAME, dataType= DataType.SERIALIZABLE)
 		SerialData serialField;
 		@DatabaseField(columnName = ENUM_FIELD_NAME)
 		OurEnum enumField;
@@ -2935,7 +2935,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		double doubleField;
 		@DatabaseField(defaultValue = DEFAULT_DOUBLE_VALUE)
 		Double doubleObj;
-		@DatabaseField
+		@DatabaseField(dataType= DataType.SERIALIZABLE)
 		SerialData objectField;
 		@DatabaseField(defaultValue = DEFAULT_ENUM_VALUE)
 		OurEnum ourEnum;
@@ -2975,7 +2975,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Float floatField;
 		@DatabaseField
 		Double doubleField;
-		@DatabaseField
+		@DatabaseField(dataType= DataType.SERIALIZABLE)
 		SerialData objectField;
 		@DatabaseField
 		OurEnum ourEnum;
@@ -3048,7 +3048,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class ObjectHolder {
 		@DatabaseField(generatedId = true)
 		public int id;
-		@DatabaseField
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public SerialData obj;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public String strObj;
@@ -3629,7 +3629,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@DatabaseTable
 	protected static class SerializableId implements TestableType<SerialData> {
-		@DatabaseField(id = true)
+		@DatabaseField(id = true, dataType = DataType.SERIALIZABLE)
 		SerialData serial;
 		@DatabaseField
 		String stuff;

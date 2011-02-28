@@ -40,6 +40,11 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 	}
 
 	@Override
+	protected void appendSerializableType(StringBuilder sb) {
+		sb.append("BYTEA");
+	}
+
+	@Override
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		String sequenceName = fieldType.getGeneratedIdSequence();

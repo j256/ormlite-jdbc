@@ -51,6 +51,11 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
+	protected void appendSerializableType(StringBuilder sb) {
+		sb.append("VARCHAR [] FOR BIT DATA");
+	}
+
+	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		sb.append("GENERATED ALWAYS AS IDENTITY ");

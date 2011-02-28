@@ -80,6 +80,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
+	protected void appendSerializableType(StringBuilder sb) {
+		sb.append("IMAGE");
+	}
+
+	@Override
 	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		sb.append("IDENTITY ");

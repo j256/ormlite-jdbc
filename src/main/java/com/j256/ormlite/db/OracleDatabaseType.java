@@ -61,6 +61,11 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
+	protected void appendSerializableType(StringBuilder sb) {
+		sb.append("LONG RAW");
+	}
+
+	@Override
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		String seqName = fieldType.getGeneratedIdSequence();

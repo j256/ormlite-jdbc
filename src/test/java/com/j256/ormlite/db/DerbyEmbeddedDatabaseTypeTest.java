@@ -153,8 +153,16 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testAppendObjectType() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		type.appendByteArrayType(sb);
+		type.appendSerializableType(sb);
 		assertEquals("BLOB", sb.toString());
+	}
+
+	@Test
+	public void testAppendByteArrayType() throws Exception {
+		StringBuilder sb = new StringBuilder();
+		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
+		type.appendByteArrayType(sb);
+		assertEquals("LONG VARCHAR FOR BIT DATA", sb.toString());
 	}
 
 	private static class NotSerializable {

@@ -677,7 +677,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		assertEquals(1, results.size());
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testOffsetNoLimit() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
@@ -691,7 +691,12 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
 		int offset = 1;
 		qb.offset(offset);
-		dao.query(qb.prepare());
+		try {
+			dao.query(qb.prepare());
+			fail("expected exception");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
