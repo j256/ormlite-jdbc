@@ -117,7 +117,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
-	public boolean isNull(int columnIndex) throws SQLException {
-		return (resultSet.getObject(columnIndex) == null);
+	public boolean wasNull(int columnIndex) throws SQLException {
+		return resultSet.wasNull();
 	}
 }

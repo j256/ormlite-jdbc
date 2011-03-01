@@ -94,10 +94,10 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 213;
-		expect(resultSet.getObject(colN)).andReturn(null);
+		expect(resultSet.wasNull()).andReturn(true);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		replay(preparedStatement, resultSet);
-		assertTrue(results.isNull(colN));
+		assertTrue(results.wasNull(colN));
 		verify(preparedStatement, resultSet);
 	}
 
