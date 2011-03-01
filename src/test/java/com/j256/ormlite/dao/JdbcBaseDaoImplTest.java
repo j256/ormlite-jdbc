@@ -2569,6 +2569,23 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertFalse(dao.isTableExists());
 	}
 
+	@Test
+	public void testRaw() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		int val = 131265312;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		StringBuilder sb = new StringBuilder();
+		databaseType.appendEscapedEntityName(sb, Foo.VAL_FIELD_NAME);
+		String fieldName = sb.toString();
+		QueryBuilder<Foo, Integer> qb = dao.queryBuilder();
+		qb.where().eq(Foo.ID_FIELD_NAME, foo.id).and().raw(fieldName + " = " + val);
+		assertEquals(1, dao.query(qb.prepare()).size());
+		qb.where().eq(Foo.ID_FIELD_NAME, foo.id).and().raw(fieldName + " != " + val);
+		assertEquals(0, dao.query(qb.prepare()).size());
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -2884,7 +2901,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		float floatField;
 		@DatabaseField(columnName = DOUBLE_FIELD_NAME)
 		double doubleField;
-		@DatabaseField(columnName = SERIAL_FIELD_NAME, dataType= DataType.SERIALIZABLE)
+		@DatabaseField(columnName = SERIAL_FIELD_NAME, dataType = DataType.SERIALIZABLE)
 		SerialData serialField;
 		@DatabaseField(columnName = ENUM_FIELD_NAME)
 		OurEnum enumField;
@@ -2935,7 +2952,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		double doubleField;
 		@DatabaseField(defaultValue = DEFAULT_DOUBLE_VALUE)
 		Double doubleObj;
-		@DatabaseField(dataType= DataType.SERIALIZABLE)
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		SerialData objectField;
 		@DatabaseField(defaultValue = DEFAULT_ENUM_VALUE)
 		OurEnum ourEnum;
@@ -2975,7 +2992,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Float floatField;
 		@DatabaseField
 		Double doubleField;
-		@DatabaseField(dataType= DataType.SERIALIZABLE)
+		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		SerialData objectField;
 		@DatabaseField
 		OurEnum ourEnum;
