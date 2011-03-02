@@ -25,26 +25,13 @@ import com.j256.ormlite.BaseCoreTest;
 public class JdbcDatabaseResultsTest extends BaseCoreTest {
 
 	@Test
-	public void testGetColumnName() throws SQLException {
-		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		ResultSet resultSet = createMock(ResultSet.class);
-		ResultSetMetaData metadata = createMock(ResultSetMetaData.class);
-		expect(metadata.getColumnName(1)).andReturn("TEST_COLUMN1");
-		expect(resultSet.getMetaData()).andReturn(metadata);
-		replay(preparedStatement, metadata, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
-		assertEquals("TEST_COLUMN1", results.getColumnName(1));
-		verify(preparedStatement, metadata, resultSet);
-	}
-
-	@Test
 	public void testGetBlobStream() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		ResultSet resultSet = createMock(ResultSet.class);
 		Blob blob = createMock(Blob.class);
 		InputStream is = new ByteArrayInputStream(new byte[] {});
 		expect(blob.getBinaryStream()).andReturn(is);
-		expect(resultSet.getBlob(0)).andReturn(blob);
+		expect(resultSet.getBlob(1)).andReturn(blob);
 		replay(preparedStatement, blob, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertTrue(results.getBlobStream(0) == is);
@@ -55,7 +42,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 	public void testGetBlobStreamNull() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		ResultSet resultSet = createMock(ResultSet.class);
-		expect(resultSet.getBlob(0)).andReturn(null);
+		expect(resultSet.getBlob(1)).andReturn(null);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertNull(results.getBlobStream(0));
@@ -71,7 +58,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		expect(resultSet.findColumn(name)).andReturn(colN);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		replay(preparedStatement, resultSet);
-		assertEquals(colN, results.findColumn(name));
+		assertEquals(colN - 1, results.findColumn(name));
 		verify(preparedStatement, resultSet);
 	}
 
@@ -125,7 +112,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		boolean val = true;
-		expect(resultSet.getBoolean(colN)).andReturn(val);
+		expect(resultSet.getBoolean(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getBoolean(colN));
@@ -138,7 +125,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		byte val = 69;
-		expect(resultSet.getByte(colN)).andReturn(val);
+		expect(resultSet.getByte(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getByte(colN));
@@ -151,7 +138,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		byte[] val = new byte[] { 23, 1, 17 };
-		expect(resultSet.getBytes(colN)).andReturn(val);
+		expect(resultSet.getBytes(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getBytes(colN));
@@ -164,7 +151,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		double val = 69.123;
-		expect(resultSet.getDouble(colN)).andReturn(val);
+		expect(resultSet.getDouble(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getDouble(colN), 0.0F);
@@ -177,7 +164,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		float val = 69.77F;
-		expect(resultSet.getFloat(colN)).andReturn(val);
+		expect(resultSet.getFloat(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getFloat(colN), 0.0F);
@@ -190,7 +177,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		int val = 613123129;
-		expect(resultSet.getInt(colN)).andReturn(val);
+		expect(resultSet.getInt(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getInt(colN));
@@ -203,7 +190,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		short val = 6129;
-		expect(resultSet.getShort(colN)).andReturn(val);
+		expect(resultSet.getShort(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getShort(colN));
@@ -216,7 +203,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		String val = "zippy";
-		expect(resultSet.getString(colN)).andReturn(val);
+		expect(resultSet.getString(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getString(colN));
@@ -229,7 +216,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 120;
 		Timestamp val = new Timestamp(123123123123L);
-		expect(resultSet.getTimestamp(colN)).andReturn(val);
+		expect(resultSet.getTimestamp(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
 		assertEquals(val, results.getTimestamp(colN));

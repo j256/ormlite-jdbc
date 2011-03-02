@@ -8,9 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.support.DatabaseResults;
-import com.j256.ormlite.support.GeneratedKeyHolder;
 
 /**
  * Wrapper around a {@link ResultSet} object which we delegate to.
@@ -35,30 +33,12 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		return metaData.getColumnCount();
 	}
 
-	public String getColumnName(int columnIndex) throws SQLException {
-		if (metaData == null) {
-			metaData = resultSet.getMetaData();
-		}
-		return metaData.getColumnName(columnIndex);
-	}
-
-	/**
-	 * Return the JDBC column type for the index. This is called from
-	 * {@link JdbcDatabaseConnection#insert(String, Object[], SqlType[], GeneratedKeyHolder)}
-	 */
-	int getColumnType(int columnIndex) throws SQLException {
-		if (metaData == null) {
-			metaData = resultSet.getMetaData();
-		}
-		return metaData.getColumnType(columnIndex);
-	}
-
 	public int findColumn(String columnName) throws SQLException {
-		return resultSet.findColumn(columnName);
+		return resultSet.findColumn(columnName) - 1;
 	}
 
 	public InputStream getBlobStream(int columnIndex) throws SQLException {
-		Blob blob = resultSet.getBlob(columnIndex);
+		Blob blob = resultSet.getBlob(columnIndex + 1);
 		if (blob == null) {
 			return null;
 		} else {
@@ -67,43 +47,43 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	}
 
 	public boolean getBoolean(int columnIndex) throws SQLException {
-		return resultSet.getBoolean(columnIndex);
+		return resultSet.getBoolean(columnIndex + 1);
 	}
 
 	public byte getByte(int columnIndex) throws SQLException {
-		return resultSet.getByte(columnIndex);
+		return resultSet.getByte(columnIndex + 1);
 	}
 
 	public byte[] getBytes(int columnIndex) throws SQLException {
-		return resultSet.getBytes(columnIndex);
+		return resultSet.getBytes(columnIndex + 1);
 	}
 
 	public double getDouble(int columnIndex) throws SQLException {
-		return resultSet.getDouble(columnIndex);
+		return resultSet.getDouble(columnIndex + 1);
 	}
 
 	public float getFloat(int columnIndex) throws SQLException {
-		return resultSet.getFloat(columnIndex);
+		return resultSet.getFloat(columnIndex + 1);
 	}
 
 	public int getInt(int columnIndex) throws SQLException {
-		return resultSet.getInt(columnIndex);
+		return resultSet.getInt(columnIndex + 1);
 	}
 
 	public long getLong(int columnIndex) throws SQLException {
-		return resultSet.getLong(columnIndex);
+		return resultSet.getLong(columnIndex + 1);
 	}
 
 	public short getShort(int columnIndex) throws SQLException {
-		return resultSet.getShort(columnIndex);
+		return resultSet.getShort(columnIndex + 1);
 	}
 
 	public String getString(int columnIndex) throws SQLException {
-		return resultSet.getString(columnIndex);
+		return resultSet.getString(columnIndex + 1);
 	}
 
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
-		return resultSet.getTimestamp(columnIndex);
+		return resultSet.getTimestamp(columnIndex + 1);
 	}
 
 	public boolean next() throws SQLException {

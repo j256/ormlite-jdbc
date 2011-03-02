@@ -27,7 +27,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 		expect(preparedStatement.getMetaData()).andReturn(metadata);
 		replay(metadata, preparedStatement);
 		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
-		assertEquals("TEST_COLUMN1", stmt.getColumnName(1));
+		assertEquals("TEST_COLUMN1", stmt.getColumnName(0));
 		verify(preparedStatement, metadata);
 	}
 
@@ -44,7 +44,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 	@Test
 	public void testSetNull() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		preparedStatement.setNull(0, TypeValMapper.getTypeValForSqlType(SqlType.STRING));
+		preparedStatement.setNull(1, TypeValMapper.getTypeValForSqlType(SqlType.STRING));
 		EasyMock.expectLastCall();
 		replay(preparedStatement);
 		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);

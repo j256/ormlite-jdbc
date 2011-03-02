@@ -36,7 +36,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		if (metaData == null) {
 			metaData = preparedStatement.getMetaData();
 		}
-		return metaData.getColumnName(column);
+		return metaData.getColumnName(column + 1);
 	}
 
 	public int runUpdate() throws SQLException {
@@ -71,11 +71,11 @@ public class JdbcCompiledStatement implements CompiledStatement {
 	}
 
 	public void setNull(int parameterIndex, SqlType sqlType) throws SQLException {
-		preparedStatement.setNull(parameterIndex, TypeValMapper.getTypeValForSqlType(sqlType));
+		preparedStatement.setNull(parameterIndex + 1, TypeValMapper.getTypeValForSqlType(sqlType));
 	}
 
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
-		preparedStatement.setObject(parameterIndex, obj, TypeValMapper.getTypeValForSqlType(sqlType));
+		preparedStatement.setObject(parameterIndex + 1, obj, TypeValMapper.getTypeValForSqlType(sqlType));
 	}
 
 	public void setMaxRows(int max) throws SQLException {

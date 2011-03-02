@@ -218,7 +218,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	private static class OneLongWrapper implements GenericRowMapper<Long> {
 		public Long mapRow(DatabaseResults rs) throws SQLException {
 			// maps the first column (sql #1)
-			return rs.getLong(1);
+			return rs.getLong(0);
 		}
 	}
 }
