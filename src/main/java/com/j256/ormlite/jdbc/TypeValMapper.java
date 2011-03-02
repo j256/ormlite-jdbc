@@ -5,18 +5,16 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.SqlType;
 
 /**
- * Mapper from {@link SqlType} to the constants in the {@link Types} class.
+ * Map from {@link SqlType} to the constants in the {@link Types} class.
  * 
  * @author graywatson
  */
 public class TypeValMapper {
 
 	private static final Map<SqlType, Integer[]> typeToValMap = new HashMap<SqlType, Integer[]>();
-	private static final Map<Integer, DataType> idValToDataTypeMap = new HashMap<Integer, DataType>();
 
 	static {
 		for (SqlType sqlType : SqlType.values()) {
@@ -68,15 +66,6 @@ public class TypeValMapper {
 					throw new IllegalArgumentException("No JDBC mapping for unknown SqlType " + sqlType);
 			}
 		}
-
-		for (DataType dataType : DataType.values()) {
-			Integer[] types = typeToValMap.get(dataType.getSqlType());
-			if (dataType.isConvertableId()) {
-				for (int typeVal : types) {
-					idValToDataTypeMap.put(typeVal, dataType);
-				}
-			}
-		}
 	}
 
 	/**
@@ -88,12 +77,5 @@ public class TypeValMapper {
 			throw new SQLException("SqlType does not have any JDBC type value mapping: " + sqlType);
 		}
 		return typeVals[0];
-	}
-
-	/**
-	 * Return the SqlType associated with the JDBC type value or null if none.
-	 */
-	public static DataType getDataTypeForIdTypeVal(int typeVal) {
-		return idValToDataTypeMap.get(typeVal);
 	}
 }
