@@ -17,6 +17,7 @@ public class DatabaseTypeUtils {
 		databaseTypes.add(new Db2DatabaseType());
 		databaseTypes.add(new DerbyClientServerDatabaseType());
 		databaseTypes.add(new DerbyEmbeddedDatabaseType());
+		databaseTypes.add(new GenericOdbcDatabaseType());
 		databaseTypes.add(new H2DatabaseType());
 		databaseTypes.add(new HsqldbDatabaseType());
 		databaseTypes.add(new MysqlDatabaseType());
