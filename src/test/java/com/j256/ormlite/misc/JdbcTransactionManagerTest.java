@@ -16,6 +16,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 
+/**
+ * This is a base class for the per-database tests and can't be rolled into -core.
+ */
 public class JdbcTransactionManagerTest extends BaseJdbcTest {
 
 	@Override
