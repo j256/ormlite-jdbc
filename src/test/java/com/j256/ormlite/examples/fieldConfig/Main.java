@@ -17,6 +17,11 @@ import com.j256.ormlite.table.TableUtils;
 
 /**
  * Main sample routine to show how to do basic operations with the package.
+ * 
+ * <p>
+ * <b>NOTE:</b> We use asserts in a couple of places to verify the results but if this were actual production code, we
+ * would have proper error handling.
+ * </p>
  */
 public class Main {
 
@@ -37,9 +42,10 @@ public class Main {
 			// create our data-source for the database
 			connectionSource = new JdbcConnectionSource(DATABASE_URL);
 			// setup our database and DAOs
-			setupDatabase(DATABASE_URL, connectionSource);
+			setupDatabase(connectionSource);
 			// read and write some data
 			readWriteData();
+			System.out.println("\n\nIt seems to have worked\n\n");
 		} finally {
 			// destroy the data source which should close underlying connections
 			if (connectionSource != null) {
@@ -51,7 +57,7 @@ public class Main {
 	/**
 	 * Setup our database and DAOs
 	 */
-	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
+	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
 		DatabaseTableConfig<Account> accountTableConfig = buildAccountTableConfig();
 		accountDao = new BaseDaoImpl<Account, Integer>(connectionSource, accountTableConfig) {

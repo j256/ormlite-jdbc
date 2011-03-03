@@ -16,6 +16,11 @@ import com.j256.ormlite.table.TableUtils;
 /**
  * Main sample routine to show how to do many-to-many type relationships. It also demonstrates how we user inner queries
  * as well foreign objects.
+ * 
+ * <p>
+ * <b>NOTE:</b> We use asserts in a couple of places to verify the results but if this were actual production code, we
+ * would have proper error handling.
+ * </p>
  */
 public class Main {
 
@@ -37,9 +42,10 @@ public class Main {
 			// create our data-source for the database
 			connectionSource = new JdbcConnectionSource(DATABASE_URL);
 			// setup our database and DAOs
-			setupDatabase(DATABASE_URL, connectionSource);
+			setupDatabase(connectionSource);
 			// read and write some data
 			readWriteData();
+			System.out.println("\n\nIt seems to have worked\n\n");
 		} finally {
 			// destroy the data source which should close underlying connections
 			if (connectionSource != null) {
@@ -51,10 +57,10 @@ public class Main {
 	/**
 	 * Setup our database and DAOs
 	 */
-	private void setupDatabase(String databaseUrl, ConnectionSource connectionSource) throws Exception {
+	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
 		/**
-		 * Creare our DAOs. One for each class and associated table.
+		 * Create our DAOs. One for each class and associated table.
 		 */
 		userDao = BaseDaoImpl.createDao(connectionSource, User.class);
 		postDao = BaseDaoImpl.createDao(connectionSource, Post.class);
@@ -88,8 +94,8 @@ public class Main {
 			throw new Exception("Could not create post in database");
 		}
 		// link the user and the post together in the join table
-		UserPost userPost1 = new UserPost(user1, post1);
-		if (userPostDao.create(userPost1) != 1) {
+		UserPost user1Post1 = new UserPost(user1, post1);
+		if (userPostDao.create(user1Post1) != 1) {
 			throw new Exception("Could not create userPost in database");
 		}
 
@@ -98,8 +104,8 @@ public class Main {
 		if (postDao.create(post2) != 1) {
 			throw new Exception("Could not create post in database");
 		}
-		UserPost userPost2 = new UserPost(user1, post2);
-		if (userPostDao.create(userPost2) != 1) {
+		UserPost user1Post2 = new UserPost(user1, post2);
+		if (userPostDao.create(user1Post2) != 1) {
 			throw new Exception("Could not create userPost in database");
 		}
 
@@ -110,8 +116,8 @@ public class Main {
 		}
 
 		// have the 2nd user also say the 2nd post
-		UserPost userPost3 = new UserPost(user2, post2);
-		if (userPostDao.create(userPost3) != 1) {
+		UserPost user2Post1 = new UserPost(user2, post2);
+		if (userPostDao.create(user2Post1) != 1) {
 			throw new Exception("Could not create userPost in database");
 		}
 
@@ -126,8 +132,8 @@ public class Main {
 		QueryBuilder<UserPost, Integer> userPostQb = userPostDao.queryBuilder();
 		// just select the post-id field
 		userPostQb.selectColumns(UserPost.POST_ID_FIELD_NAME);
-		// you could also just pass in user1 here
 		SelectArg userSelectArg = new SelectArg();
+		// you could also just pass in user1 here
 		userPostQb.where().eq(UserPost.USER_ID_FIELD_NAME, userSelectArg);
 
 		// build our outer query for Post objects
@@ -140,12 +146,15 @@ public class Main {
 		userSelectArg.setValue(user1);
 		List<Post> posts = postDao.query(postPrepared);
 		assertEquals(2, posts.size());
+		assertEquals(user1Post1.post.id, posts.get(0).id);
+		assertEquals(user1Post2.post.id, posts.get(1).id);
 
 		// user2 should have only 1 post
 		userSelectArg.setValue(user2);
 		// posts = postDao.query(postQb.prepare());
 		posts = postDao.query(postPrepared);
 		assertEquals(1, posts.size());
+		assertEquals(user2Post1.post.id, posts.get(0).id);
 
 		/*
 		 * show me all of the users that have a post.
@@ -167,10 +176,13 @@ public class Main {
 		postSelectArg.setValue(post1);
 		List<User> users = userDao.query(userPrepared);
 		assertEquals(1, users.size());
+		assertEquals(user1.id, users.get(0).id);
 
 		// post2 should have 2 corresponding users
 		postSelectArg.setValue(post2);
 		users = userDao.query(userPrepared);
 		assertEquals(2, users.size());
+		assertEquals(user1.id, users.get(0).id);
+		assertEquals(user2.id, users.get(1).id);
 	}
 }
