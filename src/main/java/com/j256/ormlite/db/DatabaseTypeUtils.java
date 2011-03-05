@@ -21,6 +21,7 @@ public class DatabaseTypeUtils {
 		databaseTypes.add(new H2DatabaseType());
 		databaseTypes.add(new HsqldbDatabaseType());
 		databaseTypes.add(new MysqlDatabaseType());
+		databaseTypes.add(new NetezzaDatabaseType());
 		databaseTypes.add(new OracleDatabaseType());
 		databaseTypes.add(new PostgresDatabaseType());
 		databaseTypes.add(new SqliteDatabaseType());

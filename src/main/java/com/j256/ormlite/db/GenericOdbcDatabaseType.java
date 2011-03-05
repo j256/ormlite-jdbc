@@ -3,6 +3,11 @@ package com.j256.ormlite.db;
 /**
  * Generic JdbcOdbcBridge database type information used to create the tables, etc..
  * 
+ * <p>
+ * <b>NOTE:</b> This is the initial take on this database type. We hope to get access to an external database for
+ * testing.
+ * </p>
+ * 
  * @author Dale Asberry
  */
 public class GenericOdbcDatabaseType extends BaseDatabaseType {
