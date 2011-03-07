@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
@@ -48,14 +49,14 @@ public class TableCreator {
 	public final static String AUTO_DROP_TABLES = "ormlite.auto.drop.tables";
 
 	private ConnectionSource connectionSource;
-	private List<BaseDaoImpl<?, ?>> configuredDaos;
+	private List<Dao<?, ?>> configuredDaos;
 	private Set<DatabaseTableConfig<?>> createdClasses = new HashSet<DatabaseTableConfig<?>>();
 
 	public TableCreator() {
 		// for spring
 	}
 
-	public TableCreator(ConnectionSource connectionSource, List<BaseDaoImpl<?, ?>> configuredDaos) {
+	public TableCreator(ConnectionSource connectionSource, List<Dao<?, ?>> configuredDaos) {
 		this.connectionSource = connectionSource;
 		this.configuredDaos = configuredDaos;
 	}
@@ -80,10 +81,13 @@ public class TableCreator {
 		}
 
 		// find all of the daos and create the tables
-		for (BaseDaoImpl<?, ?> dao : configuredDaos) {
+		for (Dao<?, ?> dao : configuredDaos) {
 			Class<?> clazz = dao.getDataClass();
 			try {
-				DatabaseTableConfig<?> tableConfig = dao.getTableConfig();
+				DatabaseTableConfig<?> tableConfig = null;
+				if (dao instanceof BaseDaoImpl) {
+					tableConfig = ((BaseDaoImpl<?, ?>) dao).getTableConfig();
+				}
 				if (tableConfig == null) {
 					TableUtils.createTable(connectionSource, dao.getDataClass());
 				} else {
@@ -127,7 +131,7 @@ public class TableCreator {
 		this.connectionSource = dataSource;
 	}
 
-	public void setConfiguredDaos(List<BaseDaoImpl<?, ?>> configuredDaos) {
+	public void setConfiguredDaos(List<Dao<?, ?>> configuredDaos) {
 		this.configuredDaos = configuredDaos;
 	}
 }
