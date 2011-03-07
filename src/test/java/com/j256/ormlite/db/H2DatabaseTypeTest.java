@@ -23,7 +23,7 @@ public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		databaseType = new H2DatabaseType();
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
 				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);

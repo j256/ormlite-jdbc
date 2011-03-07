@@ -30,7 +30,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		return false;
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
 				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);

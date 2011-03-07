@@ -120,7 +120,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequence() throws Exception {
 		TableInfo<GeneratedIdSequence> tableInfo =
 				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);

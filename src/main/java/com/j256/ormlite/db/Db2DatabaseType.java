@@ -9,8 +9,8 @@ import com.j256.ormlite.field.FieldType;
  * 
  * <p>
  * <b>WARNING:</b> I have not tested this unfortunately because of a lack of access to a DB2 instance. Love to get 1-2
- * hours of access to an database to test/tweak this. Undoubtably is it wrong. Please contact the author if you'd like
- * to help.
+ * hours of access to an database to test/tweak this. Undoubtably is it wrong. Please contact us if you'd like to help
+ * with this class.
  * </p>
  * 
  * @author graywatson

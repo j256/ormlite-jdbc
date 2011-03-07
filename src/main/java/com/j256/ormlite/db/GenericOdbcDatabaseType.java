@@ -5,7 +5,7 @@ package com.j256.ormlite.db;
  * 
  * <p>
  * <b>NOTE:</b> This is the initial take on this database type. We hope to get access to an external database for
- * testing.
+ * testing. Please contact us if you'd like to help with this class.
  * </p>
  * 
  * @author Dale Asberry
