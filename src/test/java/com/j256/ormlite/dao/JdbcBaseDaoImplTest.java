@@ -75,6 +75,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateDaoStatic() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		createTable(Foo.class, true);
 		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(connectionSource, Foo.class);
 		String stuff = "stuff";
@@ -600,6 +603,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testSpringConstruction() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		createTable(Foo.class, true);
 		BaseDaoImpl<Foo, Integer> fooDao = new BaseDaoImpl<Foo, Integer>(Foo.class) {
 		};
@@ -1105,6 +1111,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testStringWidthTooLong() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		if (!connectionSource.getDatabaseType().isVarcharFieldWidthSupported()) {
 			return;
 		}
@@ -1184,6 +1193,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testEscapeCharInField() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		StringBuilder sb = new StringBuilder();
 		String word = "foo";
 		connectionSource.getDatabaseType().appendEscapedWord(sb, word);

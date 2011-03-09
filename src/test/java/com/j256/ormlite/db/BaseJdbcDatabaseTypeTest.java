@@ -50,6 +50,9 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateColumnArg() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> moreStmts = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
@@ -95,6 +98,9 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	@Test
 	public void testLimitFormat() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		if (!databaseType.isLimitSqlSupported()) {
 			return;
 		}
@@ -122,6 +128,9 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequence() throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException("Simulate a failure");
+		}
 		TableInfo<GeneratedIdSequence> tableInfo =
 				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
@@ -143,6 +152,9 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	@Test
 	public void testDatabasePing() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		if (!isDriverClassExpected()) {
 			return;
 		}
