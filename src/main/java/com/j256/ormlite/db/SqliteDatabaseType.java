@@ -40,6 +40,11 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 	}
 
 	@Override
+	public boolean isNestedSavePointsSupported() {
+		return false;
+	}
+
+	@Override
 	public void appendOffsetValue(StringBuilder sb, int offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
 	}

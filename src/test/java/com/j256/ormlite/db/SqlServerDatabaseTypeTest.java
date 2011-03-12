@@ -47,6 +47,9 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Override
 	@Test
 	public void testLimitFormat() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		Dao<Foo, String> dao;
 		try {
 			connectionSource.setDatabaseType(databaseType);
@@ -69,6 +72,9 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testBoolean() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
@@ -82,6 +88,9 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testByte() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
@@ -95,6 +104,9 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testDate() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[2];
@@ -108,6 +120,9 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedIdBuilt() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
 		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
