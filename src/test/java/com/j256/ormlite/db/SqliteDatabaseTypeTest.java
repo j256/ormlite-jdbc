@@ -32,8 +32,8 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
-		TableInfo<GeneratedIdSequence> tableInfo =
-				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);
+		TableInfo<GeneratedIdSequence, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();
@@ -43,7 +43,8 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {
-		TableInfo<GeneratedId> tableInfo = new TableInfo<GeneratedId>(connectionSource, GeneratedId.class);
+		TableInfo<GeneratedId, Integer> tableInfo =
+				new TableInfo<GeneratedId, Integer>(connectionSource, null, GeneratedId.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -55,7 +56,8 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testGeneratedIdLong() throws Exception {
-		TableInfo<GeneratedIdLong> tableInfo = new TableInfo<GeneratedIdLong>(connectionSource, GeneratedIdLong.class);
+		TableInfo<GeneratedIdLong, Long> tableInfo =
+				new TableInfo<GeneratedIdLong, Long>(connectionSource, null, GeneratedIdLong.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -81,7 +83,8 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testSerialField() throws Exception {
-		TableInfo<SerialField> tableInfo = new TableInfo<SerialField>(connectionSource, SerialField.class);
+		TableInfo<SerialField, Void> tableInfo =
+				new TableInfo<SerialField, Void>(connectionSource, null, SerialField.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();

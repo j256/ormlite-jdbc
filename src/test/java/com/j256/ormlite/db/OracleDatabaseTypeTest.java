@@ -78,8 +78,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	@Override
 	public void testGeneratedIdSequence() throws Exception {
-		TableInfo<GeneratedIdSequence> tableInfo =
-				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);
+		TableInfo<GeneratedIdSequence, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
@@ -93,8 +93,9 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedIdSequenceAutoName() throws Exception {
-		TableInfo<GeneratedIdSequenceAutoName> tableInfo =
-				new TableInfo<GeneratedIdSequenceAutoName>(connectionSource, GeneratedIdSequenceAutoName.class);
+		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequenceAutoName, Integer>(connectionSource, null,
+						GeneratedIdSequenceAutoName.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		StringBuilder sb = new StringBuilder();
@@ -112,7 +113,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testByte() throws Exception {
-		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo =
+				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
 		assertEquals("byteField", byteField.getDbColumnName());
@@ -125,7 +127,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testLong() throws Exception {
-		TableInfo<AllTypes> tableInfo = new TableInfo<AllTypes>(connectionSource, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo =
+				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[6];
 		assertEquals("longField", booleanField.getDbColumnName());

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
@@ -29,6 +30,7 @@ import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -42,7 +44,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private final boolean CLOSE_IS_NOOP = false;
 	private final boolean UPDATE_ROWS_RETURNS_ONE = false;
-	private final boolean TABLE_EXISTS_WORKS = true;
+
+	protected boolean isTableExistsWorks() {
+		return true;
+	}
 
 	/* ======================================================================================== */
 
@@ -2509,7 +2514,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testTableExists() throws Exception {
-		if (!TABLE_EXISTS_WORKS) {
+		if (!isTableExistsWorks()) {
 			return;
 		}
 		Dao<Foo, Integer> dao = createDao(Foo.class, false);
@@ -2536,6 +2541,66 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, dao.query(qb.prepare()).size());
 		qb.where().eq(Foo.ID_FIELD_NAME, foo.id).and().raw(fieldName + " != " + val);
 		assertEquals(0, dao.query(qb.prepare()).size());
+	}
+
+	@Test
+	public void testUuidInsertQuery() throws Exception {
+		Dao<UuidGeneratedId, UUID> dao = createDao(UuidGeneratedId.class, true);
+		UuidGeneratedId uuid1 = new UuidGeneratedId();
+		String stuff1 = "fopewfjefjwgw";
+		uuid1.stuff = stuff1;
+		assertNull(uuid1.id);
+		assertEquals(1, dao.create(uuid1));
+		assertNotNull(uuid1.id);
+
+		UuidGeneratedId uuid2 = new UuidGeneratedId();
+		String stuff2 = "fopefewjfepowfjefjwgw";
+		uuid2.stuff = stuff2;
+		assertNull(uuid2.id);
+		assertEquals(1, dao.create(uuid2));
+		assertNotNull(uuid2.id);
+		assertFalse(uuid1.id.equals(uuid2.id));
+
+		List<UuidGeneratedId> uuids = dao.queryForAll();
+		assertEquals(2, uuids.size());
+		UuidGeneratedId uuid3 = dao.queryForId(uuid1.id);
+		assertEquals(stuff1, uuid3.stuff);
+		uuid3 = dao.queryForId(uuid2.id);
+		assertEquals(stuff2, uuid3.stuff);
+	}
+
+	@Test
+	public void testBaseDaoEnabled() throws Exception {
+		Dao<One, Integer> dao = createDao(One.class, true);
+		One one = new One();
+		String stuff = "fewpfjewfew";
+		one.stuff = stuff;
+		one.setDao(dao);
+		assertEquals(1, one.create());
+	}
+
+	@Test
+	public void testBaseDaoEnabledForeign() throws Exception {
+		Dao<One, Integer> oneDao = createDao(One.class, true);
+		Dao<ForeignDaoEnabled, Integer> foreignDao = createDao(ForeignDaoEnabled.class, true);
+
+		One one = new One();
+		String stuff = "fewpfjewfew";
+		one.stuff = stuff;
+		one.setDao(oneDao);
+		assertEquals(1, one.create());
+
+		ForeignDaoEnabled foreign = new ForeignDaoEnabled();
+		foreign.one = one;
+		foreign.setDao(foreignDao);
+		assertEquals(1, foreign.create());
+
+		ForeignDaoEnabled foreign2 = foreignDao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertEquals(one.id, foreign2.one.id);
+		assertNull(foreign2.one.stuff);
+		assertEquals(1, foreign2.one.refresh());
+		assertEquals(stuff, foreign2.one.stuff);
 	}
 
 	/* ==================================================================================== */
@@ -3724,6 +3789,33 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String stuff;
 		public Sub() {
 			// for ormlite
+		}
+	}
+
+	protected static class UuidGeneratedId {
+		@DatabaseField(generatedId = true)
+		public UUID id;
+		@DatabaseField
+		public String stuff;
+		public UuidGeneratedId() {
+		}
+	}
+
+	protected static class One extends BaseDaoEnabled<One, Integer> {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		public String stuff;
+		public One() {
+		}
+	}
+
+	protected static class ForeignDaoEnabled extends BaseDaoEnabled<ForeignDaoEnabled, Integer> {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true)
+		public One one;
+		public ForeignDaoEnabled() {
 		}
 	}
 }

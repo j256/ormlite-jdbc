@@ -56,7 +56,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> moreStmts = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		FieldType fieldType = tableInfo.getIdField();
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendColumnArg(sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
@@ -104,7 +104,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		if (!databaseType.isLimitSqlSupported()) {
 			return;
 		}
-		TableInfo<Foo> tableInfo = new TableInfo<Foo>(connectionSource, Foo.class);
+		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo);
 		int limit = 1232;
 		qb.limit(limit);
@@ -131,8 +131,8 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		if (connectionSource == null) {
 			throw new SQLException("Simulate a failure");
 		}
-		TableInfo<GeneratedIdSequence> tableInfo =
-				new TableInfo<GeneratedIdSequence>(connectionSource, GeneratedIdSequence.class);
+		TableInfo<GeneratedIdSequence, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();
