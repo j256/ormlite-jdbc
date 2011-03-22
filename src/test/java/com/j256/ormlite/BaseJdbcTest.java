@@ -22,6 +22,7 @@ import org.junit.runners.model.Statement;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -124,16 +125,18 @@ public abstract class BaseJdbcTest {
 		if (connectionSource == null) {
 			throw new SQLException(DATASOURCE_ERROR);
 		}
-		return createDao(DatabaseTableConfig.fromClass(connectionSource, clazz), createTable);
+		@SuppressWarnings("unchecked")
+		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, clazz);
+		return configDao(dao, createTable);
 	}
 
 	protected <T, ID> Dao<T, ID> createDao(DatabaseTableConfig<T> tableConfig, boolean createTable) throws Exception {
 		if (connectionSource == null) {
 			throw new SQLException(DATASOURCE_ERROR);
 		}
-		BaseDaoImpl<T, ID> dao = new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
-		};
-		return configDao(tableConfig, createTable, dao);
+		@SuppressWarnings("unchecked")
+		BaseDaoImpl<T, ID> dao = (BaseDaoImpl<T, ID>) DaoManager.createDao(connectionSource, tableConfig);
+		return configDao(dao, createTable);
 	}
 
 	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws Exception {
@@ -163,13 +166,16 @@ public abstract class BaseJdbcTest {
 		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
 	}
 
-	private <T, ID> Dao<T, ID> configDao(DatabaseTableConfig<T> tableConfig, boolean createTable, BaseDaoImpl<T, ID> dao)
-			throws Exception {
+	private <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws Exception {
 		if (connectionSource == null) {
 			throw new SQLException(DATASOURCE_ERROR);
 		}
 		dao.setConnectionSource(connectionSource);
 		if (createTable) {
+			DatabaseTableConfig<T> tableConfig = dao.getTableConfig();
+			if (tableConfig == null) {
+				tableConfig = DatabaseTableConfig.fromClass(connectionSource, dao.getDataClass());
+			}
 			createTable(tableConfig, true);
 		}
 		dao.initialize();

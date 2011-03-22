@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -837,12 +839,12 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 				false, false, null, false, null, false, null, false, null, false, null, null, false));
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
-		Dao<NoAnno, Integer> noAnnotaionDao = createDao(noAnnotationsTableConfig, true);
+		Dao<NoAnno, Integer> noAnnotationDao = createDao(noAnnotationsTableConfig, true);
 		NoAnno noa = new NoAnno();
 		String stuff = "qpoqwpjoqwp12";
 		noa.stuff = stuff;
-		assertEquals(1, noAnnotaionDao.create(noa));
-		assertNotNull(noAnnotaionDao.queryForId(noa.id));
+		assertEquals(1, noAnnotationDao.create(noa));
+		assertNotNull(noAnnotationDao.queryForId(noa.id));
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
@@ -863,7 +865,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(noaf.id, noaf2.id);
 		assertEquals(noa.id, noaf2.foreign.id);
 		assertNull(noaf2.foreign.stuff);
-		assertEquals(1, noAnnotaionDao.refresh(noaf2.foreign));
+		assertEquals(1, noAnnotationDao.refresh(noaf2.foreign));
 		assertEquals(stuff, noaf2.foreign.stuff);
 	}
 
@@ -2603,6 +2605,179 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(stuff, foreign2.one.stuff);
 	}
 
+	@Test
+	public void testBasicEagerCollection() throws Exception {
+		Dao<EagerAccount, Integer> accountDao = createDao(EagerAccount.class, true);
+		Dao<EagerOrder, Integer> orderDao = createDao(EagerOrder.class, true);
+
+		EagerAccount account = new EagerAccount();
+		String name = "fwepfjewfew";
+		account.name = name;
+		assertEquals(1, accountDao.create(account));
+
+		EagerOrder order1 = new EagerOrder();
+		int val1 = 13123441;
+		order1.val = val1;
+		order1.account = account;
+		assertEquals(1, orderDao.create(order1));
+
+		EagerOrder order2 = new EagerOrder();
+		int val2 = 113787097;
+		order2.val = val2;
+		order2.account = account;
+		assertEquals(1, orderDao.create(order2));
+
+		EagerAccount account2 = accountDao.queryForId(account.id);
+		assertEquals(name, account2.name);
+		assertNotNull(account2.orders);
+		int orderC = 0;
+		for (EagerOrder order : account2.orders) {
+			orderC++;
+			switch (orderC) {
+				case 1 :
+					assertEquals(val1, order.val);
+					break;
+				case 2 :
+					assertEquals(val2, order.val);
+					break;
+			}
+		}
+		assertEquals(2, orderC);
+
+		// insert it via the collection
+		EagerOrder order3 = new EagerOrder();
+		int val3 = 76557654;
+		order3.val = val3;
+		order3.account = account;
+		account2.orders.add(order3);
+		// the size should change immediately
+		assertEquals(3, account2.orders.size());
+
+		// now insert it behind the collections back
+		EagerOrder order4 = new EagerOrder();
+		int val4 = 1123587097;
+		order4.val = val4;
+		order4.account = account;
+		assertEquals(1, orderDao.create(order4));
+		// account2's collection should not have changed
+		assertEquals(3, account2.orders.size());
+
+		// now we refresh the collection
+		assertEquals(1, accountDao.refresh(account2));
+		assertEquals(name, account2.name);
+		assertNotNull(account2.orders);
+		orderC = 0;
+		for (EagerOrder order : account2.orders) {
+			orderC++;
+			switch (orderC) {
+				case 1 :
+					assertEquals(val1, order.val);
+					break;
+				case 2 :
+					assertEquals(val2, order.val);
+					break;
+				case 3 :
+					assertEquals(val3, order.val);
+					break;
+				case 4 :
+					assertEquals(val4, order.val);
+					break;
+			}
+		}
+		assertEquals(4, orderC);
+	}
+
+	@Test
+	public void testBasicLazyCollection() throws Exception {
+		Dao<LazyAccount, Integer> accountDao = createDao(LazyAccount.class, true);
+		Dao<LazyOrder, Integer> orderDao = createDao(LazyOrder.class, true);
+
+		LazyAccount account = new LazyAccount();
+		String name = "fwepfjewfew";
+		account.name = name;
+		assertEquals(1, accountDao.create(account));
+
+		LazyOrder order1 = new LazyOrder();
+		int val1 = 13123441;
+		order1.val = val1;
+		order1.account = account;
+		assertEquals(1, orderDao.create(order1));
+
+		LazyOrder order2 = new LazyOrder();
+		int val2 = 113787097;
+		order2.val = val2;
+		order2.account = account;
+		assertEquals(1, orderDao.create(order2));
+
+		LazyAccount account2 = accountDao.queryForId(account.id);
+		assertEquals(name, account2.name);
+		assertNotNull(account2.orders);
+		int orderC = 0;
+		for (LazyOrder order : account2.orders) {
+			orderC++;
+			switch (orderC) {
+				case 1 :
+					assertEquals(val1, order.val);
+					break;
+				case 2 :
+					assertEquals(val2, order.val);
+					break;
+			}
+		}
+		assertEquals(2, orderC);
+
+		// insert it via the collection
+		LazyOrder order3 = new LazyOrder();
+		int val3 = 76557654;
+		order3.val = val3;
+		order3.account = account;
+		account2.orders.add(order3);
+		orderC = 0;
+		for (LazyOrder order : account2.orders) {
+			orderC++;
+			switch (orderC) {
+				case 1 :
+					assertEquals(val1, order.val);
+					break;
+				case 2 :
+					assertEquals(val2, order.val);
+					break;
+				case 3 :
+					assertEquals(val3, order.val);
+					break;
+			}
+		}
+		assertEquals(3, orderC);
+
+		// now insert it behind the collections back
+		LazyOrder order4 = new LazyOrder();
+		int val4 = 1123587097;
+		order4.val = val4;
+		order4.account = account;
+		assertEquals(1, orderDao.create(order4));
+
+		// without refreshing we should see the new order
+		orderC = 0;
+		for (LazyOrder order : account2.orders) {
+			orderC++;
+			switch (orderC) {
+				case 1 :
+					assertEquals(val1, order.val);
+					break;
+				case 2 :
+					assertEquals(val2, order.val);
+					break;
+				case 3 :
+					assertEquals(val3, order.val);
+					break;
+				case 4 :
+					assertEquals(val4, order.val);
+					break;
+			}
+		}
+		assertEquals(4, orderC);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -3816,6 +3991,50 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(foreign = true)
 		public One one;
 		public ForeignDaoEnabled() {
+		}
+	}
+
+	protected static class EagerAccount {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+		@ForeignCollectionField(eager = true)
+		Collection<EagerOrder> orders;
+		protected EagerAccount() {
+		}
+	}
+
+	protected static class EagerOrder {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		int val;
+		@DatabaseField(foreign = true)
+		EagerAccount account;
+		protected EagerOrder() {
+		}
+	}
+
+	protected static class LazyAccount {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+		@ForeignCollectionField
+		Collection<LazyOrder> orders;
+		protected LazyAccount() {
+		}
+	}
+
+	protected static class LazyOrder {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		int val;
+		@DatabaseField(foreign = true)
+		LazyAccount account;
+		protected LazyOrder() {
 		}
 	}
 }

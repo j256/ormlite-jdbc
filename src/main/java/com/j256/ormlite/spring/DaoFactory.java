@@ -2,8 +2,8 @@ package com.j256.ormlite.spring;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
@@ -34,8 +34,7 @@ public class DaoFactory {
 	 * Create and return a Dao based on the arguments.
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
-		return new BaseDaoImpl<T, ID>(connectionSource, clazz) {
-		};
+		return DaoManager.createDao(connectionSource, clazz);
 	}
 
 	/**
@@ -43,7 +42,6 @@ public class DaoFactory {
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
-		return new BaseDaoImpl<T, ID>(connectionSource, tableConfig) {
-		};
+		return DaoManager.createDao(connectionSource, tableConfig);
 	}
 }

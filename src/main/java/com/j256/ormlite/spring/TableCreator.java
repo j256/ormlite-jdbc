@@ -89,10 +89,9 @@ public class TableCreator {
 					tableConfig = ((BaseDaoImpl<?, ?>) dao).getTableConfig();
 				}
 				if (tableConfig == null) {
-					TableUtils.createTable(connectionSource, dao.getDataClass());
-				} else {
-					TableUtils.createTable(connectionSource, tableConfig);
+					tableConfig = DatabaseTableConfig.fromClass(connectionSource, clazz);
 				}
+				TableUtils.createTable(connectionSource, tableConfig);
 				createdClasses.add(tableConfig);
 			} catch (Exception e) {
 				// we don't stop because the table might already exist

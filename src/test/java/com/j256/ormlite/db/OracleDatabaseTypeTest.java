@@ -53,7 +53,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		replay(mockDb);
 		connectionSource.setDatabaseType(mockDb);
 		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, 0);
+			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class, 0);
 			verify(mockDb);
 			StringBuilder sb = new StringBuilder();
 			List<String> statementsBefore = new ArrayList<String>();
@@ -66,7 +66,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testDropSequence() throws Exception {
 		Field field = GeneratedId.class.getField("id");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, 0);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class, 0);
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		databaseType.dropColumnArg(fieldType, statementsBefore, statementsAfter);
@@ -149,7 +149,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		String tableName = "foo";
 		connectionSource.setDatabaseType(dbType);
 		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, 0);
+			FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0);
 			dbType.appendUnique(sb, fieldType, after);
 			assertEquals(0, sb.length());
 			assertEquals(1, after.size());
