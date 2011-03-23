@@ -85,6 +85,7 @@ public abstract class BaseJdbcTest {
 	@After
 	public void after() throws Exception {
 		closeConnectionSource();
+		DaoManager.clearCache();
 	}
 
 	/**
