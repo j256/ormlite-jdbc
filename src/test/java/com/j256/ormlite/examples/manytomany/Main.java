@@ -83,43 +83,30 @@ public class Main {
 		User user1 = new User("Jim Coakley");
 
 		// persist the user object to the database, it should return 1 row changed
-		if (userDao.create(user1) != 1) {
-			throw new Exception("Could not create user in database");
-		}
+		userDao.create(user1);
 
 		// have user1 post something
 		Post post1 = new Post("Wow is it cold outside!!");
 		// save the post to the post table
-		if (postDao.create(post1) != 1) {
-			throw new Exception("Could not create post in database");
-		}
+		postDao.create(post1);
+
 		// link the user and the post together in the join table
 		UserPost user1Post1 = new UserPost(user1, post1);
-		if (userPostDao.create(user1Post1) != 1) {
-			throw new Exception("Could not create userPost in database");
-		}
+		userPostDao.create(user1Post1);
 
 		// have user1 post a second post
 		Post post2 = new Post("Now it's a bit warmer thank goodness.");
-		if (postDao.create(post2) != 1) {
-			throw new Exception("Could not create post in database");
-		}
+		postDao.create(post2);
 		UserPost user1Post2 = new UserPost(user1, post2);
-		if (userPostDao.create(user1Post2) != 1) {
-			throw new Exception("Could not create userPost in database");
-		}
+		userPostDao.create(user1Post2);
 
 		// create another user
 		User user2 = new User("Rose Gray");
-		if (userDao.create(user2) != 1) {
-			throw new Exception("Could not create user in database");
-		}
+		userDao.create(user2);
 
 		// have the 2nd user also say the 2nd post
 		UserPost user2Post1 = new UserPost(user2, post2);
-		if (userPostDao.create(user2Post1) != 1) {
-			throw new Exception("Could not create userPost in database");
-		}
+		userPostDao.create(user2Post1);
 
 		/*
 		 * Now go back and do various queries to look things up.

@@ -86,18 +86,14 @@ public class Main {
 		Account account = new Account(name);
 
 		// persist the account object to the database, it should return 1
-		if (accountDao.create(account) != 1) {
-			throw new Exception("Could not create Account in database");
-		}
+		accountDao.create(account);
 		int id = account.getId();
 		verifyDb(id, account);
 
 		// assign a password
 		account.setPassword("_secret");
 		// update the database after changing the object
-		if (accountDao.update(account) != 1) {
-			throw new Exception("Could not update Account in the database");
-		}
+		accountDao.update(account);
 		verifyDb(id, account);
 
 		// query for all items in the database
@@ -127,9 +123,7 @@ public class Main {
 		verifyAccount(account, accounts.get(0));
 
 		// delete the account since we are done with it
-		if (accountDao.delete(account) != 1) {
-			throw new Exception("Could not delete Account from the database");
-		}
+		accountDao.delete(account);
 		// we shouldn't find it now
 		assertNull("account was deleted, shouldn't find any", accountDao.queryForId(id));
 	}
@@ -144,9 +138,7 @@ public class Main {
 			String name = Integer.toString(i);
 			Account account = new Account(name);
 			// persist the account object to the database, it should return 1
-			if (accountDao.create(account) != 1) {
-				throw new Exception("Could not create Account in database");
-			}
+			accountDao.create(account);
 			accounts.put(name, account);
 		}
 

@@ -1,15 +1,16 @@
-package com.j256.ormlite.examples.foreign;
+package com.j256.ormlite.examples.foreignCollection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -89,35 +90,38 @@ public class Main {
 		Order order2 = new Order(account, itemNumber2, price2, quantity2);
 		orderDao.create(order2);
 
-		// construct a query using the QueryBuilder
-		QueryBuilder<Order, Integer> statementBuilder = orderDao.queryBuilder();
-		// should find both of the orders that match the account id
-		statementBuilder.where().eq(Order.ACCOUNT_ID_FIELD_NAME, account.getId());
-		List<Order> orders = orderDao.query(statementBuilder.prepare());
-
+		Account account2 = accountDao.queryForId(account.getId());
+		ForeignCollection<Order> orders = account2.getOrders();
+		
 		// sanity checks
-		assertEquals("Should have found both of the orders for the account", 2, orders.size());
-		assertTrue(orderDao.objectsEqual(order1, orders.get(0)));
-		assertTrue(orderDao.objectsEqual(order2, orders.get(1)));
+		CloseableIterator<Order> iterator = orders.iterator();
+		try {
+			assertTrue(iterator.hasNext());
+			Order order = iterator.next();
+			assertEquals(itemNumber1, order.getItemNumber());
+			assertTrue(iterator.hasNext());
+			order = iterator.next();
+			assertEquals(itemNumber2, order.getItemNumber());
+			assertFalse(iterator.hasNext());
+		} finally {
+			// must always close our iterators
+			iterator.close();
+		}
 
-		/*
-		 * Notice that in each of the orders that we got from the query, the Account id is good but the name field is
-		 * null. With foreign object fields, only the id field is stored in the table for the order.
-		 */
-		assertEquals(account.getId(), orders.get(0).getAccount().getId());
-		assertEquals(account.getId(), orders.get(1).getAccount().getId());
-		assertNull(orders.get(0).getAccount().getName());
-		assertNull(orders.get(1).getAccount().getName());
+		// create another Order for the Account
+		// Buzz also bought 1 of item #785 for a price of $7.98
+		int quantity3 = 50;
+		int itemNumber3 = 78315;
+		float price3 = 72.98F;
+		Order order3 = new Order(account, itemNumber3, price3, quantity3);
 
-		/*
-		 * To get the name field from the order's account field, we need to refresh each of the objects in the list
-		 * which will lookup the id and load in all of the fields.
-		 */
-		assertEquals(1, accountDao.refresh(orders.get(0).getAccount()));
-		assertEquals(1, accountDao.refresh(orders.get(1).getAccount()));
-
-		// now the account name field has been filled in
-		assertEquals(account.getName(), orders.get(0).getAccount().getName());
-		assertEquals(account.getName(), orders.get(1).getAccount().getName());
+		// now let's add this order via the foreign collection
+		orders.add(order3);
+		// now there are 3 of them in there
+		assertEquals(3, orders.size());
+		
+		List<Order> orderList = orderDao.queryForAll();
+		// and 3 in the database
+		assertEquals(3, orderList.size());
 	}
 }

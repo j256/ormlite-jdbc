@@ -105,16 +105,12 @@ public class Main {
 		// create an instance of Account
 		String name = "Jim Coakley";
 		Account account = new Account(name);
-		// persist the account object to the database, it should return 1
-		if (accountDao.create(account) != 1) {
-			throw new Exception("Could not create Account in database");
-		}
+		// persist the account object to the database
+		accountDao.create(account);
 
 		Delivery delivery = new Delivery(new Date(), "Mr. Ed", account);
 		// persist the account object to the database, it should return 1
-		if (deliveryDao.create(delivery) != 1) {
-			throw new Exception("Could not create Delivery in database");
-		}
+		deliveryDao.create(delivery);
 
 		Delivery delivery2 = deliveryDao.queryForId(delivery.getId());
 		assertNotNull(delivery2);
