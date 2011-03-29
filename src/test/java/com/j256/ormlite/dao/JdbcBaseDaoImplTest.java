@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
@@ -338,19 +339,34 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	@Ignore("Doesn't work with memory databases")
+	public void testCallBatch() throws Exception {
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+
+		int numItems = 1000;
+
+		// time it with a batch
+		long before = System.currentTimeMillis();
+		fooDao.callBatchTasks(new InsertCallable(numItems, fooDao));
+		long after = System.currentTimeMillis();
+		long batchDiff = after - before;
+
+		// time it with a batch
+		before = System.currentTimeMillis();
+		new InsertCallable(numItems, fooDao).call();
+		after = System.currentTimeMillis();
+		long normalDiff = after - before;
+
+		assertTrue(batchDiff + " should be much less than " + normalDiff, batchDiff < normalDiff / 2);
+	}
+
+	@Test
 	public void testIteratePageSize() throws Exception {
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		// do a mass insert of 1000 items
-		fooDao.callBatchTasks(new Callable<Void>() {
-			public Void call() throws Exception {
-				for (int i = 0; i < 1000; i++) {
-					Foo foo = new Foo();
-					foo.stuff = Integer.toString(i);
-					assertEquals(1, fooDao.create(foo));
-				}
-				return null;
-			}
-		});
+
+		int numItems = 1000;
+		fooDao.callBatchTasks(new InsertCallable(numItems, fooDao));
+
 		// now delete them with the iterator to test page-size
 		Iterator<Foo> iterator = fooDao.iterator();
 		while (iterator.hasNext()) {
@@ -362,18 +378,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@Test
 	public void testIteratorPreparedQuery() throws Exception {
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		// do an insert of 100 items
+		// do an insert of bunch of items
 		final int numItems = 100;
-		fooDao.callBatchTasks(new Callable<Void>() {
-			public Void call() throws Exception {
-				for (int i = 0; i < numItems; i++) {
-					Foo foo = new Foo();
-					foo.val = i;
-					assertEquals(1, fooDao.create(foo));
-				}
-				return null;
-			}
-		});
+		fooDao.callBatchTasks(new InsertCallable(numItems, fooDao));
 
 		int lastX = 10;
 		PreparedQuery<Foo> preparedQuery =
@@ -388,6 +395,23 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			itemC++;
 		}
 		assertEquals(lastX, itemC);
+	}
+
+	private class InsertCallable implements Callable<Void> {
+		private int numItems;
+		private Dao<Foo, Integer> fooDao;
+		public InsertCallable(int numItems, Dao<Foo, Integer> fooDao) {
+			this.numItems = numItems;
+			this.fooDao = fooDao;
+		}
+		public Void call() throws Exception {
+			for (int i = 0; i < numItems; i++) {
+				Foo foo = new Foo();
+				foo.val = i;
+				assertEquals(1, fooDao.create(foo));
+			}
+			return null;
+		}
 	}
 
 	@Test
