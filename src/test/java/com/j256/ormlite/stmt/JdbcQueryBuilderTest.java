@@ -537,7 +537,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		try {
 			qb.selectColumns("unknown column");
 			fail("expected exception");
-		} catch (SQLException e) {
+		} catch (IllegalArgumentException e) {
 			// expected
 		}
 	}
