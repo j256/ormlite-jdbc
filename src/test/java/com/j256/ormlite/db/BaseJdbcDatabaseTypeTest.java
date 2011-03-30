@@ -105,7 +105,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 			return;
 		}
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo);
+		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo, null);
 		int limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
