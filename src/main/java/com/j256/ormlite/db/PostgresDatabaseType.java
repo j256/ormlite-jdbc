@@ -97,4 +97,9 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 		appendEscapedWord(sb, sequenceName);
 		sb.append(')');
 	}
+
+	@Override
+	public boolean isTruncateSupported() {
+		return true;
+	}
 }

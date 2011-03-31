@@ -113,6 +113,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		return "SELECT 1 FROM SYSIBM.SYSDUMMY1";
 	}
 
+	@Override
+	public boolean isEntityNamesMustBeUpCase() {
+		return true;
+	}
+
 	/**
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
@@ -148,10 +153,5 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		public boolean isStreamType() {
 			return true;
 		}
-	}
-
-	@Override
-	public boolean isEntityNamesMustBeUpCase() {
-		return true;
 	}
 }
