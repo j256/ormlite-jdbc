@@ -28,8 +28,9 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
 	private final static String DATABASE_NAME = "Derby";
 
-	private final static FieldConverter objectConverter = new ObjectFieldConverter();
-	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
+	private static FieldConverter objectConverter;
+	private static FieldConverter booleanConverter;
+	private static FieldConverter charConverter;
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		if (!DATABASE_URL_PORTION.equals(dbTypePart)) {
@@ -56,14 +57,25 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		switch (dataType) {
 			case BOOLEAN :
 			case BOOLEAN_OBJ :
+				if (booleanConverter == null) {
+					booleanConverter = new BooleanNumberFieldConverter();
+				}
 				return booleanConverter;
+			case CHAR :
+			case CHAR_OBJ :
+				if (charConverter == null) {
+					charConverter = new CharFieldConverter();
+				}
+				return charConverter;
 			case SERIALIZABLE :
+				if (objectConverter == null) {
+					objectConverter = new ObjectFieldConverter();
+				}
 				return objectConverter;
 			default :
 				return super.getFieldConverter(dataType);
 		}
 	}
-
 	@Override
 	protected void appendLongStringType(StringBuilder sb) {
 		sb.append("LONG VARCHAR");
@@ -78,6 +90,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	@Override
 	protected void appendBooleanType(StringBuilder sb) {
 		// I tried "char for bit data" and "char(1)" with no luck
+		sb.append("SMALLINT");
+	}
+
+	@Override
+	protected void appendCharType(StringBuilder sb) {
 		sb.append("SMALLINT");
 	}
 
@@ -152,6 +169,33 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		}
 		public boolean isStreamType() {
 			return true;
+		}
+	}
+
+	/**
+	 * Conversion from the char Java field because Derby can't convert Character to type char. Jesus.
+	 */
+	private static class CharFieldConverter implements FieldConverter {
+		public SqlType getSqlType() {
+			return SqlType.INTEGER;
+		}
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+			char character = (char) (Character) javaObject;
+			return (int) character;
+		}
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			if (defaultStr.length() != 1) {
+				throw new SQLException("Problems with field " + fieldType + ", default string to long: '" + defaultStr
+						+ "'");
+			}
+			return (int) defaultStr.charAt(0);
+		}
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			int intVal = results.getInt(columnPos);
+			return (char) intVal;
+		}
+		public boolean isStreamType() {
+			return false;
 		}
 	}
 }

@@ -31,6 +31,9 @@ public class TypeValMapper {
 				case BOOLEAN :
 					typeToValMap.put(sqlType, new Integer[] { Types.BOOLEAN });
 					break;
+				case CHAR :
+					typeToValMap.put(sqlType, new Integer[] { Types.CHAR });
+					break;
 				case BYTE :
 					typeToValMap.put(sqlType, new Integer[] { Types.TINYINT });
 					break;

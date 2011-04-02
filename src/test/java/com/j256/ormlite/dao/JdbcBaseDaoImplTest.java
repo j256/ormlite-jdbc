@@ -29,6 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
+import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -1012,6 +1013,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date dateVal = new Date(millis);
 		Date dateLongVal = new Date(millis);
 		Date dateStringVal = new Date(millis);
+		char charVal = 'w';
 		byte byteVal = 117;
 		short shortVal = 15217;
 		int intVal = 1023213;
@@ -1024,6 +1026,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		allTypes.dateField = dateVal;
 		allTypes.dateLongField = dateLongVal;
 		allTypes.dateStringField = dateStringVal;
+		allTypes.charField = charVal;
 		allTypes.byteField = byteVal;
 		allTypes.shortField = shortVal;
 		allTypes.intField = intVal;
@@ -1051,6 +1054,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_FIELD_NAME, dateVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_LONG_FIELD_NAME, dateLongVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_STRING_FIELD_NAME, dateStringVal, true);
+		if (!(databaseType instanceof DerbyEmbeddedDatabaseType)) {
+			checkQueryResult(allDao, qb, allTypes, AllTypes.CHAR_FIELD_NAME, charVal, true);
+		}
 		checkQueryResult(allDao, qb, allTypes, AllTypes.BYTE_FIELD_NAME, byteVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.SHORT_FIELD_NAME, shortVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.INT_FIELD_NAME, intVal, true);
@@ -3084,6 +3090,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public static final String DATE_LONG_FIELD_NAME = "dateLongField";
 		public static final String DATE_STRING_FIELD_NAME = "dateStringField";
 		public static final String SERIAL_FIELD_NAME = "serialField";
+		public static final String CHAR_FIELD_NAME = "charField";
 		public static final String BYTE_FIELD_NAME = "byteField";
 		public static final String SHORT_FIELD_NAME = "shortField";
 		public static final String INT_FIELD_NAME = "intField";
@@ -3105,6 +3112,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date dateLongField;
 		@DatabaseField(columnName = DATE_STRING_FIELD_NAME, dataType = DataType.DATE_STRING, format = DEFAULT_DATE_STRING_FORMAT)
 		Date dateStringField;
+		@DatabaseField(columnName = CHAR_FIELD_NAME)
+		char charField;
 		@DatabaseField(columnName = BYTE_FIELD_NAME)
 		byte byteField;
 		@DatabaseField(columnName = SHORT_FIELD_NAME)
