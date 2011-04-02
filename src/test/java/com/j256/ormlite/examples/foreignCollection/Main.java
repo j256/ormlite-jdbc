@@ -92,7 +92,7 @@ public class Main {
 
 		Account account2 = accountDao.queryForId(account.getId());
 		ForeignCollection<Order> orders = account2.getOrders();
-		
+
 		// sanity checks
 		CloseableIterator<Order> iterator = orders.iterator();
 		try {
@@ -119,7 +119,7 @@ public class Main {
 		orders.add(order3);
 		// now there are 3 of them in there
 		assertEquals(3, orders.size());
-		
+
 		List<Order> orderList = orderDao.queryForAll();
 		// and 3 in the database
 		assertEquals(3, orderList.size());
