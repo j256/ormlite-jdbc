@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
@@ -337,28 +336,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		} catch (IllegalStateException e) {
 			// expected
 		}
-	}
-
-	@Test
-	@Ignore("Doesn't work with memory databases")
-	public void testCallBatch() throws Exception {
-		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-
-		int numItems = 1000;
-
-		// time it with a batch
-		long before = System.currentTimeMillis();
-		fooDao.callBatchTasks(new InsertCallable(numItems, fooDao));
-		long after = System.currentTimeMillis();
-		long batchDiff = after - before;
-
-		// time it with a batch
-		before = System.currentTimeMillis();
-		new InsertCallable(numItems, fooDao).call();
-		after = System.currentTimeMillis();
-		long normalDiff = after - before;
-
-		assertTrue(batchDiff + " should be much less than " + normalDiff, batchDiff < normalDiff / 2);
 	}
 
 	@Test
