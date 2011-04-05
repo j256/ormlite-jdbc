@@ -39,6 +39,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
@@ -1167,12 +1168,12 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateReserverdTable() throws Exception {
-		Dao<Where, String> whereDao = createDao(Where.class, true);
+		Dao<Create, String> whereDao = createDao(Create.class, true);
 		String id = "from-string";
-		Where where = new Where();
+		Create where = new Create();
 		where.id = id;
 		assertEquals(1, whereDao.create(where));
-		Where where2 = whereDao.queryForId(id);
+		Create where2 = whereDao.queryForId(id);
 		assertEquals(id, where2.id);
 		assertEquals(1, whereDao.delete(where2));
 		assertNull(whereDao.queryForId(id));
@@ -2785,6 +2786,118 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(4, orderC);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testUseOfAndMany() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		int id = 1;
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		int notId = id + 1;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Where<Foo, Integer> where = dao.queryBuilder().where();
+		where.andMany(where.eq(Foo.VAL_FIELD_NAME, val), where.eq(Foo.ID_FIELD_NAME, id));
+
+		List<Foo> results = where.query();
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+
+		// this should match none
+		where.clear();
+		where.andMany(where.eq(Foo.VAL_FIELD_NAME, val), where.eq(Foo.ID_FIELD_NAME, id),
+				where.eq(Foo.ID_FIELD_NAME, notId));
+		results = where.query();
+		assertEquals(0, results.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testUseOfOrMany() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		int id = 1;
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		int notId = id + 1;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Where<Foo, Integer> where = dao.queryBuilder().where();
+		where.orMany(where.eq(Foo.ID_FIELD_NAME, id), where.eq(Foo.ID_FIELD_NAME, notId),
+				where.eq(Foo.VAL_FIELD_NAME, val + 1), where.eq(Foo.VAL_FIELD_NAME, val + 1));
+
+		List<Foo> results = where.query();
+		assertEquals(2, results.size());
+		assertEquals(id, results.get(0).id);
+		assertEquals(notId, results.get(1).id);
+	}
+
+	@Test
+	public void testQueryForMatching() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		int id = 1;
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		int notId = id + 1;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Foo match = new Foo();
+		match.val = val;
+		List<Foo> results = dao.queryForMatching(match);
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+
+		match = new Foo();
+		match.id = notId;
+		match.val = val;
+		results = dao.queryForMatching(match);
+		assertEquals(0, results.size());
+	}
+
+	@Test
+	public void testQueryForFieldValues() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		int id = 1;
+		foo.id = id;
+		int val = 1231231;
+		foo.val = val;
+		assertEquals(1, dao.create(foo));
+		int notId = id + 1;
+		foo.id = notId;
+		foo.val = val + 1;
+		assertEquals(1, dao.create(foo));
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+		fieldValues.put(Foo.VAL_FIELD_NAME, val);
+		List<Foo> results = dao.queryForFieldValues(fieldValues);
+		assertEquals(1, results.size());
+		assertEquals(id, results.get(0).id);
+
+		fieldValues.put(Foo.ID_FIELD_NAME, notId);
+		fieldValues.put(Foo.VAL_FIELD_NAME, val);
+		results = dao.queryForFieldValues(fieldValues);
+		assertEquals(0, results.size());
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -3229,7 +3342,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	// for testing reserved table names as fields
-	private static class Where {
+	private static class Create {
 		@DatabaseField(id = true)
 		public String id;
 	}
