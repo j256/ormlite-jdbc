@@ -64,4 +64,9 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	public boolean isTruncateSupported() {
 		return true;
 	}
+
+	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
 }

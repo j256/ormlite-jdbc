@@ -48,4 +48,9 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 	public void appendOffsetValue(StringBuilder sb, int offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
 	}
+
+	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
 }

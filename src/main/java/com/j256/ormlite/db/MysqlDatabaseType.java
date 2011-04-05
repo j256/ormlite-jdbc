@@ -81,4 +81,9 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	public boolean isTruncateSupported() {
 		return true;
 	}
+
+	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		return true;
+	}
 }
