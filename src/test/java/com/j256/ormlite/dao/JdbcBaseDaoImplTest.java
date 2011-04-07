@@ -376,7 +376,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(lastX, itemC);
 	}
 
-	private class InsertCallable implements Callable<Void> {
+	private static class InsertCallable implements Callable<Void> {
 		private int numItems;
 		private Dao<Foo, Integer> fooDao;
 		public InsertCallable(int numItems, Dao<Foo, Integer> fooDao) {

@@ -137,7 +137,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			DatabaseConnection connection = makeConnection(logger);
 			openCount++;
 			// add it to our connection map
-			connectionMap.put(connection, new ConnectionMetaData(connection));
+			connectionMap.put(connection, new ConnectionMetaData(connection, maxConnectionAgeMillis));
 			int maxInUse = connectionMap.size();
 			if (maxInUse > maxEverUsed) {
 				maxEverUsed = maxInUse;
@@ -348,11 +348,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	/**
 	 * Class to hold the connection and its meta data.
 	 */
-	private class ConnectionMetaData {
+	private static class ConnectionMetaData {
 		public final DatabaseConnection connection;
 		private final long expiresMillis;
 
-		public ConnectionMetaData(DatabaseConnection connection) {
+		public ConnectionMetaData(DatabaseConnection connection, long maxConnectionAgeMillis) {
 			this.connection = connection;
 			long now = System.currentTimeMillis();
 			if (maxConnectionAgeMillis > Long.MAX_VALUE - now) {
