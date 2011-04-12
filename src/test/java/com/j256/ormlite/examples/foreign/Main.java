@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
@@ -57,8 +57,8 @@ public class Main {
 	 */
 	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
-		accountDao = BaseDaoImpl.createDao(connectionSource, Account.class);
-		orderDao = BaseDaoImpl.createDao(connectionSource, Order.class);
+		accountDao = DaoManager.createDao(connectionSource, Account.class);
+		orderDao = DaoManager.createDao(connectionSource, Order.class);
 
 		// if you need to create the table
 		TableUtils.createTable(connectionSource, Account.class);

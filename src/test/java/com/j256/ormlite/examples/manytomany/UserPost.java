@@ -5,7 +5,6 @@ import com.j256.ormlite.field.DatabaseField;
 /**
  * Join table which links users to their posts.
  * 
- * 
  * <p>
  * For more information about foreign objects, see the <a href="http://ormlite.com/docs/foreign" >online docs</a>
  * </p>

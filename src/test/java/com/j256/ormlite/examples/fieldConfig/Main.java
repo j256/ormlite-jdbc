@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -60,12 +60,10 @@ public class Main {
 	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
 		DatabaseTableConfig<Account> accountTableConfig = buildAccountTableConfig();
-		accountDao = new BaseDaoImpl<Account, Integer>(connectionSource, accountTableConfig) {
-		};
+		accountDao = DaoManager.createDao(connectionSource, accountTableConfig);
 
 		DatabaseTableConfig<Delivery> deliveryTableConfig = buildDeliveryTableConfig(accountTableConfig);
-		deliveryDao = new BaseDaoImpl<Delivery, Integer>(connectionSource, deliveryTableConfig) {
-		};
+		deliveryDao = DaoManager.createDao(connectionSource, deliveryTableConfig);
 
 		// if you need to create the table
 		TableUtils.createTable(connectionSource, accountTableConfig);
@@ -109,7 +107,7 @@ public class Main {
 		accountDao.create(account);
 
 		Delivery delivery = new Delivery(new Date(), "Mr. Ed", account);
-		// persist the account object to the database, it should return 1
+		// persist the account object to the database
 		deliveryDao.create(delivery);
 
 		Delivery delivery2 = deliveryDao.queryForId(delivery.getId());

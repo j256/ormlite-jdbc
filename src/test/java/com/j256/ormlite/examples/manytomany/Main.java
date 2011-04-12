@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -62,9 +62,9 @@ public class Main {
 		/**
 		 * Create our DAOs. One for each class and associated table.
 		 */
-		userDao = BaseDaoImpl.createDao(connectionSource, User.class);
-		postDao = BaseDaoImpl.createDao(connectionSource, Post.class);
-		userPostDao = BaseDaoImpl.createDao(connectionSource, UserPost.class);
+		userDao = DaoManager.createDao(connectionSource, User.class);
+		postDao = DaoManager.createDao(connectionSource, Post.class);
+		userPostDao = DaoManager.createDao(connectionSource, UserPost.class);
 
 		/**
 		 * Create the tables for our example. This would not be necessary if the tables already existed.
@@ -82,7 +82,7 @@ public class Main {
 		// create our 1st user
 		User user1 = new User("Jim Coakley");
 
-		// persist the user object to the database, it should return 1 row changed
+		// persist the user object to the database
 		userDao.create(user1);
 
 		// have user1 post something

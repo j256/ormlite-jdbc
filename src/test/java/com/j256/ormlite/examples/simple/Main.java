@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -71,7 +71,7 @@ public class Main {
 	 */
 	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
-		accountDao = BaseDaoImpl.createDao(connectionSource, Account.class);
+		accountDao = DaoManager.createDao(connectionSource, Account.class);
 
 		// if you need to create the table
 		TableUtils.createTable(connectionSource, Account.class);
@@ -85,7 +85,7 @@ public class Main {
 		String name = "Jim Coakley";
 		Account account = new Account(name);
 
-		// persist the account object to the database, it should return 1
+		// persist the account object to the database
 		accountDao.create(account);
 		int id = account.getId();
 		verifyDb(id, account);
