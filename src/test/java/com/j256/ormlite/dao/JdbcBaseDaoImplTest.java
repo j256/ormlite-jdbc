@@ -836,10 +836,13 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@Test
 	public void testFieldConfigForeign() throws Exception {
 		List<DatabaseFieldConfig> noAnnotationsFieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("id", "idthingie", DataType.UNKNOWN, null, 0, false,
-				false, true, null, false, null, false, null, false, null, false, null, null, false));
-		noAnnotationsFieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false,
-				false, false, null, false, null, false, null, false, null, false, null, null, false));
+		DatabaseFieldConfig field1 = new DatabaseFieldConfig("id");
+		field1.setColumnName("idthingie");
+		field1.setGeneratedId(true);
+		noAnnotationsFieldConfigs.add(field1);
+		DatabaseFieldConfig field2 = new DatabaseFieldConfig("stuff");
+		field2.setColumnName("stuffy");
+		noAnnotationsFieldConfigs.add(field2);
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
 				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
 		Dao<NoAnno, Integer> noAnnotationDao = createDao(noAnnotationsTableConfig, true);
@@ -850,11 +853,15 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertNotNull(noAnnotationDao.queryForId(noa.id));
 
 		List<DatabaseFieldConfig> noAnnotationsForiegnFieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("id", "anotherid", DataType.UNKNOWN, null, 0,
-				false, false, true, null, false, null, false, null, false, null, false, null, null, false));
-		noAnnotationsForiegnFieldConfigs.add(new DatabaseFieldConfig("foreign", "foreignThingie", DataType.UNKNOWN,
-				null, 0, false, false, false, null, true, noAnnotationsTableConfig, false, null, false, null, false,
-				null, null, false));
+		DatabaseFieldConfig field3 = new DatabaseFieldConfig("id");
+		field3.setColumnName("anotherid");
+		field3.setGeneratedId(true);
+		noAnnotationsForiegnFieldConfigs.add(field3);
+		DatabaseFieldConfig field4 = new DatabaseFieldConfig("foreign");
+		field4.setColumnName("foreignThingie");
+		field4.setForeign(true);
+		field4.setForeignTableConfig(noAnnotationsTableConfig);
+		noAnnotationsForiegnFieldConfigs.add(field4);
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
 				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
 
@@ -1829,6 +1836,34 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		unique.stuff = stuff;
 		assertEquals(1, dao.create(unique));
 		unique = new Unique();
+		unique.uniqueStuff = uniqueStuff;
+		try {
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+			return;
+		}
+	}
+
+	@Test
+	public void testDoubleUnique() throws Exception {
+		Dao<DoubleUnique, Long> dao = createDao(DoubleUnique.class, true);
+		String stuff = "this doesn't need to be unique";
+		String uniqueStuff = "this needs to be unique";
+		DoubleUnique unique = new DoubleUnique();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		// can't create it twice with the same stuff which needs to be unique
+		unique = new DoubleUnique();
+		unique.stuff = stuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUnique();
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUnique();
+		unique.stuff = stuff;
 		unique.uniqueStuff = uniqueStuff;
 		try {
 			dao.create(unique);
@@ -3560,6 +3595,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
+		String stuff;
+		@DatabaseField(unique = true)
+		String uniqueStuff;
+	}
+
+	@DatabaseTable
+	protected static class DoubleUnique {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(unique = true)
 		String stuff;
 		@DatabaseField(unique = true)
 		String uniqueStuff;

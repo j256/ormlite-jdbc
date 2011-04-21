@@ -140,27 +140,6 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testUnique() throws Exception {
-		OracleDatabaseType dbType = new OracleDatabaseType();
-		StringBuilder sb = new StringBuilder();
-		List<String> after = new ArrayList<String>();
-		String fieldName = "id";
-		Field field = Foo.class.getDeclaredField(fieldName);
-		String tableName = "foo";
-		connectionSource.setDatabaseType(dbType);
-		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0);
-			dbType.appendUnique(sb, fieldType, after);
-			assertEquals(0, sb.length());
-			assertEquals(1, after.size());
-			assertEquals("ALTER TABLE \"" + tableName + "\" ADD CONSTRAINT " + tableName + "_" + fieldName
-					+ "_unique UNIQUE (\"" + fieldName + "\");", after.get(0));
-		} finally {
-			connectionSource.setDatabaseType(databaseType);
-		}
-	}
-
-	@Test
 	public void testObject() throws Exception {
 		OracleDatabaseType dbType = new OracleDatabaseType();
 		StringBuilder sb = new StringBuilder();

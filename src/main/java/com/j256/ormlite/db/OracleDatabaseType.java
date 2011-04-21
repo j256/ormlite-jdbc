@@ -115,21 +115,6 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendUnique(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
-		StringBuilder alterSb = new StringBuilder();
-		alterSb.append("ALTER TABLE ");
-		String tableName = fieldType.getTableName();
-		appendEscapedEntityName(alterSb, tableName);
-		alterSb.append(" ADD CONSTRAINT ");
-		String colName = fieldType.getDbColumnName();
-		alterSb.append(tableName).append('_').append(colName).append('_').append("unique");
-		alterSb.append(" UNIQUE (");
-		appendEscapedEntityName(alterSb, colName);
-		alterSb.append(");");
-		statementsAfter.add(alterSb.toString());
-	}
-
-	@Override
 	public String getPingStatement() {
 		return "SELECT 1 FROM DUAL";
 	}

@@ -49,6 +49,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
 		assertTrue(sb + "should contain the stuff", sb.toString().contains(" INTEGER PRIMARY KEY AUTOINCREMENT"));
 		assertEquals(0, statementsBefore.size());
 		assertEquals(0, additionalArgs.size());

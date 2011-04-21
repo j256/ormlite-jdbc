@@ -68,17 +68,6 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	protected void appendUnique(StringBuilder sb, FieldType fieldType, List<String> statementsAfter) {
-		StringBuilder alterSb = new StringBuilder();
-		alterSb.append("ALTER TABLE ");
-		appendEscapedEntityName(alterSb, fieldType.getTableName());
-		alterSb.append(" ADD UNIQUE (");
-		appendEscapedEntityName(alterSb, fieldType.getDbColumnName());
-		alterSb.append(");");
-		statementsAfter.add(alterSb.toString());
-	}
-
-	@Override
 	public boolean isOffsetSqlSupported() {
 		// there is no easy way to do this in this database type
 		return false;

@@ -95,6 +95,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> queriesAfter = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
 				queriesAfter);
+		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, queriesAfter);
 		assertTrue(sb.toString().contains(" DEFAULT NEXTVAL('\"" + GENERATED_ID_SEQ + "\"')"));
 		assertEquals(1, statementsBefore.size());
 		assertTrue(statementsBefore.get(0).contains(GENERATED_ID_SEQ));
@@ -118,6 +119,8 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, idField, additionalArgs, statementsBefore, null, queriesAfter);
+		databaseType.addPrimaryKeySql(new FieldType[] { idField }, additionalArgs, statementsBefore, null,
+				queriesAfter);
 		String seqName =
 				databaseType.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(),
 						idField);

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +70,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
 		assertTrue(sb + "should contain the stuff", sb.toString().contains(" GENERATED ALWAYS AS IDENTITY"));
 		assertEquals(0, statementsBefore.size());
 		assertEquals(1, additionalArgs.size());
@@ -83,20 +83,6 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		dbType.appendByteArrayType(sb);
 		assertEquals("VARCHAR [] FOR BIT DATA", sb.toString());
-	}
-
-	@Test
-	public void testUnique() throws Exception {
-		StringBuilder sb = new StringBuilder();
-		List<String> after = new ArrayList<String>();
-		String fieldName = "id";
-		Field field = Foo.class.getDeclaredField(fieldName);
-		String tableName = "foo";
-		FieldType fieldType = FieldType.createFieldType(connectionSource, tableName, field, Foo.class, 0);
-		((BaseDatabaseType) databaseType).appendUnique(sb, fieldType, after);
-		assertEquals(0, sb.length());
-		assertEquals(1, after.size());
-		assertEquals("ALTER TABLE \"" + tableName + "\" ADD UNIQUE (\"" + fieldName + "\");", after.get(0));
 	}
 
 	@Override

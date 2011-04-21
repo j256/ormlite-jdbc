@@ -133,6 +133,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains(" IDENTITY"));
 		assertEquals(1, additionalArgs.size());
 		assertTrue(additionalArgs.get(0).contains("PRIMARY KEY"));
