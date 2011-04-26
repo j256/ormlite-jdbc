@@ -55,7 +55,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		replay(mockDb);
 		connectionSource.setDatabaseType(mockDb);
 		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class, 0);
+			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
 			verify(mockDb);
 			StringBuilder sb = new StringBuilder();
 			List<String> statementsBefore = new ArrayList<String>();
@@ -71,7 +71,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			return;
 		}
 		Field field = GeneratedId.class.getField("id");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class, 0);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		databaseType.dropColumnArg(fieldType, statementsBefore, statementsAfter);
@@ -119,8 +119,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, idField, additionalArgs, statementsBefore, null, queriesAfter);
-		databaseType.addPrimaryKeySql(new FieldType[] { idField }, additionalArgs, statementsBefore, null,
-				queriesAfter);
+		databaseType.addPrimaryKeySql(new FieldType[] { idField }, additionalArgs, statementsBefore, null, queriesAfter);
 		String seqName =
 				databaseType.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(),
 						idField);

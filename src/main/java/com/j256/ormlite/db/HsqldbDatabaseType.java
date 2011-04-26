@@ -54,7 +54,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	protected void configureGeneratedIdSequence(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
 		// needs to match dropColumnArg()
-		StringBuilder seqSb = new StringBuilder();
+		StringBuilder seqSb = new StringBuilder(128);
 		seqSb.append("CREATE SEQUENCE ");
 		appendEscapedEntityName(seqSb, fieldType.getGeneratedIdSequence());
 		if (fieldType.getDataType() == DataType.LONG) {
@@ -77,7 +77,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	public void dropColumnArg(FieldType fieldType, List<String> statementsBefore, List<String> statementsAfter) {
 		if (fieldType.isGeneratedIdSequence()) {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(64);
 			sb.append("DROP SEQUENCE ");
 			appendEscapedEntityName(sb, fieldType.getGeneratedIdSequence());
 			statementsAfter.add(sb.toString());

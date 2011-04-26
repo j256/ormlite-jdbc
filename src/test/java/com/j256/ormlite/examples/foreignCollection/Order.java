@@ -14,7 +14,7 @@ public class Order {
 	@DatabaseField(generatedId = true)
 	private int id;
 
-	@DatabaseField(foreign = true, columnName = ACCOUNT_ID_FIELD_NAME)
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ACCOUNT_ID_FIELD_NAME)
 	private Account account;
 
 	@DatabaseField

@@ -44,7 +44,7 @@ public class NetezzaDatabaseType extends BaseDatabaseType implements DatabaseTyp
 			List<String> additionalArgs, List<String> queriesAfter) {
 		String sequenceName = fieldType.getGeneratedIdSequence();
 		// needs to match dropColumnArg()
-		StringBuilder seqSb = new StringBuilder();
+		StringBuilder seqSb = new StringBuilder(64);
 		seqSb.append("CREATE SEQUENCE ");
 		// when it is created, it needs to be escaped specially
 		appendEscapedEntityName(seqSb, sequenceName);
@@ -56,7 +56,7 @@ public class NetezzaDatabaseType extends BaseDatabaseType implements DatabaseTyp
 	@Override
 	public void dropColumnArg(FieldType fieldType, List<String> statementsBefore, List<String> statementsAfter) {
 		if (fieldType.isGeneratedIdSequence()) {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(64);
 			sb.append("DROP SEQUENCE ");
 			appendEscapedEntityName(sb, fieldType.getGeneratedIdSequence());
 			statementsAfter.add(sb.toString());

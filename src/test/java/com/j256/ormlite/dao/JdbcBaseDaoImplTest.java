@@ -88,7 +88,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			return;
 		}
 		createTable(Foo.class, true);
-		Dao<Foo, Integer> fooDao = BaseDaoImpl.createDao(connectionSource, Foo.class);
+		Dao<Foo, Integer> fooDao = DaoManager.createDao(connectionSource, Foo.class);
 		String stuff = "stuff";
 		Foo foo = new Foo();
 		foo.stuff = stuff;
