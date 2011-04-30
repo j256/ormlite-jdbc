@@ -1842,8 +1842,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			fail("Should have thrown");
 		} catch (SQLException e) {
 			// expected
-			return;
-		}
+					}
 	}
 
 	@Test
@@ -1858,11 +1857,51 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		// can't create it twice with the same stuff which needs to be unique
 		unique = new DoubleUnique();
 		unique.stuff = stuff;
-		assertEquals(1, dao.create(unique));
+		try {
+			// either 1st field can't be unique
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 		unique = new DoubleUnique();
 		unique.uniqueStuff = uniqueStuff;
-		assertEquals(1, dao.create(unique));
+		try {
+			// nor 2nd field can't be unique
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 		unique = new DoubleUnique();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		try {
+			// nor both fields can't be unique
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
+	}
+
+	@Test
+	public void testDoubleUniqueCombo() throws Exception {
+		Dao<DoubleUniqueCombo, Long> dao = createDao(DoubleUniqueCombo.class, true);
+		String stuff = "this doesn't need to be unique";
+		String uniqueStuff = "this needs to be unique";
+		DoubleUniqueCombo unique = new DoubleUniqueCombo();
+		unique.stuff = stuff;
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		// can't create it twice with the same stuff which needs to be unique
+		unique = new DoubleUniqueCombo();
+		unique.stuff = stuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUniqueCombo();
+		unique.uniqueStuff = uniqueStuff;
+		assertEquals(1, dao.create(unique));
+		unique = new DoubleUniqueCombo();
 		unique.stuff = stuff;
 		unique.uniqueStuff = uniqueStuff;
 		try {
@@ -1870,7 +1909,47 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			fail("Should have thrown");
 		} catch (SQLException e) {
 			// expected
-			return;
+					}
+	}
+
+	@Test
+	public void testUniqueAndUniqueCombo() throws Exception {
+		Dao<UniqueAndUniqueCombo, Long> dao = createDao(UniqueAndUniqueCombo.class, true);
+		String unique1 = "unique but not combo";
+		String combo1 = "combo unique";
+		String combo2 = "another combo unique";
+		UniqueAndUniqueCombo unique = new UniqueAndUniqueCombo();
+		unique.unique1 = unique1;
+		assertEquals(1, dao.create(unique));
+		// can't create it twice with the same stuff which needs to be unique
+		unique = new UniqueAndUniqueCombo();
+		unique.unique1 = unique1;
+		try {
+			dao.create(unique);
+			fail("this should throw");
+		} catch (Exception e) {
+			// expected
+		}
+		unique = new UniqueAndUniqueCombo();
+		unique.combo1 = combo1;
+		unique.combo2 = combo2;
+		assertEquals(1, dao.create(unique));
+		unique = new UniqueAndUniqueCombo();
+		unique.combo1 = combo1;
+		unique.combo2 = unique1;
+		assertEquals(1, dao.create(unique));
+		unique = new UniqueAndUniqueCombo();
+		unique.combo1 = unique1;
+		unique.combo2 = combo2;
+		assertEquals(1, dao.create(unique));
+		unique = new UniqueAndUniqueCombo();
+		unique.combo1 = combo1;
+		unique.combo2 = combo2;
+		try {
+			dao.create(unique);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
 		}
 	}
 
@@ -3608,6 +3687,28 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String stuff;
 		@DatabaseField(unique = true)
 		String uniqueStuff;
+	}
+
+	@DatabaseTable
+	protected static class DoubleUniqueCombo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(uniqueCombo = true)
+		String stuff;
+		@DatabaseField(uniqueCombo = true)
+		String uniqueStuff;
+	}
+
+	@DatabaseTable
+	protected static class UniqueAndUniqueCombo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(unique = true)
+		String unique1;
+		@DatabaseField(uniqueCombo = true)
+		String combo1;
+		@DatabaseField(uniqueCombo = true)
+		String combo2;
 	}
 
 	@DatabaseTable
