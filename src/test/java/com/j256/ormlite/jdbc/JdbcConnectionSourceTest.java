@@ -7,6 +7,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -202,5 +203,16 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.setDatabaseType(new H2DatabaseType());
 		sds.initialize();
 		assertTrue(sds.getDatabaseType() instanceof H2DatabaseType);
+	}
+
+	@Test
+	public void testIsOpen() throws Exception {
+		JdbcConnectionSource sds = new JdbcConnectionSource("jdbc:h2:mem:baz");
+		// no get connection yet
+		assertFalse(sds.isOpen());
+		sds.releaseConnection(sds.getReadOnlyConnection());
+		assertTrue(sds.isOpen());
+		sds.close();
+		assertFalse(sds.isOpen());
 	}
 }

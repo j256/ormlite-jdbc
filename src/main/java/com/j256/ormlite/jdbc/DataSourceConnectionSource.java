@@ -168,6 +168,13 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		return databaseType;
 	}
 
+	/**
+	 * Unfortunately we cannot tell if the related data source has been closed so this just returns true.
+	 */
+	public boolean isOpen() {
+		return true;
+	}
+
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}

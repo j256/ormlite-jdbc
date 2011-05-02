@@ -1,8 +1,10 @@
 package com.j256.ormlite.jdbc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -405,5 +407,17 @@ public class JdbcPooledConnectionSourceTest {
 		} finally {
 			pooled.close();
 		}
+	}
+
+	@Test
+	public void testIsOpen() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		pooled.setUrl("jdbc:h2:mem:baz");
+		assertTrue(pooled.isOpen());
+		DatabaseConnection conn = pooled.getReadOnlyConnection();
+		pooled.releaseConnection(conn);
+		assertTrue(pooled.isOpen());
+		pooled.close();
+		assertFalse(pooled.isOpen());
 	}
 }

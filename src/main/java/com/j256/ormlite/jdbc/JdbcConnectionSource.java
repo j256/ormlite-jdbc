@@ -197,6 +197,10 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		return databaseType;
 	}
 
+	public boolean isOpen() {
+		return connection != null;
+	}
+
 	// not required
 	public void setUsername(String username) {
 		this.username = username;

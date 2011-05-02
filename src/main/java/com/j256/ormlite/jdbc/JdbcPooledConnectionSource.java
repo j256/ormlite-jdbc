@@ -62,6 +62,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private int maxEverUsed = 0;
 	private long checkConnectionsEveryMillis = CHECK_CONNECTIONS_EVERY_MILLIS;
 	private boolean testBeforeGetFromPool = false;
+	private volatile boolean isOpen = true;
 
 	public JdbcPooledConnectionSource() {
 		// for spring type wiring
@@ -103,6 +104,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			connFreeList = null;
 			// NOTE: We can't close the ones left in the connectionMap because they may still be in use.
 			connectionMap.clear();
+			isOpen = false;
 		}
 	}
 
@@ -234,6 +236,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			}
 		}
 		// release should then called after the clear
+	}
+
+	@Override
+	public boolean isOpen() {
+		return isOpen;
 	}
 
 	public void setUsesTransactions(boolean usesTransactions) {
