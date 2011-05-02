@@ -8,7 +8,6 @@ import java.util.Date;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
@@ -72,26 +71,28 @@ public class Main {
 
 	private DatabaseTableConfig<Account> buildAccountTableConfig() {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false, null, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("name", Account.NAME_FIELD_NAME, DataType.UNKNOWN, null, 0, false,
-				false, false, null, false, null, false, null, false, null, false, null, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("password", Account.PASSWORD_FIELD_NAME, DataType.UNKNOWN, null, 0,
-				true, false, false, null, false, null, false, null, false, null, false, null, null, false));
+		DatabaseFieldConfig fieldConfig = new DatabaseFieldConfig("id");
+		fieldConfig.setGeneratedId(true);
+		fieldConfigs.add(fieldConfig);
+		fieldConfigs.add(new DatabaseFieldConfig("name"));
+		fieldConfig = new DatabaseFieldConfig("password");
+		fieldConfig.setCanBeNull(true);
+		fieldConfigs.add(fieldConfig);
 		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
 		return tableConfig;
 	}
 
 	private DatabaseTableConfig<Delivery> buildDeliveryTableConfig(DatabaseTableConfig<Account> accountTableConfig) {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
-		fieldConfigs.add(new DatabaseFieldConfig("id", null, DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false, null, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("when", null, DataType.UNKNOWN, null, 0, false, false, false, null,
-				false, null, false, null, false, null, false, null, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("signedBy", null, DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false, null, false, null, null, false));
-		fieldConfigs.add(new DatabaseFieldConfig("account", null, DataType.UNKNOWN, null, 0, false, false, false, null,
-				true, accountTableConfig, false, null, false, null, false, null, null, false));
+		DatabaseFieldConfig fieldConfig = new DatabaseFieldConfig("id");
+		fieldConfig.setGeneratedId(true);
+		fieldConfigs.add(fieldConfig);
+		fieldConfigs.add(new DatabaseFieldConfig("when"));
+		fieldConfigs.add(new DatabaseFieldConfig("signedBy"));
+		fieldConfig = new DatabaseFieldConfig("account");
+		fieldConfig.setForeign(true);
+		fieldConfig.setForeignTableConfig(accountTableConfig);
+		fieldConfigs.add(fieldConfig);
 		DatabaseTableConfig<Delivery> tableConfig = new DatabaseTableConfig<Delivery>(Delivery.class, fieldConfigs);
 		return tableConfig;
 	}
