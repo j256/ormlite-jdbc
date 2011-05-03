@@ -1842,7 +1842,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			fail("Should have thrown");
 		} catch (SQLException e) {
 			// expected
-					}
+		}
 	}
 
 	@Test
@@ -1909,7 +1909,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			fail("Should have thrown");
 		} catch (SQLException e) {
 			// expected
-					}
+		}
 	}
 
 	@Test
