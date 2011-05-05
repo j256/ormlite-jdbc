@@ -78,8 +78,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
-			FieldType[] resultFieldTypes) throws SQLException {
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes) throws SQLException {
 		return new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
 				ResultSet.CONCUR_READ_ONLY), type);
 	}
@@ -103,25 +102,33 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
-		statementSetArgs(stmt, args, argFieldTypes);
-		int rowN = stmt.executeUpdate();
-		ResultSet resultSet = stmt.getGeneratedKeys();
-		ResultSetMetaData metaData = resultSet.getMetaData();
-		int colN = metaData.getColumnCount();
-		while (resultSet.next()) {
-			for (int colC = 1; colC <= colN; colC++) {
-				// get the id column data so we can pass it back to the caller thru the keyHolder
-				Number id = getIdColumnData(resultSet, metaData, colC);
-				keyHolder.addKey(id);
+		try {
+			statementSetArgs(stmt, args, argFieldTypes);
+			int rowN = stmt.executeUpdate();
+			ResultSet resultSet = stmt.getGeneratedKeys();
+			ResultSetMetaData metaData = resultSet.getMetaData();
+			int colN = metaData.getColumnCount();
+			while (resultSet.next()) {
+				for (int colC = 1; colC <= colN; colC++) {
+					// get the id column data so we can pass it back to the caller thru the keyHolder
+					Number id = getIdColumnData(resultSet, metaData, colC);
+					keyHolder.addKey(id);
+				}
 			}
+			return rowN;
+		} finally {
+			stmt.close();
 		}
-		return rowN;
 	}
 
 	public int update(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		PreparedStatement stmt = connection.prepareStatement(statement);
-		statementSetArgs(stmt, args, argFieldTypes);
-		return stmt.executeUpdate();
+		try {
+			statementSetArgs(stmt, args, argFieldTypes);
+			return stmt.executeUpdate();
+		} finally {
+			stmt.close();
+		}
 	}
 
 	public int delete(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
@@ -133,17 +140,21 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			GenericRowMapper<T> rowMapper) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		statementSetArgs(stmt, args, argFieldTypes);
-		DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery());
-		if (!results.next()) {
-			// no results at all
-			return null;
-		}
-		T first = rowMapper.mapRow(results);
-		if (results.next()) {
-			return MORE_THAN_ONE;
-		} else {
-			return first;
+		try {
+			statementSetArgs(stmt, args, argFieldTypes);
+			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery());
+			if (!results.next()) {
+				// no results at all
+				return null;
+			}
+			T first = rowMapper.mapRow(results);
+			if (results.next()) {
+				return MORE_THAN_ONE;
+			} else {
+				return first;
+			}
+		} finally {
+			stmt.close();
 		}
 	}
 
