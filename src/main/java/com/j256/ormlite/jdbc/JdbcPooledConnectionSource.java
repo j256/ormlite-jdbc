@@ -58,6 +58,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private String pingStatment;
 
 	private int openCount = 0;
+	private int releaseCount = 0;
 	private int closeCount = 0;
 	private int maxEverUsed = 0;
 	private long checkConnectionsEveryMillis = CHECK_CONNECTIONS_EVERY_MILLIS;
@@ -174,6 +175,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			return;
 		}
 		synchronized (lock) {
+			releaseCount++;
 			if (connection.isClosed()) {
 				// it's already closed so just drop it
 				ConnectionMetaData meta = connectionMap.remove(connection);
@@ -270,6 +272,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	/**
+	 * Return the approximate number of connections released over the life of the pool.
+	 */
+	public int getReleaseCount() {
+		return releaseCount;
+	}
+
+	/**
 	 * Return the approximate number of connections closed over the life of the pool.
 	 */
 	public int getCloseCount() {
@@ -281,6 +290,15 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	 */
 	public int getMaxConnectionsEverUsed() {
 		return maxEverUsed;
+	}
+
+	/**
+	 * Return the number of currently freed connectionsin the free list.
+	 */
+	public int getCurrentConnectionsFree() {
+		synchronized (lock) {
+			return connFreeList.size();
+		}
 	}
 
 	/**
@@ -424,7 +442,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 						// we do this so we don't have to double lock in the loop
 						connFreeList.add(connMetaData);
 					}
-					if (connFreeList.size() == 0) {
+					if (connFreeList.isEmpty()) {
 						// nothing to do
 						continue;
 					}

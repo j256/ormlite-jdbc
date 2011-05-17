@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -25,7 +27,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
@@ -43,7 +44,6 @@ public abstract class BaseJdbcTest {
 	protected String password = null;
 
 	protected JdbcConnectionSource connectionSource = null;
-	protected DatabaseConnection databaseConnection = null;
 	protected boolean isConnectionExpected = false;
 	protected DatabaseType databaseType = null;
 
@@ -61,7 +61,6 @@ public abstract class BaseJdbcTest {
 			isConnectionExpected = isConnectionExpected();
 			if (isConnectionExpected) {
 				connectionSource = new JdbcConnectionSource(databaseUrl, userName, password);
-				databaseConnection = connectionSource.getReadWriteConnection();
 			}
 		}
 		if (databaseType == null) {
@@ -220,6 +219,12 @@ public abstract class BaseJdbcTest {
 				try {
 					statement.evaluate();
 				} catch (Throwable t) {
+					if (t instanceof MultipleFailureException) {
+						t = ((MultipleFailureException) t).getFailures().get(0);
+					}
+					if (t instanceof InvocationTargetException) {
+						t = ((InvocationTargetException) t).getTargetException();
+					}
 					String assertMsg;
 					if (t instanceof AssertionError) {
 						throw t;

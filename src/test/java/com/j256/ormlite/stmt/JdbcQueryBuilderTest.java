@@ -133,6 +133,8 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 			fail("expected exception");
 		} catch (SQLException e) {
 			// expected
+			System.err.println("Expected: " + e);
+			e.printStackTrace();
 		}
 	}
 

@@ -30,7 +30,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	private String url;
 	private String username;
 	private String password;
-	private JdbcDatabaseConnection connection;
+	private DatabaseConnection connection;
 	protected DatabaseType databaseType;
 	protected boolean initialized = false;
 

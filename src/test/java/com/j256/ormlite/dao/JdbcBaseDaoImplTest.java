@@ -291,7 +291,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		try {
 			while (iterator.hasNext()) {
 				closeConnectionSource();
@@ -302,6 +302,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			}
 		} catch (IllegalStateException e) {
 			// expected
+		} finally {
+			iterator.close();
 		}
 	}
 
@@ -311,7 +313,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
@@ -330,12 +332,14 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		try {
 			iterator.remove();
 			fail("expected exception");
 		} catch (IllegalStateException e) {
 			// expected
+		} finally {
+			iterator.close();
 		}
 	}
 
@@ -819,9 +823,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false, null, null, false, 0));
+				false, null, false, null, false, null, false, null, null, false, 0, 0));
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false, null, false, null, null, false, 0));
+				null, false, null, false, null, false, null, false, null, null, false, 0, 0));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
 		NoAnno noa = new NoAnno();

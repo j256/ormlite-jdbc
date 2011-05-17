@@ -31,7 +31,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	private static FieldType[] noArgTypes = new FieldType[0];
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
-	private final Connection connection;
+	private Connection connection;
 	private Boolean supportsSavePoints = null;
 
 	public JdbcDatabaseConnection(Connection connection) {
@@ -78,7 +78,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes) throws SQLException {
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
+			throws SQLException {
 		return new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
 				ResultSet.CONCUR_READ_ONLY), type);
 	}
@@ -191,6 +192,20 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 				results.close();
 			}
 		}
+	}
+
+	/**
+	 * Return the internal database connection. Most likely for testing purposes.
+	 */
+	public Connection getInternalConnection() {
+		return connection;
+	}
+
+	/**
+	 * Set the internal database connection. Most likely for testing purposes.
+	 */
+	public void setInternalConnection(Connection connection) {
+		this.connection = connection;
 	}
 
 	/**

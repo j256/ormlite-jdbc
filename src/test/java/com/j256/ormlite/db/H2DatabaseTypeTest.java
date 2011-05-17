@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
 public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
@@ -52,7 +53,11 @@ public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		System.setProperty("h2.socketConnectRetry", "0");
 		String dbUrl = "jdbc:h2:tcp://localhost:" + notTheRightPort + "/" + dbDir.getPath() + "/" + DATABASE_NAME;
 		connectionSource = new JdbcConnectionSource(dbUrl);
-		connectionSource.getReadOnlyConnection();
-		DatabaseTypeUtils.createDatabaseType(dbUrl);
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		try {
+			DatabaseTypeUtils.createDatabaseType(dbUrl);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 }

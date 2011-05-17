@@ -77,9 +77,13 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		closeConnectionSource();
 		String dbUrl = "jdbc:h2:" + dbDir.getPath() + "/" + DATABASE_NAME;
 		connectionSource = new JdbcConnectionSource(dbUrl);
-		connectionSource.getReadWriteConnection();
-		databaseType = DatabaseTypeUtils.createDatabaseType(dbUrl);
-		assertTrue(dbDir.list().length != 0);
+		DatabaseConnection conn = connectionSource.getReadWriteConnection();
+		try {
+			databaseType = DatabaseTypeUtils.createDatabaseType(dbUrl);
+			assertTrue(dbDir.list().length != 0);
+		} finally {
+			connectionSource.releaseConnection(conn);
+		}
 	}
 
 	@Test
@@ -164,7 +168,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		try {
 			testPingValue(conn.queryForLong(ping));
 		} finally {
-			conn.close();
+			connectionSource.releaseConnection(conn);
 		}
 	}
 
