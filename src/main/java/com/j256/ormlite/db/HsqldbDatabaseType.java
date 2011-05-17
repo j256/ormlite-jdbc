@@ -133,11 +133,6 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public boolean isNestedSavePointsSupported() {
-		return false;
-	}
-
-	@Override
 	public String getPingStatement() {
 		return "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_TABLES";
 	}
