@@ -94,7 +94,7 @@ public class Main {
 		ForeignCollection<Order> orders = account2.getOrders();
 
 		// sanity checks
-		CloseableIterator<Order> iterator = orders.iterator();
+		CloseableIterator<Order> iterator = orders.closeableIterator();
 		try {
 			assertTrue(iterator.hasNext());
 			Order order = iterator.next();

@@ -1505,7 +1505,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		String queryString = buildFooQueryAllString(fooDao);
 		GenericRawResults<String[]> results = fooDao.queryRaw(queryString);
-		CloseableIterator<String[]> iterator = results.iterator();
+		CloseableIterator<String[]> iterator = results.closeableIterator();
 		try {
 			assertFalse(iterator.hasNext());
 		} finally {
@@ -1517,7 +1517,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		assertEquals(3, colNames.length);
-		iterator = results.iterator();
+		iterator = results.closeableIterator();
 		try {
 			assertTrue(iterator.hasNext());
 			String[] result = iterator.next();
@@ -1582,7 +1582,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String queryString = buildFooQueryAllString(fooDao);
 		GenericRawResults<Object[]> results =
 				fooDao.queryRaw(queryString, new DataType[] { DataType.INTEGER, DataType.STRING, DataType.INTEGER });
-		CloseableIterator<Object[]> iterator = results.iterator();
+		CloseableIterator<Object[]> iterator = results.closeableIterator();
 		try {
 			assertFalse(iterator.hasNext());
 		} finally {
@@ -1594,7 +1594,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		assertEquals(3, colNames.length);
-		iterator = results.iterator();
+		iterator = results.closeableIterator();
 		try {
 			assertTrue(iterator.hasNext());
 			Object[] result = iterator.next();
@@ -1687,7 +1687,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		String queryString = buildFooQueryAllString(fooDao);
 		RawResults results = fooDao.iteratorRaw(queryString);
-		CloseableIterator<String[]> iterator = results.iterator();
+		CloseableIterator<String[]> iterator = results.closeableIterator();
 		try {
 			assertFalse(iterator.hasNext());
 		} finally {
@@ -1699,7 +1699,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int colN = results.getNumberColumns();
 		String[] colNames = results.getColumnNames();
 		assertEquals(3, colNames.length);
-		iterator = results.iterator();
+		iterator = results.closeableIterator();
 		try {
 			assertTrue(iterator.hasNext());
 			String[] result = iterator.next();
