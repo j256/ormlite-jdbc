@@ -36,22 +36,22 @@ public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb) {
+	protected void appendByteType(StringBuilder sb, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
 		sb.append("VARCHAR [] FOR BIT DATA");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("VARCHAR [] FOR BIT DATA");
 	}
 

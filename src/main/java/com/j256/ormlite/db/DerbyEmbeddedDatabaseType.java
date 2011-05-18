@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
-import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -52,17 +52,15 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(DataType dataType) {
+	public FieldConverter getFieldConverter(DataPersister dataType) {
 		// we are only overriding certain types
-		switch (dataType) {
+		switch (dataType.getSqlType()) {
 			case BOOLEAN :
-			case BOOLEAN_OBJ :
 				if (booleanConverter == null) {
 					booleanConverter = new BooleanNumberFieldConverter();
 				}
 				return booleanConverter;
 			case CHAR :
-			case CHAR_OBJ :
 				if (charConverter == null) {
 					charConverter = new CharFieldConverter();
 				}
@@ -77,7 +75,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		}
 	}
 	@Override
-	protected void appendLongStringType(StringBuilder sb) {
+	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG VARCHAR");
 	}
 
@@ -88,23 +86,23 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		// I tried "char for bit data" and "char(1)" with no luck
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendCharType(StringBuilder sb) {
+	protected void appendCharType(StringBuilder sb, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb) {
+	protected void appendByteType(StringBuilder sb, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG VARCHAR FOR BIT DATA");
 	}
 

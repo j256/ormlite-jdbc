@@ -16,7 +16,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.TableInfo;
@@ -50,7 +50,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		Field field = GeneratedId.class.getField("id");
 		DatabaseType mockDb = createMock(DatabaseType.class);
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
-		expect(mockDb.getFieldConverter(isA(DataType.class))).andReturn(null);
+		expect(mockDb.getFieldConverter(isA(DataPersister.class))).andReturn(null);
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(mockDb);
 		connectionSource.setDatabaseType(mockDb);

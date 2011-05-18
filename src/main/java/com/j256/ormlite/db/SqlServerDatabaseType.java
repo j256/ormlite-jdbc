@@ -3,7 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
@@ -42,11 +42,10 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(DataType dataType) {
+	public FieldConverter getFieldConverter(DataPersister dataType) {
 		// we are only overriding certain types
-		switch (dataType) {
+		switch (dataType.getSqlType()) {
 			case BOOLEAN :
-			case BOOLEAN_OBJ :
 				return booleanConverter;
 			case BYTE :
 				return byteConverter;
@@ -56,12 +55,12 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		sb.append("BIT");
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb) {
+	protected void appendByteType(StringBuilder sb, int fieldWidth) {
 		// TINYINT exists but it gives 0-255 unsigned
 		// http://msdn.microsoft.com/en-us/library/ms187745.aspx
 		sb.append("SMALLINT");
@@ -75,12 +74,12 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
 		sb.append("IMAGE");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("IMAGE");
 	}
 

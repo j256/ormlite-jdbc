@@ -100,7 +100,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testGetFieldConverterSerializable() throws Exception {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		assertEquals(SqlType.BLOB, converter.getSqlType());
 		assertTrue(converter.isStreamType());
 	}
@@ -108,21 +108,21 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test(expected = SQLException.class)
 	public void testObjectFieldConverterParseDefaultString() throws Exception {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		converter.parseDefaultString(null, null);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testObjectFieldConverterJavaToArgNonSerializable() throws Exception {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		converter.javaToSqlArg(null, new NotSerializable());
 	}
 
 	@Test
 	public void testObjectFieldConverterJavaToArg() throws Exception {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		Object object = converter.javaToSqlArg(null, "TEST");
 		assertEquals(SerialBlob.class, object.getClass());
 	}
@@ -134,7 +134,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		expect(results.getBlobStream(COLUMN)).andReturn(null);
 		replay(results);
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		assertEquals(null, converter.resultToJava(null, results, COLUMN));
 		verify(results);
 	}
@@ -147,7 +147,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		expect(results.getBlobStream(COLUMN)).andReturn(new ByteArrayInputStream(value.getBytes()));
 		replay(results);
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE);
+		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		Object obj = converter.resultToJava(null, results, COLUMN);
 		verify(results);
 		assertEquals(value, obj);
@@ -157,7 +157,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testAppendObjectType() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		type.appendSerializableType(sb);
+		type.appendSerializableType(sb, 0);
 		assertEquals("BLOB", sb.toString());
 	}
 
@@ -165,7 +165,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testAppendByteArrayType() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		type.appendByteArrayType(sb);
+		type.appendByteArrayType(sb, 0);
 		assertEquals("LONG VARCHAR FOR BIT DATA", sb.toString());
 	}
 

@@ -60,7 +60,7 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		sb.append("TINYINT(1)");
 	}
 

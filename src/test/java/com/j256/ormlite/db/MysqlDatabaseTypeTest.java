@@ -84,7 +84,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testObject() throws Exception {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendByteArrayType(sb);
+		dbType.appendByteArrayType(sb, 0);
 		assertEquals("BLOB", sb.toString());
 	}
 }

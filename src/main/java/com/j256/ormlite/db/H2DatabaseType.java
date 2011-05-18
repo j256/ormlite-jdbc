@@ -30,7 +30,7 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		sb.append("TINYINT(1)");
 	}
 

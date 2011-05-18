@@ -41,27 +41,27 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendLongStringType(StringBuilder sb) {
+	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG");
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb) {
+	protected void appendByteType(StringBuilder sb, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendLongType(StringBuilder sb) {
+	protected void appendLongType(StringBuilder sb, int fieldWidth) {
 		sb.append("NUMERIC");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG RAW");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG RAW");
 	}
 

@@ -2,8 +2,8 @@ package com.j256.ormlite.db;
 
 import java.util.List;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
 
 /**
  * HyberSQL database type information used to create the tables, etc..
@@ -31,22 +31,22 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendLongStringType(StringBuilder sb) {
+	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONGVARCHAR");
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb) {
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
 		sb.append("BIT");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb) {
+	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
 		sb.append("BINARY");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb) {
+	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("BINARY");
 	}
 
@@ -57,7 +57,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 		StringBuilder seqSb = new StringBuilder(128);
 		seqSb.append("CREATE SEQUENCE ");
 		appendEscapedEntityName(seqSb, fieldType.getGeneratedIdSequence());
-		if (fieldType.getDataType() == DataType.LONG) {
+		if (fieldType.getSqlType() == SqlType.LONG) {
 			seqSb.append(" AS BIGINT");
 		} else {
 			// integer is the default
