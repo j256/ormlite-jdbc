@@ -47,7 +47,8 @@ public abstract class BaseJdbcTest {
 	protected boolean isConnectionExpected = false;
 	protected DatabaseType databaseType = null;
 
-	private Set<DatabaseTableConfig<?>> dropClassSet = new HashSet<DatabaseTableConfig<?>>();
+	private Set<Class<?>> dropClassSet = new HashSet<Class<?>>();
+	private Set<DatabaseTableConfig<?>> dropTableConfigSet = new HashSet<DatabaseTableConfig<?>>();
 
 	@Before
 	public void before() throws Exception {
@@ -113,7 +114,10 @@ public abstract class BaseJdbcTest {
 
 	protected void closeConnectionSource() throws Exception {
 		if (connectionSource != null) {
-			for (DatabaseTableConfig<?> tableConfig : dropClassSet) {
+			for (Class<?> clazz : dropClassSet) {
+				dropTable(clazz, true);
+			}
+			for (DatabaseTableConfig<?> tableConfig : dropTableConfigSet) {
 				dropTable(tableConfig, true);
 			}
 			connectionSource.close();
@@ -140,7 +144,16 @@ public abstract class BaseJdbcTest {
 	}
 
 	protected <T> void createTable(Class<T> clazz, boolean dropAtEnd) throws Exception {
-		createTable(DatabaseTableConfig.fromClass(connectionSource, clazz), dropAtEnd);
+		try {
+			// first we drop it in case it existed before
+			dropTable(clazz, true);
+		} catch (SQLException ignored) {
+			// ignore any errors about missing tables
+		}
+		TableUtils.createTable(connectionSource, clazz);
+		if (dropAtEnd) {
+			dropClassSet.add(clazz);
+		}
 	}
 
 	protected <T> void createTable(DatabaseTableConfig<T> tableConfig, boolean dropAtEnd) throws Exception {
@@ -152,7 +165,7 @@ public abstract class BaseJdbcTest {
 		}
 		TableUtils.createTable(connectionSource, tableConfig);
 		if (dropAtEnd) {
-			dropClassSet.add(tableConfig);
+			dropTableConfigSet.add(tableConfig);
 		}
 	}
 
