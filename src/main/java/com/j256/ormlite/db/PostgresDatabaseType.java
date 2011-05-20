@@ -91,6 +91,11 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 	}
 
 	@Override
+	public boolean isSelectSequenceBeforeInsert() {
+		return true;
+	}
+
+	@Override
 	public void appendSelectNextValFromSequence(StringBuilder sb, String sequenceName) {
 		sb.append("SELECT NEXTVAL(");
 		// this is word and not entity unfortunately
