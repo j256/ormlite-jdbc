@@ -91,7 +91,14 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 
 	@Override
 	public boolean isVarcharFieldWidthSupported() {
-		return false;
+		/**
+		 * In version 2.X, VARCHAR(width) is required. In 1.8.X or before, it is not supported. Wonderful.
+		 */
+		if (driver.getMajorVersion() >= 2) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

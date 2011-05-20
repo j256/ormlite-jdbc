@@ -130,6 +130,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 			databaseType = DatabaseTypeUtils.createDatabaseType(url);
 		}
 		databaseType.loadDriver();
+		databaseType.setDriver(DriverManager.getDriver(url));
 		initialized = true;
 	}
 

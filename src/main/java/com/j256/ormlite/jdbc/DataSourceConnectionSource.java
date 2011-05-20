@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -88,6 +89,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 			databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		}
 		databaseType.loadDriver();
+		databaseType.setDriver(DriverManager.getDriver(databaseUrl));
 		initialized = true;
 	}
 
