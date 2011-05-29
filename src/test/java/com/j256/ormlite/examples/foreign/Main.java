@@ -91,8 +91,9 @@ public class Main {
 
 		// construct a query using the QueryBuilder
 		QueryBuilder<Order, Integer> statementBuilder = orderDao.queryBuilder();
-		// should find both of the orders that match the account id
-		statementBuilder.where().eq(Order.ACCOUNT_ID_FIELD_NAME, account.getId());
+		// should find both of the orders that match the account
+		// ORMLite extracts the id from the account for the query automagically
+		statementBuilder.where().eq(Order.ACCOUNT_ID_FIELD_NAME, account);
 		List<Order> orders = orderDao.query(statementBuilder.prepare());
 
 		// sanity checks
