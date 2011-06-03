@@ -7,6 +7,7 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -51,6 +52,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		expect(dataSource.getConnection()).andReturn(null);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.setDataSource(dataSource);
+		dcs.setDatabaseUrl(DEFAULT_DATABASE_URL);
 		dcs.setDatabaseType(new H2DatabaseType());
 		dcs.initialize();
 		replay(dataSource);

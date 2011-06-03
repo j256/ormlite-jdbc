@@ -53,14 +53,15 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test
 	public void testGetConnection() throws Exception {
-		String url = "jdbc:bar:mem:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		Driver driver = createMock(Driver.class);
+		String url = "jdbc:bar:mem:baz";
+		expect(driver.acceptsURL(url)).andReturn(true);
 		expect(driver.connect(isA(String.class), isA(Properties.class))).andReturn(conn);
 		replay(driver);
 		DriverManager.registerDriver(driver);
 		try {
+			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			assertNotNull(sds.getReadOnlyConnection());
 			verify(driver);
 		} finally {
@@ -81,14 +82,15 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testGetConnectionNull() throws Exception {
-		String url = "jdbc:bar:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Driver driver = createMock(Driver.class);
 		Properties props = new Properties();
+		String url = "jdbc:bar:baz";
+		expect(driver.acceptsURL(url)).andReturn(true);
 		expect(driver.connect(eq(url), eq(props))).andReturn(null);
 		replay(driver);
 		DriverManager.registerDriver(driver);
 		try {
+			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			sds.getReadOnlyConnection();
 		} finally {
 			DriverManager.deregisterDriver(driver);
@@ -97,20 +99,19 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test
 	public void testClose() throws Exception {
-		String url = "jdbc:bar:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		conn.close();
 		Driver driver = createMock(Driver.class);
+		String url = "jdbc:bar:baz";
+		expect(driver.acceptsURL(url)).andReturn(true);
 		expect(driver.connect(isA(String.class), isA(Properties.class))).andReturn(conn);
-		replay(driver);
-		replay(conn);
+		replay(driver, conn);
 		DriverManager.registerDriver(driver);
 		try {
+			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			assertNotNull(sds.getReadOnlyConnection());
 			sds.close();
-			verify(driver);
-			verify(conn);
+			verify(driver, conn);
 		} finally {
 			DriverManager.deregisterDriver(driver);
 		}
@@ -123,16 +124,16 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testConnectionClosed() throws Exception {
-		String url = "jdbc:bar:baz";
-		JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 		Connection conn = createMock(Connection.class);
 		expect(conn.isClosed()).andReturn(true);
 		Driver driver = createMock(Driver.class);
+		String url = "jdbc:bar:baz";
+		expect(driver.acceptsURL(url)).andReturn(true);
 		expect(driver.connect(isA(String.class), isA(Properties.class))).andReturn(conn);
-		replay(driver);
-		replay(conn);
+		replay(driver, conn);
 		DriverManager.registerDriver(driver);
 		try {
+			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			assertNotNull(sds.getReadOnlyConnection());
 			sds.getReadOnlyConnection();
 			fail("Should not get here");

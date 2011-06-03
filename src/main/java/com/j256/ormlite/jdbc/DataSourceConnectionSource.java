@@ -89,7 +89,9 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 			databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		}
 		databaseType.loadDriver();
-		databaseType.setDriver(DriverManager.getDriver(databaseUrl));
+		if (databaseUrl != null) {
+			databaseType.setDriver(DriverManager.getDriver(databaseUrl));
+		}
 		initialized = true;
 	}
 
