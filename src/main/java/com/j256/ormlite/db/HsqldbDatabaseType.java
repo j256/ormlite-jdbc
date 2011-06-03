@@ -90,6 +90,11 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
+	public boolean isSelectSequenceBeforeInsert() {
+		return true;
+	}
+
+	@Override
 	public boolean isVarcharFieldWidthSupported() {
 		/**
 		 * In version 2.X, VARCHAR(width) is required. In 1.8.X or before, it is not supported. Wonderful.
