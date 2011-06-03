@@ -129,6 +129,11 @@
 				</executions>
 				<configuration>
 					<showPackage>false</showPackage>
+					<bottom>
+						This content is licensed by Gray Watson under the
+						&lt;a
+						href="http://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
+						&lt;/a&gt; </bottom>
 					<additionalparam>-tag inheritDoc:X</additionalparam>
 					<excludePackageNames>com.j256.ormlite.stmt.query,com.j256.ormlite.stmt.mapped
 					</excludePackageNames>
