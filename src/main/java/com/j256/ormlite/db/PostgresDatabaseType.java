@@ -107,4 +107,14 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 	public boolean isTruncateSupported() {
 		return true;
 	}
+
+	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		int major = driver.getMajorVersion();
+		if (major > 9 || (major == 9 && driver.getMinorVersion() >= 1)) {
+			return true;
+		} else {
+			return super.isCreateIfNotExistsSupported();
+		}
+	}
 }
