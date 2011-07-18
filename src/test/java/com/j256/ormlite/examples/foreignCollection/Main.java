@@ -2,6 +2,7 @@ package com.j256.ormlite.examples.foreignCollection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -90,8 +91,8 @@ public class Main {
 		Order order2 = new Order(account, itemNumber2, price2, quantity2);
 		orderDao.create(order2);
 
-		Account account2 = accountDao.queryForId(account.getId());
-		ForeignCollection<Order> orders = account2.getOrders();
+		Account accountResult = accountDao.queryForId(account.getId());
+		ForeignCollection<Order> orders = accountResult.getOrders();
 
 		// sanity checks
 		CloseableIterator<Order> iterator = orders.closeableIterator();
@@ -99,12 +100,13 @@ public class Main {
 			assertTrue(iterator.hasNext());
 			Order order = iterator.next();
 			assertEquals(itemNumber1, order.getItemNumber());
+			assertSame(accountResult, order.getAccount());
 			assertTrue(iterator.hasNext());
 			order = iterator.next();
 			assertEquals(itemNumber2, order.getItemNumber());
 			assertFalse(iterator.hasNext());
 		} finally {
-			// must always close our iterators
+			// must always close our iterators otherwise connections to the database are held open
 			iterator.close();
 		}
 
