@@ -3,7 +3,7 @@ This is similar to the "foreign" example, but this shows how to use "foreign col
 Foreign collections are collections of objects in other tables that match the current object.  For
 example, if you have Account and Order objects in your database, the Order objects may have an
 associated Account so would have an foreign Account field.  With foreign objects, the Account can
-have a Collection or orders that match the account.  See the documentation for more information:
+have a Collection of orders that match the account.  See the documentation for more information:
 
 	http://ormlite.com/docs/foreign-collection
 
