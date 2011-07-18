@@ -6,6 +6,10 @@ Account so would have an foreign Account field.  See the documentation for more 
 
 	http://ormlite.com/docs/foreign
 
+You may also want to learn about Foreign Collections which use foreign fields:
+
+	http://ormlite.com/docs/foreign-collection
+
 Also, the many-to-many example also foreign objects in combination with a join table.
 
 	http://ormlite.com/docs/example-many
