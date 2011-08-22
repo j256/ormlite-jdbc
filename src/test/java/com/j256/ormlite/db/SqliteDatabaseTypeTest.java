@@ -7,10 +7,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -91,6 +94,22 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("BLOB"));
+	}
+
+	@Test
+	public void testDateFormat() throws Exception {
+		Dao<AllTypes, Object> dao = createDao(AllTypes.class, true);
+		AllTypes all = new AllTypes();
+		all.dateField = new Date();
+		assertEquals(1, dao.create(all));
+		GenericRawResults<String[]> results = dao.queryRaw("select * from alltypes");
+		List<String[]> stringslist = results.getResults();
+		String[] names = results.getColumnNames();
+		for (String[] strings : stringslist) {
+			for (int i = 0; i < strings.length; i++) {
+				System.out.println(names[i] + "=" + strings[i]);
+			}
+		}
 	}
 
 	protected static class GeneratedIdLong {
