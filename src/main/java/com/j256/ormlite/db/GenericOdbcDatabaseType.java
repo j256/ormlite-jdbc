@@ -25,8 +25,7 @@ public class GenericOdbcDatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
-	protected String getDatabaseName() {
+	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}
 }

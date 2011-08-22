@@ -25,7 +25,6 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

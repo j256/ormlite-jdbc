@@ -59,7 +59,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		FieldType fieldType = tableInfo.getIdField();
 		StringBuilder sb = new StringBuilder();
-		databaseType.appendColumnArg(sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
+		databaseType.appendColumnArg(null, sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
 		assertTrue(sb.toString().contains(fieldType.getDbColumnName()));
 		if (!sb.toString().contains("PRIMARY KEY")) {
 			databaseType.addPrimaryKeySql(new FieldType[] { fieldType }, additionalArgs, null, moreStmts, queriesAfter);
@@ -144,7 +144,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		ArrayList<String> statementsBefore = new ArrayList<String>();
 		ArrayList<String> statementsAfter = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore,
+		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore,
 				statementsAfter, queriesAfter);
 	}
 

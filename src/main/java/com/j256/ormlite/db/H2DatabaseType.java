@@ -24,7 +24,6 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}
@@ -35,8 +34,9 @@ public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
 	}
 
 	@Override
-	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
-			List<String> additionalArgs, List<String> queriesAfter) {
+	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
+			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
+			List<String> queriesAfter) {
 		sb.append("AUTO_INCREMENT ");
 		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
 	}

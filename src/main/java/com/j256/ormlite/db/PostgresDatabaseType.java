@@ -24,7 +24,6 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

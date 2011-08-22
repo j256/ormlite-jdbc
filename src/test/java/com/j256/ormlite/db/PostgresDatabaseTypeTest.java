@@ -59,7 +59,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			verify(mockDb);
 			StringBuilder sb = new StringBuilder();
 			List<String> statementsBefore = new ArrayList<String>();
-			databaseType.appendColumnArg(sb, fieldType, null, statementsBefore, null, null);
+			databaseType.appendColumnArg(null, sb, fieldType, null, statementsBefore, null, null);
 		} finally {
 			connectionSource.setDatabaseType(databaseType);
 		}
@@ -93,7 +93,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
+		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
 				queriesAfter);
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, queriesAfter);
 		assertTrue(sb.toString().contains(" DEFAULT NEXTVAL('\"" + GENERATED_ID_SEQ + "\"')"));
@@ -118,7 +118,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, idField, additionalArgs, statementsBefore, null, queriesAfter);
+		databaseType.appendColumnArg(null, sb, idField, additionalArgs, statementsBefore, null, queriesAfter);
 		databaseType.addPrimaryKeySql(new FieldType[] { idField }, additionalArgs, statementsBefore, null, queriesAfter);
 		String seqName =
 				databaseType.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(),
@@ -144,7 +144,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, booleanField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, booleanField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("BOOLEAN"));
 	}
 
@@ -161,7 +161,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, byteField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, byteField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("SMALLINT"));
 	}
 }

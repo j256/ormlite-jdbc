@@ -57,7 +57,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			verify(mockDb);
 			StringBuilder sb = new StringBuilder();
 			List<String> statementsBefore = new ArrayList<String>();
-			databaseType.appendColumnArg(sb, fieldType, null, statementsBefore, null, null);
+			databaseType.appendColumnArg(null, sb, fieldType, null, statementsBefore, null, null);
 		} finally {
 			connectionSource.setDatabaseType(databaseType);
 		}
@@ -84,7 +84,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
+				null);
 		assertTrue(sb.toString().contains(" PRIMARY KEY"));
 		assertEquals(1, statementsBefore.size());
 		assertTrue(statementsBefore.get(0).contains(GENERATED_ID_SEQ));
@@ -101,7 +102,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, idField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, idField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains(" PRIMARY KEY"));
 		assertEquals(1, statementsBefore.size());
 		String seqName =
@@ -121,7 +122,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, byteField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, byteField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("SMALLINT"));
 	}
 
@@ -135,7 +136,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, booleanField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, booleanField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("NUMERIC"));
 	}
 

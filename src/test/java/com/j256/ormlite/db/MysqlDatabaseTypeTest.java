@@ -40,7 +40,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, booleanField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, booleanField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("TINYINT(1)"));
 	}
 
@@ -55,7 +55,8 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
+				null);
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains(" AUTO_INCREMENT"));
 		assertEquals(1, additionalArgs.size());

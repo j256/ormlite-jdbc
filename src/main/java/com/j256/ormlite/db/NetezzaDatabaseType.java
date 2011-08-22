@@ -29,7 +29,6 @@ public class NetezzaDatabaseType extends BaseDatabaseType implements DatabaseTyp
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

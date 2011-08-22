@@ -28,7 +28,6 @@ import java.util.concurrent.Callable;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -1043,7 +1042,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_FIELD_NAME, dateVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_LONG_FIELD_NAME, dateLongVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.DATE_STRING_FIELD_NAME, dateStringVal, true);
-		if (!(databaseType instanceof DerbyEmbeddedDatabaseType)) {
+		if (!databaseType.getDatabaseName().equals("Derby")) {
 			checkQueryResult(allDao, qb, allTypes, AllTypes.CHAR_FIELD_NAME, charVal, true);
 		}
 		checkQueryResult(allDao, qb, allTypes, AllTypes.BYTE_FIELD_NAME, byteVal, true);
@@ -2915,11 +2914,69 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		NotQuiteFoo notQuiteFoo = new NotQuiteFoo();
 		notQuiteFoo.id = foo.id + 1;
 		assertEquals(1, dao2.create(notQuiteFoo));
-		
+
 		List<Foo> results = dao1.queryForAll();
 		assertEquals(2, results.size());
 		assertEquals(foo.id, results.get(0).id);
 		assertEquals(notQuiteFoo.id, results.get(1).id);
+	}
+
+	@Test
+	public void testCreateWithAllowGeneratedIdInsert() throws Exception {
+		if (databaseType == null || !databaseType.isAllowGeneratedIdInsertSupported()) {
+			return;
+		}
+		Dao<AllowGeneratedIdInsert, Integer> dao = createDao(AllowGeneratedIdInsert.class, true);
+		AllowGeneratedIdInsert foo = new AllowGeneratedIdInsert();
+		assertEquals(1, dao.create(foo));
+		AllowGeneratedIdInsert result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
+
+		AllowGeneratedIdInsert foo2 = new AllowGeneratedIdInsert();
+		assertEquals(1, dao.create(foo2));
+		result = dao.queryForId(foo2.id);
+		assertNotNull(result);
+		assertEquals(foo2.id, result.id);
+		assertFalse(foo2.id == foo.id);
+
+		AllowGeneratedIdInsert foo3 = new AllowGeneratedIdInsert();
+		foo3.id = 10002;
+		assertEquals(1, dao.create(foo3));
+		result = dao.queryForId(foo3.id);
+		assertNotNull(result);
+		assertEquals(foo3.id, result.id);
+		assertFalse(foo3.id == foo.id);
+		assertFalse(foo3.id == foo2.id);
+	}
+
+	@Test
+	public void testCreateWithAllowGeneratedIdInsertObject() throws Exception {
+		if (databaseType == null || !databaseType.isAllowGeneratedIdInsertSupported()) {
+			return;
+		}
+		Dao<AllowGeneratedIdInsertObject, Integer> dao = createDao(AllowGeneratedIdInsertObject.class, true);
+		AllowGeneratedIdInsertObject foo = new AllowGeneratedIdInsertObject();
+		assertEquals(1, dao.create(foo));
+		AllowGeneratedIdInsertObject result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
+
+		AllowGeneratedIdInsertObject foo2 = new AllowGeneratedIdInsertObject();
+		assertEquals(1, dao.create(foo2));
+		result = dao.queryForId(foo2.id);
+		assertNotNull(result);
+		assertEquals(foo2.id, result.id);
+		assertFalse(foo2.id == foo.id);
+
+		AllowGeneratedIdInsertObject foo3 = new AllowGeneratedIdInsertObject();
+		foo3.id = 10002;
+		assertEquals(1, dao.create(foo3));
+		result = dao.queryForId(foo3.id);
+		assertNotNull(result);
+		assertEquals(foo3.id, result.id);
+		assertFalse(foo3.id == foo.id);
+		assertFalse(foo3.id == foo2.id);
 	}
 
 	/* ==================================================================================== */
@@ -4227,5 +4284,21 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		LazyAccount account;
 		protected LazyOrder() {
 		}
+	}
+
+	protected static class AllowGeneratedIdInsert {
+		@DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
+		int id;
+
+		@DatabaseField
+		String stuff;
+	}
+
+	protected static class AllowGeneratedIdInsertObject {
+		@DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
+		Integer id;
+
+		@DatabaseField
+		String stuff;
 	}
 }

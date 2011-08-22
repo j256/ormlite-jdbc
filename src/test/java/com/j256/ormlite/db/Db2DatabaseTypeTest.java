@@ -45,7 +45,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, booleanField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, booleanField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("SMALLINT"));
 	}
 
@@ -58,7 +58,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, byteField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, byteField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("SMALLINT"));
 	}
 
@@ -69,7 +69,8 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
+				null);
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
 		assertTrue(sb + "should contain the stuff", sb.toString().contains(" GENERATED ALWAYS AS IDENTITY"));
 		assertEquals(0, statementsBefore.size());

@@ -20,7 +20,6 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

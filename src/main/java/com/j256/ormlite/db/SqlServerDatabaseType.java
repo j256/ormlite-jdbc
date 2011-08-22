@@ -36,7 +36,6 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 		return DRIVER_CLASS_NAME;
 	}
 
-	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}
@@ -84,10 +83,18 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	protected void configureGeneratedId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
-			List<String> additionalArgs, List<String> queriesAfter) {
+	protected void configureGeneratedId(String tableName, StringBuilder sb, FieldType fieldType,
+			List<String> statementsBefore, List<String> statementsAfter, List<String> additionalArgs,
+			List<String> queriesAfter) {
 		sb.append("IDENTITY ");
 		configureId(sb, fieldType, statementsBefore, additionalArgs, queriesAfter);
+		if (fieldType.isAllowGeneratedIdInsert()) {
+			StringBuilder identityInsertSb = new StringBuilder();
+			identityInsertSb.append("SET IDENTITY_INSERT ");
+			appendEscapedEntityName(identityInsertSb, tableName);
+			identityInsertSb.append(" ON");
+			statementsAfter.add(identityInsertSb.toString());
+		}
 	}
 
 	@Override
@@ -108,6 +115,15 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	@Override
 	public boolean isOffsetSqlSupported() {
 		// there is no easy way to do this in this database type
+		return false;
+	}
+
+	@Override
+	public boolean isAllowGeneratedIdInsertSupported() {
+		/*
+		 * The only way sql-server allows this is if "SET IDENTITY_INSERT table-name ON" has been set. However this is a
+		 * runtime session value and not a configuration option. Grrrrr.
+		 */
 		return false;
 	}
 

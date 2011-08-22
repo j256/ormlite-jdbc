@@ -83,7 +83,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, booleanField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, booleanField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("BIT"));
 	}
 
@@ -100,7 +100,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, byteField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, byteField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("SMALLINT"));
 	}
 
@@ -117,7 +117,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, byteField, additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, byteField, additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains("DATETIME"));
 	}
 
@@ -132,7 +132,8 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null, null);
+		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
+				null);
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
 		assertTrue(sb.toString().contains(" IDENTITY"));
 		assertEquals(1, additionalArgs.size());
