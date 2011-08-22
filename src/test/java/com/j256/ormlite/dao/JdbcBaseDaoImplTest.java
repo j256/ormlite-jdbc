@@ -3025,7 +3025,13 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertNotNull(result);
 		assertEquals(stuff, result.stuff);
 
-		
+		String stuff2 = "pwojgfwe";
+		foo.stuff = stuff2;
+		dao.createOrUpdate(foo);
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(stuff2, result.stuff);
 	}
 
 	/* ==================================================================================== */
