@@ -3034,6 +3034,17 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(stuff2, result.stuff);
 	}
 
+	@Test
+	public void testUpdateNoChange() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		foo.id = 13567567;
+		foo.val = 1232131;
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, dao.update(foo));
+		assertEquals(1, dao.update(foo));
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {

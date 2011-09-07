@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -47,11 +48,11 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return preparedStatement.executeUpdate();
 	}
 
-	public DatabaseResults runQuery() throws SQLException {
+	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
 		if (type != StatementType.SELECT) {
 			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
 		}
-		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery());
+		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery(), objectCache);
 	}
 
 	public int runExecute() throws SQLException {
@@ -60,10 +61,6 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		}
 		preparedStatement.execute();
 		return preparedStatement.getUpdateCount();
-	}
-
-	public DatabaseResults getGeneratedKeys() throws SQLException {
-		return new JdbcDatabaseResults(preparedStatement, preparedStatement.getGeneratedKeys());
 	}
 
 	public void close() throws SQLException {

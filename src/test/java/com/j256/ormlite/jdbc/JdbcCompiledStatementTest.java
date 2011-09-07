@@ -63,6 +63,6 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 	public void testExecuteQueryWithNonSelectType() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.INSERT);
-		stmt.runQuery();
+		stmt.runQuery(null);
 	}
 }

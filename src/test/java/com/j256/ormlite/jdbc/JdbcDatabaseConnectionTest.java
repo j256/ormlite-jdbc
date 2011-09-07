@@ -123,7 +123,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		// should close the statement
 		prepStmt.close();
 		replay(connection, prepStmt, keyHolder, resultSet, rowMapper);
-		jdc.queryForOne(statement, new Object[0], new FieldType[0], rowMapper);
+		jdc.queryForOne(statement, new Object[0], new FieldType[0], rowMapper, null);
 		verify(connection, prepStmt, keyHolder, resultSet, rowMapper);
 	}
 

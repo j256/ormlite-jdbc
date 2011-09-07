@@ -10,6 +10,7 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Types;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -138,12 +139,12 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
-			GenericRowMapper<T> rowMapper) throws SQLException {
+			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
-			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery());
+			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
 			if (!results.next()) {
 				// no results at all
 				return null;
@@ -160,7 +161,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	public long queryForLong(String statement) throws SQLException {
-		Object result = queryForOne(statement, noArgs, noArgTypes, longWrapper);
+		// don't care about the object cache here
+		Object result = queryForOne(statement, noArgs, noArgTypes, longWrapper, null);
 		if (result == null) {
 			throw new SQLException("No results returned in query-for-long: " + statement);
 		} else if (result == MORE_THAN_ONE) {

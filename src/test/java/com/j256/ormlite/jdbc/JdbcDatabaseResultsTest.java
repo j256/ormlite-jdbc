@@ -33,7 +33,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		expect(blob.getBinaryStream()).andReturn(is);
 		expect(resultSet.getBlob(1)).andReturn(blob);
 		replay(preparedStatement, blob, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertTrue(results.getBlobStream(0) == is);
 		verify(preparedStatement, blob, resultSet);
 	}
@@ -44,7 +44,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		expect(resultSet.getBlob(1)).andReturn(null);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertNull(results.getBlobStream(0));
 		verify(preparedStatement, resultSet);
 	}
@@ -56,7 +56,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		int colN = 21323;
 		String name = "name";
 		expect(resultSet.findColumn(name)).andReturn(colN);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		replay(preparedStatement, resultSet);
 		assertEquals(colN - 1, results.findColumn(name));
 		verify(preparedStatement, resultSet);
@@ -70,7 +70,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSetMetaData metaData = createMock(ResultSetMetaData.class);
 		expect(resultSet.getMetaData()).andReturn(metaData);
 		expect(metaData.getColumnCount()).andReturn(colN);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		replay(preparedStatement, resultSet, metaData);
 		assertEquals(colN, results.getColumnCount());
 		verify(preparedStatement, resultSet, metaData);
@@ -82,7 +82,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		ResultSet resultSet = createMock(ResultSet.class);
 		int colN = 213;
 		expect(resultSet.wasNull()).andReturn(true);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		replay(preparedStatement, resultSet);
 		assertTrue(results.wasNull(colN));
 		verify(preparedStatement, resultSet);
@@ -98,7 +98,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		expect(resultSet.next()).andReturn(true);
 		expect(resultSet.next()).andReturn(false);
 		expect(preparedStatement.getMoreResults()).andReturn(false);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		replay(preparedStatement, resultSet);
 		assertTrue(results.next());
 		assertTrue(results.next());
@@ -114,7 +114,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		boolean val = true;
 		expect(resultSet.getBoolean(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getBoolean(colN));
 		verify(preparedStatement, resultSet);
 	}
@@ -127,7 +127,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		byte val = 69;
 		expect(resultSet.getByte(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getByte(colN));
 		verify(preparedStatement, resultSet);
 	}
@@ -140,7 +140,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		byte[] val = new byte[] { 23, 1, 17 };
 		expect(resultSet.getBytes(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getBytes(colN));
 		verify(preparedStatement, resultSet);
 	}
@@ -153,7 +153,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		double val = 69.123;
 		expect(resultSet.getDouble(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getDouble(colN), 0.0F);
 		verify(preparedStatement, resultSet);
 	}
@@ -166,7 +166,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		float val = 69.77F;
 		expect(resultSet.getFloat(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getFloat(colN), 0.0F);
 		verify(preparedStatement, resultSet);
 	}
@@ -179,7 +179,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		int val = 613123129;
 		expect(resultSet.getInt(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getInt(colN));
 		verify(preparedStatement, resultSet);
 	}
@@ -192,7 +192,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		short val = 6129;
 		expect(resultSet.getShort(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getShort(colN));
 		verify(preparedStatement, resultSet);
 	}
@@ -205,7 +205,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		String val = "zippy";
 		expect(resultSet.getString(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getString(colN));
 		verify(preparedStatement, resultSet);
 	}
@@ -218,7 +218,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		Timestamp val = new Timestamp(123123123123L);
 		expect(resultSet.getTimestamp(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
-		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet);
+		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
 		assertEquals(val, results.getTimestamp(colN));
 		verify(preparedStatement, resultSet);
 	}

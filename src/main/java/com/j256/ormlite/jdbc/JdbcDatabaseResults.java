@@ -8,6 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -19,11 +20,13 @@ public class JdbcDatabaseResults implements DatabaseResults {
 
 	private final PreparedStatement preparedStmt;
 	private final ResultSet resultSet;
+	private final ObjectCache objectCache;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcDatabaseResults(PreparedStatement preparedStmt, ResultSet resultSet) {
+	public JdbcDatabaseResults(PreparedStatement preparedStmt, ResultSet resultSet, ObjectCache objectCache) {
 		this.preparedStmt = preparedStmt;
 		this.resultSet = resultSet;
+		this.objectCache = objectCache;
 	}
 
 	public int getColumnCount() throws SQLException {
@@ -110,5 +113,9 @@ public class JdbcDatabaseResults implements DatabaseResults {
 
 	public boolean wasNull(int columnIndex) throws SQLException {
 		return resultSet.wasNull();
+	}
+
+	public ObjectCache getObjectCache() {
+		return objectCache;
 	}
 }
