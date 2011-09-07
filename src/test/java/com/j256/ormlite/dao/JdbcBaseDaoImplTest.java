@@ -229,7 +229,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@Test
 	public void testCreateNull() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		assertEquals(0, fooDao.create(null));
+		assertEquals(0, fooDao.create((Foo)null));
 	}
 
 	@Test
