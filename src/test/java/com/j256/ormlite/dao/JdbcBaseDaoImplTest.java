@@ -229,7 +229,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@Test
 	public void testCreateNull() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		assertEquals(0, fooDao.create((Foo)null));
+		assertEquals(0, fooDao.create((Foo) null));
 	}
 
 	@Test
@@ -3045,6 +3045,34 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, dao.update(foo));
 	}
 
+	@Test
+	public void testNullForeign() throws Exception {
+		Dao<Order, Integer> orderDao = createDao(Order.class, true);
+
+		int numOrders = 10;
+		for (int orderC = 0; orderC < numOrders; orderC++) {
+			Order order = new Order();
+			order.val = orderC;
+			assertEquals(1, orderDao.create(order));
+		}
+
+		List<Order> results = orderDao.queryBuilder().where().isNull(Order.ONE_FIELD_NAME).query();
+		assertNotNull(results);
+		assertEquals(numOrders, results.size());
+	}
+
+	@Test
+	public void testSelfGeneratedIdPrimary() throws Exception {
+		Dao<SelfGeneratedIdUuidPrimary, UUID> dao = createDao(SelfGeneratedIdUuidPrimary.class, true);
+		SelfGeneratedIdUuidPrimary foo = new SelfGeneratedIdUuidPrimary();
+		foo.stuff = "ewpfojwefjo";
+		assertEquals(1, dao.create(foo));
+
+		SelfGeneratedIdUuidPrimary result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.stuff, result.stuff);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -4360,6 +4388,14 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String stuff;
 	}
 
+	protected static class SelfGeneratedIdUuidPrimary {
+		@DatabaseField(generatedId = true)
+		UUID id;
+
+		@DatabaseField
+		String stuff;
+	}
+
 	protected static class AllowGeneratedIdInsertObject {
 		@DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
 		Integer id;
@@ -4374,6 +4410,18 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField
 		public String stuff;
 		public CreateOrUpdateObjectId() {
+		}
+	}
+
+	protected static class Order {
+		public static final String ONE_FIELD_NAME = "one_id";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(unique = true)
+		int val;
+		@DatabaseField(foreign = true, columnName = ONE_FIELD_NAME)
+		One one;
+		protected Order() {
 		}
 	}
 }
