@@ -3073,6 +3073,30 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(foo.stuff, result.stuff);
 	}
 
+	@Test
+	public void testCreateIfNotExists() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		String stuff = "stuff";
+		foo1.stuff = stuff;
+
+		Foo fooResult = dao.createIfNotExists(foo1);
+		assertSame(foo1, fooResult);
+
+		// now if we do it again, we should get the database copy of foo
+		fooResult = dao.createIfNotExists(foo1);
+		assertNotSame(foo1, fooResult);
+
+		assertEquals(foo1.id, fooResult.id);
+		assertEquals(foo1.stuff, fooResult.stuff);
+	}
+
+	@Test
+	public void testCreateIfNotExistsNull() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertNull(dao.createIfNotExists(null));
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
