@@ -58,7 +58,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	private final static String DEFAULT_VALUE_STRING = "1314199";
 	private final static int DEFAULT_VALUE = Integer.parseInt(DEFAULT_VALUE_STRING);
 	private final static int ALL_TYPES_STRING_WIDTH = 4;
-	private final static String FOO_TABLE_NAME = "footable";
+	protected final static String FOO_TABLE_NAME = "footable";
 	private final static String ENUM_TABLE_NAME = "enumtable";
 
 	private final static String NULL_BOOLEAN_TABLE_NAME = "nullbooltable";
