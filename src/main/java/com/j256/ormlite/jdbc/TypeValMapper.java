@@ -14,60 +14,62 @@ import com.j256.ormlite.field.SqlType;
  */
 public class TypeValMapper {
 
-	private static final Map<SqlType, Integer[]> typeToValMap = new HashMap<SqlType, Integer[]>();
+	private static final Map<SqlType, int[]> typeToValMap = new HashMap<SqlType, int[]>();
 
 	static {
 		for (SqlType sqlType : SqlType.values()) {
+			int[] values;
 			switch (sqlType) {
 				case STRING :
-					typeToValMap.put(sqlType, new Integer[] { Types.VARCHAR });
+					values = new int[] { Types.VARCHAR };
 					break;
 				case LONG_STRING :
-					typeToValMap.put(sqlType, new Integer[] { Types.LONGVARCHAR });
+					values = new int[] { Types.LONGVARCHAR };
 					break;
 				case DATE :
-					typeToValMap.put(sqlType, new Integer[] { Types.TIMESTAMP });
+					values = new int[] { Types.TIMESTAMP };
 					break;
 				case BOOLEAN :
-					typeToValMap.put(sqlType, new Integer[] { Types.BOOLEAN });
+					values = new int[] { Types.BOOLEAN };
 					break;
 				case CHAR :
-					typeToValMap.put(sqlType, new Integer[] { Types.CHAR });
+					values = new int[] { Types.CHAR };
 					break;
 				case BYTE :
-					typeToValMap.put(sqlType, new Integer[] { Types.TINYINT });
+					values = new int[] { Types.TINYINT };
 					break;
 				case BYTE_ARRAY :
-					typeToValMap.put(sqlType, new Integer[] { Types.VARBINARY });
+					values = new int[] { Types.VARBINARY };
 					break;
 				case SHORT :
-					typeToValMap.put(sqlType, new Integer[] { Types.SMALLINT });
+					values = new int[] { Types.SMALLINT };
 					break;
 				case INTEGER :
-					typeToValMap.put(sqlType, new Integer[] { Types.INTEGER });
+					values = new int[] { Types.INTEGER };
 					break;
 				case LONG :
-					typeToValMap.put(sqlType, new Integer[] { Types.BIGINT, Types.DECIMAL, Types.NUMERIC });
+					values = new int[] { Types.BIGINT, Types.DECIMAL, Types.NUMERIC };
 					break;
 				case FLOAT :
-					typeToValMap.put(sqlType, new Integer[] { Types.FLOAT });
+					values = new int[] { Types.FLOAT };
 					break;
 				case DOUBLE :
-					typeToValMap.put(sqlType, new Integer[] { Types.DOUBLE });
+					values = new int[] { Types.DOUBLE };
 					break;
 				case SERIALIZABLE :
-					typeToValMap.put(sqlType, new Integer[] { Types.VARBINARY });
+					values = new int[] { Types.VARBINARY };
 					break;
 				case BLOB :
 					// the following do not need to be handled except in specific situations
-					typeToValMap.put(sqlType, new Integer[] { Types.BLOB });
+					values = new int[] { Types.BLOB };
 					break;
 				case UNKNOWN :
-					typeToValMap.put(sqlType, new Integer[] {});
+					values = new int[] {};
 					break;
 				default :
 					throw new IllegalArgumentException("No JDBC mapping for unknown SqlType " + sqlType);
 			}
+			typeToValMap.put(sqlType, values);
 		}
 	}
 
@@ -75,10 +77,29 @@ public class TypeValMapper {
 	 * Returns the primary type value associated with the SqlType argument.
 	 */
 	public static int getTypeValForSqlType(SqlType sqlType) throws SQLException {
-		Integer[] typeVals = typeToValMap.get(sqlType);
+		int[] typeVals = typeToValMap.get(sqlType);
+		if (typeVals == null) {
+			throw new SQLException("SqlType is unknown to type val mapping: " + sqlType);
+		}
 		if (typeVals.length == 0) {
 			throw new SQLException("SqlType does not have any JDBC type value mapping: " + sqlType);
+		} else {
+			return typeVals[0];
 		}
-		return typeVals[0];
+	}
+
+	/**
+	 * Returns the SqlType value associated with the typeVal argument. Can be slow-er.
+	 */
+	public static SqlType getSqlTypeForTypeVal(int typeVal) throws SQLException {
+		// iterate through to save on the extra HashMap since only for errors
+		for (Map.Entry<SqlType, int[]> entry : typeToValMap.entrySet()) {
+			for (int val : entry.getValue()) {
+				if (val == typeVal) {
+					return entry.getKey();
+				}
+			}
+		}
+		return SqlType.UNKNOWN;
 	}
 }

@@ -231,7 +231,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			case Types.INTEGER :
 				return (Number) resultSet.getInt(columnIndex);
 			default :
-				throw new SQLException("Unknown DataType for typeVal " + typeVal + " in column " + columnIndex);
+				String columnName = metaData.getColumnName(columnIndex);
+				throw new SQLException("Unexpected ID column type " + TypeValMapper.getSqlTypeForTypeVal(typeVal)
+						+ " (typeVal " + typeVal + ") in column " + columnName + "(#" + columnIndex
+						+ ") is not a number");
 		}
 	}
 
