@@ -21,8 +21,11 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
+import com.j256.ormlite.table.DatabaseTable;
 
 public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
+
+	private static final String FOOINT_TABLE_NAME = "fooint";
 
 	@Test
 	public void testQueryForLong() throws Exception {
@@ -133,7 +136,61 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		try {
 			createDao(Foo.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-			databaseConnection.insert("insert into foo (id) values (1)", new Object[0], new FieldType[0], keyHolder);
+			keyHolder.addKey(0L);
+			replay(keyHolder);
+			databaseConnection.insert("insert into foo (id) values (2)", new Object[0], new FieldType[0], keyHolder);
+			verify(keyHolder);
+		} finally {
+			connectionSource.releaseConnection(databaseConnection);
+		}
+	}
+
+	@Test
+	public void testIdColumnInteger() throws Exception {
+		// NOTE: this doesn't seem to generate an INTEGER type, oh well
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		try {
+			createDao(FooInt.class, true);
+			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
+			keyHolder.addKey(1L);
+			replay(keyHolder);
+			databaseConnection.insert("insert into fooint (stuff) values (2)", new Object[0], new FieldType[0],
+					keyHolder);
+			verify(keyHolder);
+		} finally {
+			connectionSource.releaseConnection(databaseConnection);
+		}
+	}
+
+	@Test
+	public void testIdColumnInvalid() throws Exception {
+		// NOTE: this doesn't seem to generate an INTEGER type, oh well
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		try {
+			createDao(FooInt.class, true);
+			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
+			keyHolder.addKey(1L);
+			replay(keyHolder);
+			databaseConnection.insert("insert into fooint (stuff) values ('zipper')", new Object[0], new FieldType[0],
+					keyHolder);
+			verify(keyHolder);
+		} finally {
+			connectionSource.releaseConnection(databaseConnection);
+		}
+	}
+
+	@Test
+	public void testIdColumnChangedFromStringToNumber() throws Exception {
+		// NOTE: trying to get the database to return a string as a result but could not figure it out
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		try {
+			createDao(FooString.class, true);
+			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
+			keyHolder.addKey(0L);
+			replay(keyHolder);
+			databaseConnection.insert("insert into fooint (id, stuff) values ('12', 'zipper')", new Object[0],
+					new FieldType[0], keyHolder);
+			verify(keyHolder);
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
 		}
@@ -143,6 +200,26 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		@DatabaseField
 		public long id;
 		Foo() {
+		}
+	}
+
+	@DatabaseTable(tableName = FOOINT_TABLE_NAME)
+	protected static class FooInt {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField
+		public String stuff;
+		FooInt() {
+		}
+	}
+
+	@DatabaseTable(tableName = FOOINT_TABLE_NAME)
+	protected static class FooString {
+		@DatabaseField(id = true)
+		public String id;
+		@DatabaseField
+		public String stuff;
+		FooString() {
 		}
 	}
 }
