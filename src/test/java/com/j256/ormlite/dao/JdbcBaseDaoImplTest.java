@@ -3097,6 +3097,43 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertNull(dao.createIfNotExists(null));
 	}
 
+	@Test
+	public void testCountOf() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		foo.id = 1;
+		assertEquals(1, dao.create(foo));
+		assertEquals(1, dao.countOf());
+		foo.id = 2;
+		assertEquals(1, dao.create(foo));
+		assertEquals(2, dao.countOf());
+	}
+
+	@Test
+	public void testCountOfPrepared() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		assertEquals(0, dao.countOf());
+		Foo foo = new Foo();
+		int id1 = 1;
+		foo.id = id1;
+		assertEquals(1, dao.create(foo));
+		foo.id = 2;
+		assertEquals(1, dao.create(foo));
+		assertEquals(2, dao.countOf());
+
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.setCountOf(true).where().eq(Foo.ID_FIELD_NAME, id1);
+		assertEquals(1, dao.countOf(qb.prepare()));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCountOfPreparedNoCountOf() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		dao.countOf(qb.prepare());
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {

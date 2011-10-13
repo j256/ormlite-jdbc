@@ -234,6 +234,9 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes) throws SQLException {
+		if (args == null) {
+			return;
+		}
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
 			int typeVal = TypeValMapper.getTypeValForSqlType(argFieldTypes[i].getSqlType());

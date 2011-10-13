@@ -62,7 +62,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testExecuteQueryWithNonSelectType() throws SQLException {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.INSERT);
+		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.EXECUTE);
 		stmt.runQuery(null);
 	}
 }

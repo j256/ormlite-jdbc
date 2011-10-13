@@ -49,7 +49,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 	}
 
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
-		if (type != StatementType.SELECT) {
+		if (type != StatementType.SELECT && type != StatementType.SELECT_LONG) {
 			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
 		}
 		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery(), objectCache);
