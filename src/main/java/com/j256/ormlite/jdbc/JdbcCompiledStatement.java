@@ -48,10 +48,6 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return preparedStatement.executeUpdate();
 	}
 
-	public DatabaseResults runQuery() throws SQLException {
-		return runQuery(null);
-	}
-
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
 		if (type != StatementType.SELECT) {
 			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
