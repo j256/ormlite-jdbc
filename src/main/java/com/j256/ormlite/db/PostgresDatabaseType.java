@@ -76,6 +76,10 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 
 	@Override
 	public void appendEscapedEntityName(StringBuilder sb, String name) {
+		/*
+		 * NOTE: this does not handle table names like schema.table which have to be quoted like "schema"."table". Put
+		 * looking for all periods and doing that seems to be dangerous.
+		 */
 		sb.append('\"').append(name).append('\"');
 	}
 
