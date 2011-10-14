@@ -75,8 +75,8 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 	}
 
 	@Override
-	public void appendEscapedEntityName(StringBuilder sb, String word) {
-		sb.append('\"').append(word).append('\"');
+	public void appendEscapedEntityName(StringBuilder sb, String name) {
+		sb.append('\"').append(name).append('\"');
 	}
 
 	public void appendEscapedWordEntityName(StringBuilder sb, String word) {

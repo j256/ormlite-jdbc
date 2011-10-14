@@ -95,8 +95,8 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public void appendEscapedEntityName(StringBuilder sb, String word) {
-		sb.append('\"').append(word).append('\"');
+	public void appendEscapedEntityName(StringBuilder sb, String name) {
+		sb.append('\"').append(name).append('\"');
 	}
 
 	@Override
