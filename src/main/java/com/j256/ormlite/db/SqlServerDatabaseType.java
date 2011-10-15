@@ -138,14 +138,13 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
-		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
-			// convert the Byte arg to be a short
-			byte byteVal = (Byte) javaObject;
-			return (short) byteVal;
-		}
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int dbColumnPos) throws SQLException {
+		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			// starts as a short and then gets converted to a byte on the way out
-			short shortVal = results.getShort(dbColumnPos);
+			short shortVal = results.getShort(columnPos);
+			return sqlArgToJava(fieldType, shortVal, columnPos);
+		}
+		public Object sqlArgToJava(FieldType fieldType, Object sqlObject, int columnPos) {
+			short shortVal = (Short) sqlObject;
 			// make sure the database value doesn't overflow the byte
 			if (shortVal < Byte.MIN_VALUE) {
 				return Byte.MIN_VALUE;
@@ -154,6 +153,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 			} else {
 				return (byte) shortVal;
 			}
+		}
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+			// convert the Byte arg to be a short
+			byte byteVal = (Byte) javaObject;
+			return (short) byteVal;
 		}
 		public boolean isStreamType() {
 			return false;

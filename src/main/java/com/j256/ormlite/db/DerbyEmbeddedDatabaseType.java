@@ -150,16 +150,6 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
 		}
-		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			try {
-				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
-				objOutStream.writeObject(javaObject);
-			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not write serialized object to output stream", e);
-			}
-			return new SerialBlob(outStream.toByteArray());
-		}
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
@@ -167,7 +157,12 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			InputStream stream = results.getBlobStream(columnPos);
 			if (stream == null) {
 				return null;
+			} else {
+				return sqlArgToJava(fieldType, stream, columnPos);
 			}
+		}
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+			InputStream stream = (InputStream) sqlArg;
 			try {
 				ObjectInputStream objInStream = new ObjectInputStream(stream);
 				return objInStream.readObject();
@@ -180,6 +175,16 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 					// ignore close exception
 				}
 			}
+		}
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			try {
+				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
+				objOutStream.writeObject(javaObject);
+			} catch (Exception e) {
+				throw SqlExceptionUtil.create("Could not write serialized object to output stream", e);
+			}
+			return new SerialBlob(outStream.toByteArray());
 		}
 		public boolean isStreamType() {
 			return true;
@@ -206,6 +211,10 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		}
 		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			int intVal = results.getInt(columnPos);
+			return (char) intVal;
+		}
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+			int intVal = (Integer) sqlArg;
 			return (char) intVal;
 		}
 		public boolean isStreamType() {
