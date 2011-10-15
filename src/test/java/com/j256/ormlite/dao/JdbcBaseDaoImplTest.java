@@ -46,8 +46,8 @@ import com.j256.ormlite.table.TableUtils;
 
 public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
-	private final boolean CLOSE_IS_NOOP = false;
-	private final boolean UPDATE_ROWS_RETURNS_ONE = false;
+	private static final boolean CLOSE_IS_NOOP = false;
+	private static final boolean UPDATE_ROWS_RETURNS_ONE = false;
 
 	protected boolean isTableExistsWorks() {
 		return true;
@@ -67,11 +67,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	private final static String DEFAULT_BOOLEAN_VALUE = "true";
 	private final static String DEFAULT_STRING_VALUE = "foo";
 	// this can't have non-zero milliseconds
-	private static DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 	private final static String DEFAULT_DATE_VALUE = "2010-07-16 01:31:17.000000";
 	private final static String DEFAULT_DATE_LONG_VALUE = "1282768620000";
 	private final static String DEFAULT_DATE_STRING_FORMAT = "MM/dd/yyyy HH-mm-ss-SSSSSS";
-	private static DateFormat defaultDateStringFormat = new SimpleDateFormat(DEFAULT_DATE_STRING_FORMAT);
 	private final static String DEFAULT_DATE_STRING_VALUE = "07/16/2010 01-31-17-000000";
 	private final static String DEFAULT_BYTE_VALUE = "1";
 	private final static String DEFAULT_SHORT_VALUE = "2";
@@ -1387,8 +1385,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		List<AllTypesDefault> allList = allDao.queryForAll();
 		assertEquals(1, allList.size());
 		all.stringField = DEFAULT_STRING_VALUE;
+		DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 		all.dateField = defaultDateFormat.parse(DEFAULT_DATE_VALUE);
 		all.dateLongField = new Date(Long.parseLong(DEFAULT_DATE_LONG_VALUE));
+		DateFormat defaultDateStringFormat = new SimpleDateFormat(DEFAULT_DATE_STRING_FORMAT);
 		all.dateStringField = defaultDateStringFormat.parse(DEFAULT_DATE_STRING_VALUE);
 		all.booleanField = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
 		all.booleanObj = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
@@ -3301,6 +3301,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			if (other == null || other.getClass() != getClass())
 				return false;
 			return id == ((Foo) other).id;
+		}
+		@Override
+		public int hashCode() {
+			return id;
 		}
 		@Override
 		public String toString() {

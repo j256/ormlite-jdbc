@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  */
 public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 
-	public WrappedJdbcConnectionSource(JdbcConnectionSource cs) throws SQLException {
+	public WrappedJdbcConnectionSource(JdbcConnectionSource cs) {
 		super(cs);
 	}
 

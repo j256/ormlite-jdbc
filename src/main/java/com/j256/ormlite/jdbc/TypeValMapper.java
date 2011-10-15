@@ -91,7 +91,7 @@ public class TypeValMapper {
 	/**
 	 * Returns the SqlType value associated with the typeVal argument. Can be slow-er.
 	 */
-	public static SqlType getSqlTypeForTypeVal(int typeVal) throws SQLException {
+	public static SqlType getSqlTypeForTypeVal(int typeVal) {
 		// iterate through to save on the extra HashMap since only for errors
 		for (Map.Entry<SqlType, int[]> entry : typeToValMap.entrySet()) {
 			for (int val : entry.getValue()) {

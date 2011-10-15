@@ -105,11 +105,11 @@ public class TableCreator {
 	 * Possibly drop the tables that were previously created if the {@link #AUTO_DROP_TABLES} system property is set to
 	 * "true".
 	 */
-	public void maybeDropTables() throws SQLException {
+	public void maybeDropTables() {
 		destroy();
 	}
 
-	public void destroy() throws SQLException {
+	public void destroy() {
 		if (!Boolean.parseBoolean(System.getProperty(AUTO_DROP_TABLES))) {
 			return;
 		}

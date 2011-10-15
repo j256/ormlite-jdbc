@@ -34,7 +34,7 @@ public abstract class BaseJdbcTest {
 
 	private static final String DATASOURCE_ERROR = "Property 'dataSource' is required";
 	@Rule
-	public PossibleException possibleException = new PossibleException();
+	public PossibleExceptionRule possibleException = new PossibleExceptionRule();
 
 	protected static final String DEFAULT_DATABASE_URL = "jdbc:h2:mem:ormlite";
 
@@ -198,7 +198,7 @@ public abstract class BaseJdbcTest {
 	/**
 	 * Our own junit rule which adds in an optional exception matcher if the db host is not available.
 	 */
-	public class PossibleException implements MethodRule {
+	public class PossibleExceptionRule implements MethodRule {
 
 		private Class<? extends Throwable> tClass = null;
 
@@ -266,7 +266,7 @@ public abstract class BaseJdbcTest {
 	}
 
 	/**
-	 * We can't use the @Test(expected) with the {@link PossibleException} rule because it masks the exception and
+	 * We can't use the @Test(expected) with the {@link PossibleExceptionRule} rule because it masks the exception and
 	 * doesn't pass it up to our statement wrapper.
 	 */
 	@Target(METHOD)
