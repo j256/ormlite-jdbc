@@ -55,8 +55,8 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 		statementsBefore.add(seqSb.toString());
 
 		sb.append("DEFAULT NEXTVAL(");
-		// when it is used, it is escaped as a word, grumble
-		appendEscapedWordEntityName(sb, sequenceName);
+		// postgres needed this special escaping for NEXTVAL('"sequence-name"')
+		sb.append('\'').append('\"').append(sequenceName).append('\"').append('\'');
 		sb.append(") ");
 		// could also be the type serial for auto-generated sequences
 		// 8.2 also have the returning insert statement
@@ -81,11 +81,6 @@ public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseTy
 		 * looking for all periods and doing that seems to be dangerous.
 		 */
 		sb.append('\"').append(name).append('\"');
-	}
-
-	public void appendEscapedWordEntityName(StringBuilder sb, String word) {
-		// postgres needed this special escaping for NEXTVAL('"sequence-name"')
-		sb.append('\'').append('\"').append(word).append('\"').append('\'');
 	}
 
 	@Override
