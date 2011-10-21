@@ -61,6 +61,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private int releaseCount = 0;
 	private int closeCount = 0;
 	private int maxEverUsed = 0;
+	private int testLoopCount = 0;
 	private long checkConnectionsEveryMillis = CHECK_CONNECTIONS_EVERY_MILLIS;
 	private boolean testBeforeGetFromPool = false;
 	private volatile boolean isOpen = true;
@@ -293,7 +294,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	/**
-	 * Return the number of currently freed connectionsin the free list.
+	 * Return the number of currently freed connections in the free list.
 	 */
 	public int getCurrentConnectionsFree() {
 		synchronized (lock) {
@@ -321,6 +322,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 
 	public void setTestBeforeGet(boolean testBeforeGetFromPool) {
 		this.testBeforeGetFromPool = testBeforeGetFromPool;
+	}
+
+	/**
+	 * Mostly for testing purposes to see how many times our test loop ran.
+	 */
+	public int getTestLoopCount() {
+		return testLoopCount;
 	}
 
 	private void checkInitializedSqlException() throws SQLException {
@@ -429,12 +437,18 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			long now = System.currentTimeMillis();
 
 			ConnectionMetaData connMetaData = null;
+			boolean closeLast = false;
 			while (true) {
+				testLoopCount++;
 				synchronized (lock) {
-					if (connFreeList == null) {
+					if (closeLast) {
 						if (connMetaData != null) {
 							closeConnectionQuietly(connMetaData);
+							connMetaData = null;
 						}
+						closeLast = false;
+					}
+					if (connFreeList == null) {
 						// we're closed
 						return false;
 					}
@@ -443,8 +457,8 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 						connFreeList.add(connMetaData);
 					}
 					if (connFreeList.isEmpty()) {
-						// nothing to do
-						continue;
+						// nothing to do, return to sleep and go again
+						return true;
 					}
 
 					connMetaData = connFreeList.get(0);
@@ -455,6 +469,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 					// otherwise, take the first one off the list
 					connMetaData = connFreeList.remove(0);
 
+					// see if it is expires so it can be closed immediately
 					if (connMetaData.isExpired(now)) {
 						// close expired connection
 						closeConnectionQuietly(connMetaData);
@@ -467,10 +482,8 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 				if (testConnection(connMetaData)) {
 					testedSet.add(connMetaData);
 				} else {
-					synchronized (lock) {
-						closeConnectionQuietly(connMetaData);
-						connMetaData = null;
-					}
+					// we close this inside of the synchronized block
+					closeLast = true;
 				}
 			}
 		}

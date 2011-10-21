@@ -126,6 +126,46 @@ public class JdbcPooledConnectionSourceTest {
 	}
 
 	@Test
+	public void testClosedConnction() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		pooled.setCheckConnectionsEveryMillis(100);
+		try {
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			assertEquals(0, pooled.getReleaseCount());
+			assertEquals(0, pooled.getCurrentConnectionsFree());
+			pooled.releaseConnection(conn1);
+			assertEquals(1, pooled.getReleaseCount());
+			assertEquals(1, pooled.getCurrentConnectionsFree());
+
+			// wait a bit
+			Thread.sleep(200);
+
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			// should get the same connection
+			assertSame(conn1, conn2);
+			pooled.releaseConnection(conn2);
+			assertEquals(2, pooled.getReleaseCount());
+			assertEquals(1, pooled.getCurrentConnectionsFree());
+
+			// close it behind the scenes
+			conn2.close();
+
+			// wait a bit
+			Thread.sleep(200);
+			DatabaseConnection conn3 = pooled.getReadOnlyConnection();
+			// now it should be different
+			assertTrue(conn3 != conn1);
+			assertEquals(0, pooled.getCurrentConnectionsFree());
+
+			Thread.sleep(200);
+			assertTrue("loop counter is " + pooled.getTestLoopCount(), pooled.getTestLoopCount() < 100);
+
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
 	public void testMaxAgeMaxValue() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
