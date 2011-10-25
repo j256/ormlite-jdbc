@@ -21,11 +21,6 @@ import com.j256.ormlite.support.DatabaseConnection;
  * reentrant and can handle requests from multiple threads.
  * 
  * <p>
- * <b> WARNING: </b> As of 10/2010 this is one of the newer parts of ORMLite meaning it may still have bugs. Additional
- * review of the code and any feedback would be appreciated.
- * </p>
- * 
- * <p>
  * <b> NOTE: </b> If you are using the Spring type wiring in Java, {@link #initialize} should be called after all of the
  * set methods. In Spring XML, init-method="initialize" should be used.
  * </p>
