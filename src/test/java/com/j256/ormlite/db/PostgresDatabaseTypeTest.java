@@ -42,6 +42,14 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
 
+	@Test
+	public void testEscapedEntityNameSchema() throws Exception {
+		String schema = "schema";
+		String table = "table";
+		String word = schema + "." + table;
+		assertEquals("\"" + schema + "\".\"" + table + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
+	}
+
 	@Test(expected = IllegalStateException.class)
 	public void testBadGeneratedId() throws Exception {
 		if (connectionSource == null) {
