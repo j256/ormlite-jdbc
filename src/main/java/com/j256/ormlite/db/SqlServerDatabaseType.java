@@ -108,7 +108,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
+	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		sb.append("TOP ").append(limit).append(' ');
 	}
 

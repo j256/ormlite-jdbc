@@ -111,7 +111,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		}
 		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
 		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo, null);
-		int limit = 1232;
+		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
 		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + limit + " "));

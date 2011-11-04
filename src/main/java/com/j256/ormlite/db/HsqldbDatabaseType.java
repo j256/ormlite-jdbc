@@ -111,7 +111,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public void appendLimitValue(StringBuilder sb, int limit, Integer offset) {
+	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		// the 0 is the offset, could also use TOP X
 		sb.append("LIMIT ");
 		if (offset == null) {
@@ -128,7 +128,7 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	public void appendOffsetValue(StringBuilder sb, int offset) {
+	public void appendOffsetValue(StringBuilder sb, long offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
 	}
 

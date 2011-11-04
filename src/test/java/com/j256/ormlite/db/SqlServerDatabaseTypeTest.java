@@ -58,7 +58,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			connectionSource.setDatabaseType(new H2DatabaseType());
 		}
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		int limit = 1232;
+		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
 		assertTrue(query + " should start with stuff", query.startsWith("SELECT TOP " + limit + " "));

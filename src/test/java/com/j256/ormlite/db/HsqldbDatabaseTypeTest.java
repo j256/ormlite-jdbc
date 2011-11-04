@@ -145,7 +145,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		};
 		dao.initialize();
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		int limit = 1232;
+		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
 		assertTrue(query + " should start with stuff", query.startsWith("SELECT LIMIT 0 " + limit + " "));
