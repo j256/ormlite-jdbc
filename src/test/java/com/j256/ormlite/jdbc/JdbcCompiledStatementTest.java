@@ -48,7 +48,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 		EasyMock.expectLastCall();
 		replay(preparedStatement);
 		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
-		stmt.setNull(0, SqlType.STRING);
+		stmt.setObject(0, null, SqlType.STRING);
 		verify(preparedStatement);
 	}
 
