@@ -3171,6 +3171,46 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
+	@Test
+	public void testForeignAutoCreate() throws Exception {
+		Dao<ForeignAutoCreate, Long> foreignAutoCreateDao = createDao(ForeignAutoCreate.class, true);
+		Dao<ForeignAutoCreateForeign, Long> foreignAutoCreateForeignDao =
+				createDao(ForeignAutoCreateForeign.class, true);
+
+		List<ForeignAutoCreateForeign> results = foreignAutoCreateForeignDao.queryForAll();
+		assertEquals(0, results.size());
+
+		ForeignAutoCreateForeign foreign = new ForeignAutoCreateForeign();
+		String stuff = "fopewjfpwejfpwjfw";
+		foreign.stuff = stuff;
+
+		ForeignAutoCreate foo1 = new ForeignAutoCreate();
+		foo1.foreign = foreign;
+		assertEquals(1, foreignAutoCreateDao.create(foo1));
+
+		// we should not get something from the other dao
+		results = foreignAutoCreateForeignDao.queryForAll();
+		assertEquals(1, results.size());
+		assertEquals(foreign.id, results.get(0).id);
+
+		// if we get foo back, we should see the foreign-id
+		List<ForeignAutoCreate> foreignAutoCreateResults = foreignAutoCreateDao.queryForAll();
+		assertEquals(1, foreignAutoCreateResults.size());
+		assertEquals(foo1.id, foreignAutoCreateResults.get(0).id);
+		assertNotNull(foreignAutoCreateResults.get(0).foreign);
+		assertEquals(foo1.foreign.id, foreignAutoCreateResults.get(0).foreign.id);
+
+		// now we create it when the foreign field already has an id set
+		ForeignAutoCreate foo2 = new ForeignAutoCreate();
+		foo2.foreign = foreign;
+		assertEquals(1, foreignAutoCreateDao.create(foo1));
+
+		results = foreignAutoCreateForeignDao.queryForAll();
+		// no additional results should be found
+		assertEquals(1, results.size());
+		assertEquals(foreign.id, results.get(0).id);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -4525,5 +4565,19 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		One one;
 		protected Order() {
 		}
+	}
+
+	protected static class ForeignAutoCreate {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, foreignAutoCreate = true)
+		public ForeignAutoCreateForeign foreign;
+	}
+
+	protected static class ForeignAutoCreateForeign {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
 	}
 }
