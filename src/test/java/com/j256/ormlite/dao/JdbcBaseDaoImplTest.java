@@ -3129,9 +3129,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testCountOfPreparedNoCountOf() throws Exception {
-		if (connectionSource == null) {
-			throw new IllegalArgumentException("Simulation");
-		}
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
 		try {
