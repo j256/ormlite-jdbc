@@ -3127,14 +3127,48 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, dao.countOf(qb.prepare()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCountOfPreparedNoCountOf() throws Exception {
 		if (connectionSource == null) {
 			throw new IllegalArgumentException("Simulation");
 		}
 		Dao<Foo, String> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, String> qb = dao.queryBuilder();
-		dao.countOf(qb.prepare());
+		try {
+			dao.countOf(qb.prepare());
+			fail("Should have thrown");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+	}
+
+	@Test
+	public void testSelectRaw() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.selectRaw("COUNT(*)");
+		GenericRawResults<String[]> results = dao.queryRaw(qb.prepareStatementString());
+		List<String[]> list = results.getResults();
+		assertEquals(1, list.size());
+		String[] array = list.get(0);
+		assertEquals(1, array.length);
+		assertEquals("1", array[0]);
+	}
+
+	@Test
+	public void testSelectRawNotQuery() throws Exception {
+		Dao<Foo, String> dao = createDao(Foo.class, true);
+		Foo foo = new Foo();
+		assertEquals(1, dao.create(foo));
+		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		qb.selectRaw("COUNTOF(*)");
+		try {
+			qb.query();
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	/* ==================================================================================== */

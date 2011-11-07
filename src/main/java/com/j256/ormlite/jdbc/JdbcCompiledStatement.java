@@ -42,21 +42,21 @@ public class JdbcCompiledStatement implements CompiledStatement {
 
 	public int runUpdate() throws SQLException {
 		// this can be a UPDATE, DELETE, or ... just not a SELECT
-		if (type == StatementType.SELECT) {
+		if (!type.isOkForUpdate()) {
 			throw new IllegalArgumentException("Cannot call update on a " + type + " statement");
 		}
 		return preparedStatement.executeUpdate();
 	}
 
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
-		if (type != StatementType.SELECT && type != StatementType.SELECT_LONG) {
+		if (!type.isOkForQuery()) {
 			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
 		}
 		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery(), objectCache);
 	}
 
 	public int runExecute() throws SQLException {
-		if (type != StatementType.EXECUTE) {
+		if (!type.isOkForExecute()) {
 			throw new IllegalArgumentException("Cannot call execute on a " + type + " statement");
 		}
 		preparedStatement.execute();
