@@ -79,7 +79,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
-		assertEquals("booleanField", booleanField.getDbColumnName());
+		assertEquals("booleanField", booleanField.getColumnName());
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -96,7 +96,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
-		assertEquals("byteField", byteField.getDbColumnName());
+		assertEquals("byteField", byteField.getColumnName());
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -113,7 +113,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[2];
-		assertEquals("dateField", byteField.getDbColumnName());
+		assertEquals("dateField", byteField.getColumnName());
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();

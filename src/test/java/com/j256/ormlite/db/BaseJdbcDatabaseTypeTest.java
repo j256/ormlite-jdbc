@@ -60,7 +60,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		FieldType fieldType = tableInfo.getIdField();
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendColumnArg(null, sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
-		assertTrue(sb.toString().contains(fieldType.getDbColumnName()));
+		assertTrue(sb.toString().contains(fieldType.getColumnName()));
 		if (!sb.toString().contains("PRIMARY KEY")) {
 			databaseType.addPrimaryKeySql(new FieldType[] { fieldType }, additionalArgs, null, moreStmts, queriesAfter);
 			assertEquals(1, additionalArgs.size());

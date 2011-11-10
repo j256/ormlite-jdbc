@@ -118,7 +118,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
-		assertEquals("byteField", byteField.getDbColumnName());
+		assertEquals("byteField", byteField.getColumnName());
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -132,7 +132,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[6];
-		assertEquals("longField", booleanField.getDbColumnName());
+		assertEquals("longField", booleanField.getColumnName());
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
