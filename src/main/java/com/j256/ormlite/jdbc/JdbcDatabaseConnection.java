@@ -12,6 +12,8 @@ import java.sql.Types;
 
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -26,6 +28,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
  */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
+	private static Logger logger = LoggerFactory.getLogger(JdbcDatabaseConnection.class);
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
 
 	private static Object[] noArgs = new Object[0];
@@ -44,19 +47,24 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	public boolean getAutoCommit() throws SQLException {
-		return connection.getAutoCommit();
+		boolean autoCommit = connection.getAutoCommit();
+		logger.debug("connection autoCommit is {}", autoCommit);
+		return autoCommit;
 	}
 
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		connection.setAutoCommit(autoCommit);
+		logger.debug("connection set autoCommit to {}", autoCommit);
 	}
 
 	public Savepoint setSavePoint(String name) throws SQLException {
 		if (supportsSavePoints == null) {
 			DatabaseMetaData metaData = connection.getMetaData();
 			supportsSavePoints = metaData.supportsSavepoints();
+			logger.debug("connection supports save points is {}", supportsSavePoints);
 		}
 		if (supportsSavePoints) {
+			logger.debug("save-point set with name {}", name);
 			return connection.setSavepoint(name);
 		} else {
 			return null;
@@ -66,34 +74,44 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	public void commit(Savepoint savepoint) throws SQLException {
 		if (savepoint == null) {
 			connection.commit();
+			logger.debug("connection committed");
 		} else {
 			connection.releaseSavepoint(savepoint);
+			logger.debug("save-point {} is released", savepoint.getSavepointName());
 		}
 	}
 
 	public void rollback(Savepoint savepoint) throws SQLException {
 		if (savepoint == null) {
 			connection.rollback();
+			logger.debug("connection is rolled back");
 		} else {
 			connection.rollback(savepoint);
+			logger.debug("save-point {} is rolled back", savepoint.getSavepointName());
 		}
 	}
 
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
 			throws SQLException {
-		return new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
-				ResultSet.CONCUR_READ_ONLY), type);
+		JdbcCompiledStatement compiledStatement =
+				new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
+						ResultSet.CONCUR_READ_ONLY), type);
+		logger.debug("compiled statement: {}", statement);
+		return compiledStatement;
 	}
 
 	public void close() throws SQLException {
 		connection.close();
+		logger.debug("connection closed");
 	}
 
 	/**
 	 * Returns whether the connection has already been closed. Used by {@link JdbcConnectionSource}.
 	 */
 	public boolean isClosed() throws SQLException {
-		return connection.isClosed();
+		boolean isClosed = connection.isClosed();
+		logger.debug("connection is closed returned {}", isClosed);
+		return isClosed;
 	}
 
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
@@ -107,6 +125,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
 			int rowN = stmt.executeUpdate();
+			logger.debug("insert statement is prepared and executed: {}", statement);
 			if (keyHolder != null) {
 				ResultSet resultSet = stmt.getGeneratedKeys();
 				ResultSetMetaData metaData = resultSet.getMetaData();
@@ -126,40 +145,17 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	public int update(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
-		PreparedStatement stmt = connection.prepareStatement(statement);
-		try {
-			statementSetArgs(stmt, args, argFieldTypes);
-			return stmt.executeUpdate();
-		} finally {
-			stmt.close();
-		}
+		return update(statement, args, argFieldTypes, "update");
 	}
 
 	public int delete(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// it's a call to executeUpdate
-		return update(statement, args, argFieldTypes);
+		return update(statement, args, argFieldTypes, "delete");
 	}
 
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
-		PreparedStatement stmt =
-				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		try {
-			statementSetArgs(stmt, args, argFieldTypes);
-			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
-			if (!results.next()) {
-				// no results at all
-				return null;
-			}
-			T first = rowMapper.mapRow(results);
-			if (results.next()) {
-				return MORE_THAN_ONE;
-			} else {
-				return first;
-			}
-		} finally {
-			stmt.close();
-		}
+		return queryForOne(statement, args, argFieldTypes, rowMapper, objectCache, "query for one");
 	}
 
 	public long queryForLong(String statement) throws SQLException {
@@ -168,7 +164,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// don't care about the object cache here
-		Object result = queryForOne(statement, args, argFieldTypes, longWrapper, null);
+		Object result = queryForOne(statement, args, argFieldTypes, longWrapper, null, "query for long");
 		if (result == null) {
 			throw new SQLException("No results returned in query-for-long: " + statement);
 		} else if (result == MORE_THAN_ONE) {
@@ -180,6 +176,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public boolean isTableExists(String tableName) throws SQLException {
 		DatabaseMetaData metaData = connection.getMetaData();
+		logger.debug("Got meta data from connection");
 		ResultSet results = null;
 		try {
 			results = metaData.getTables(null, null, "%", new String[] { "TABLE" });
@@ -214,6 +211,41 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	 */
 	public void setInternalConnection(Connection connection) {
 		this.connection = connection;
+	}
+
+	private int update(String statement, Object[] args, FieldType[] argFieldTypes, String label) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(statement);
+		try {
+			statementSetArgs(stmt, args, argFieldTypes);
+			int rowCount = stmt.executeUpdate();
+			logger.debug("{} statement is prepared and executed returning {}: {}", label, rowCount, statement);
+			return rowCount;
+		} finally {
+			stmt.close();
+		}
+	}
+
+	private <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
+			GenericRowMapper<T> rowMapper, ObjectCache objectCache, String label) throws SQLException {
+		PreparedStatement stmt =
+				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		try {
+			statementSetArgs(stmt, args, argFieldTypes);
+			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
+			logger.debug("{} statement is prepared and executed: {}", label, statement);
+			if (!results.next()) {
+				// no results at all
+				return null;
+			}
+			T first = rowMapper.mapRow(results);
+			if (results.next()) {
+				return MORE_THAN_ONE;
+			} else {
+				return first;
+			}
+		} finally {
+			stmt.close();
+		}
 	}
 
 	/**
