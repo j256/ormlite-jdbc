@@ -371,8 +371,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Iterator<Foo> iterator = fooDao.iterator(preparedQuery);
 		int itemC = 0;
 		while (iterator.hasNext()) {
-			Foo foo = iterator.next();
-			System.out.println("Foo = " + foo.val);
+			iterator.next();
 			itemC++;
 		}
 		assertEquals(lastX, itemC);
