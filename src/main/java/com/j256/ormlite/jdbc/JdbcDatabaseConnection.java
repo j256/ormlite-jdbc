@@ -40,6 +40,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public JdbcDatabaseConnection(Connection connection) {
 		this.connection = connection;
+		logger.trace("connection opened: {}", connection);
 	}
 
 	public boolean isAutoCommitSupported() throws SQLException {
@@ -102,7 +103,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public void close() throws SQLException {
 		connection.close();
-		logger.trace("connection closed");
+		logger.trace("connection closed: {}", connection);
 	}
 
 	/**
