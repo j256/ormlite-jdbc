@@ -48,23 +48,23 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public boolean getAutoCommit() throws SQLException {
 		boolean autoCommit = connection.getAutoCommit();
-		logger.debug("connection autoCommit is {}", autoCommit);
+		logger.trace("connection autoCommit is {}", autoCommit);
 		return autoCommit;
 	}
 
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		connection.setAutoCommit(autoCommit);
-		logger.debug("connection set autoCommit to {}", autoCommit);
+		logger.trace("connection set autoCommit to {}", autoCommit);
 	}
 
 	public Savepoint setSavePoint(String name) throws SQLException {
 		if (supportsSavePoints == null) {
 			DatabaseMetaData metaData = connection.getMetaData();
 			supportsSavePoints = metaData.supportsSavepoints();
-			logger.debug("connection supports save points is {}", supportsSavePoints);
+			logger.trace("connection supports save points is {}", supportsSavePoints);
 		}
 		if (supportsSavePoints) {
-			logger.debug("save-point set with name {}", name);
+			logger.trace("save-point set with name {}", name);
 			return connection.setSavepoint(name);
 		} else {
 			return null;
@@ -74,20 +74,20 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	public void commit(Savepoint savepoint) throws SQLException {
 		if (savepoint == null) {
 			connection.commit();
-			logger.debug("connection committed");
+			logger.trace("connection committed");
 		} else {
 			connection.releaseSavepoint(savepoint);
-			logger.debug("save-point {} is released", savepoint.getSavepointName());
+			logger.trace("save-point {} is released", savepoint.getSavepointName());
 		}
 	}
 
 	public void rollback(Savepoint savepoint) throws SQLException {
 		if (savepoint == null) {
 			connection.rollback();
-			logger.debug("connection is rolled back");
+			logger.trace("connection is rolled back");
 		} else {
 			connection.rollback(savepoint);
-			logger.debug("save-point {} is rolled back", savepoint.getSavepointName());
+			logger.trace("save-point {} is rolled back", savepoint.getSavepointName());
 		}
 	}
 
@@ -96,13 +96,13 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		JdbcCompiledStatement compiledStatement =
 				new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
 						ResultSet.CONCUR_READ_ONLY), type);
-		logger.debug("compiled statement: {}", statement);
+		logger.trace("compiled statement: {}", statement);
 		return compiledStatement;
 	}
 
 	public void close() throws SQLException {
 		connection.close();
-		logger.debug("connection closed");
+		logger.trace("connection closed");
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	 */
 	public boolean isClosed() throws SQLException {
 		boolean isClosed = connection.isClosed();
-		logger.debug("connection is closed returned {}", isClosed);
+		logger.trace("connection is closed returned {}", isClosed);
 		return isClosed;
 	}
 
@@ -125,7 +125,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
 			int rowN = stmt.executeUpdate();
-			logger.debug("insert statement is prepared and executed: {}", statement);
+			logger.trace("insert statement is prepared and executed: {}", statement);
 			if (keyHolder != null) {
 				ResultSet resultSet = stmt.getGeneratedKeys();
 				ResultSetMetaData metaData = resultSet.getMetaData();
@@ -176,7 +176,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public boolean isTableExists(String tableName) throws SQLException {
 		DatabaseMetaData metaData = connection.getMetaData();
-		logger.debug("Got meta data from connection");
+		logger.trace("Got meta data from connection");
 		ResultSet results = null;
 		try {
 			results = metaData.getTables(null, null, "%", new String[] { "TABLE" });
@@ -218,7 +218,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
 			int rowCount = stmt.executeUpdate();
-			logger.debug("{} statement is prepared and executed returning {}: {}", label, rowCount, statement);
+			logger.trace("{} statement is prepared and executed returning {}: {}", label, rowCount, statement);
 			return rowCount;
 		} finally {
 			stmt.close();
@@ -232,7 +232,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
 			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
-			logger.debug("{} statement is prepared and executed: {}", label, statement);
+			logger.trace("{} statement is prepared and executed: {}", label, statement);
 			if (!results.next()) {
 				// no results at all
 				return null;
