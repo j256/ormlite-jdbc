@@ -31,7 +31,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
@@ -79,7 +79,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testObject() throws Exception {
+	public void testObject() {
 		Db2DatabaseType dbType = new Db2DatabaseType();
 		StringBuilder sb = new StringBuilder();
 		dbType.appendByteArrayType(sb, 0);
@@ -88,7 +88,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testOffsetSupport() throws Exception {
+	public void testOffsetSupport() {
 		assertFalse(databaseType.isOffsetSqlSupported());
 	}
 }

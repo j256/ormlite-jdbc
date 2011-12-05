@@ -79,12 +79,12 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testFieldWidthSupport() throws Exception {
+	public void testFieldWidthSupport() {
 		assertFalse(databaseType.isVarcharFieldWidthSupported());
 	}
 
 	@Test
-	public void testCreateTableReturnsZero() throws Exception {
+	public void testCreateTableReturnsZero() {
 		assertFalse(databaseType.isCreateTableReturnsZero());
 	}
 

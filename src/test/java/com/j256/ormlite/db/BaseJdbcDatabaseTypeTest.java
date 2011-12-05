@@ -32,18 +32,18 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 	protected final static String GENERATED_ID_SEQ = "genId_seq";
 
 	@Test
-	public void testCommentLinePrefix() throws Exception {
+	public void testCommentLinePrefix() {
 		assertEquals("-- ", databaseType.getCommentLinePrefix());
 	}
 
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("`" + word + "`", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
 
 	@Test
-	public void testEscapedWord() throws Exception {
+	public void testEscapedWord() {
 		String word = "word";
 		assertEquals("'" + word + "'", TestUtils.appendEscapedWord(databaseType, word));
 	}
@@ -87,17 +87,17 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testFieldWidthSupport() throws Exception {
+	public void testFieldWidthSupport() {
 		assertTrue(databaseType.isVarcharFieldWidthSupported());
 	}
 
 	@Test
-	public void testLimitSupport() throws Exception {
+	public void testLimitSupport() {
 		assertTrue(databaseType.isLimitSqlSupported());
 	}
 
 	@Test
-	public void testLimitAfterSelect() throws Exception {
+	public void testLimitAfterSelect() {
 		assertFalse(databaseType.isLimitAfterSelect());
 	}
 
@@ -118,7 +118,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testOffsetSupport() throws Exception {
+	public void testOffsetSupport() {
 		assertTrue(databaseType.isOffsetSqlSupported());
 	}
 

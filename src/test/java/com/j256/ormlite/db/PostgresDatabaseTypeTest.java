@@ -37,13 +37,13 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
 
 	@Test
-	public void testEscapedEntityNameSchema() throws Exception {
+	public void testEscapedEntityNameSchema() {
 		String schema = "schema";
 		String table = "table";
 		String word = schema + "." + table;

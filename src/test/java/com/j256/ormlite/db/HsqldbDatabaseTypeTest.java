@@ -43,7 +43,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
@@ -127,13 +127,13 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testFieldWidthSupport() throws Exception {
+	public void testFieldWidthSupport() {
 		assertFalse(databaseType.isVarcharFieldWidthSupported());
 	}
 
 	@Override
 	@Test
-	public void testLimitAfterSelect() throws Exception {
+	public void testLimitAfterSelect() {
 		assertTrue(databaseType.isLimitAfterSelect());
 	}
 

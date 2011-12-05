@@ -33,14 +33,14 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
 
 	@Override
 	@Test
-	public void testLimitAfterSelect() throws Exception {
+	public void testLimitAfterSelect() {
 		assertTrue(databaseType.isLimitAfterSelect());
 	}
 
@@ -66,7 +66,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testOffsetSupport() throws Exception {
+	public void testOffsetSupport() {
 		assertFalse(databaseType.isOffsetSqlSupported());
 	}
 

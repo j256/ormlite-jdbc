@@ -21,22 +21,22 @@ public class DatabaseTypeUtilsTest {
 	}
 
 	@Test
-	public void testCreateDbType() throws Exception {
+	public void testCreateDbType() {
 		DatabaseTypeUtils.createDatabaseType("jdbc:h2:mem:ormlitetest");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreateDbTypeBadDriver() throws Exception {
+	public void testCreateDbTypeBadDriver() {
 		DatabaseTypeUtils.createDatabaseType("jdbc:unknown-db:");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreateDbTypeBadUrl() throws Exception {
+	public void testCreateDbTypeBadUrl() {
 		DatabaseTypeUtils.createDatabaseType("bad-url");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreateDbTypeNotEnoughParts() throws Exception {
+	public void testCreateDbTypeNotEnoughParts() {
 		DatabaseTypeUtils.createDatabaseType("jdbc:");
 	}
 

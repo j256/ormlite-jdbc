@@ -64,7 +64,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testTableSuffix() throws Exception {
+	public void testTableSuffix() {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		String suffix = "ewfwefef";
 		dbType.setCreateTableSuffix(suffix);
@@ -74,7 +74,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testDateTime() throws Exception {
+	public void testDateTime() {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
 		dbType.appendDateType(sb, 0);
@@ -82,7 +82,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testObject() throws Exception {
+	public void testObject() {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
 		dbType.appendByteArrayType(sb, 0);

@@ -77,8 +77,9 @@ public abstract class BaseJdbcTest {
 
 	/**
 	 * Set the database parameters for this db type.
+	 * @throws SQLException For sub classes
 	 */
-	protected void setDatabaseParams() throws Exception {
+	protected void setDatabaseParams() throws SQLException {
 		// noop here -- designed to be overridden
 	}
 

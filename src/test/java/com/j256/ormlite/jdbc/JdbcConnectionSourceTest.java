@@ -175,7 +175,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testGetDatabaseTypeBeforeInitialize() throws Exception {
+	public void testGetDatabaseTypeBeforeInitialize() {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.getDatabaseType();
 	}

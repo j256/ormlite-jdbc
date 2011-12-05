@@ -38,7 +38,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
@@ -141,7 +141,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testObject() throws Exception {
+	public void testObject() {
 		OracleDatabaseType dbType = new OracleDatabaseType();
 		StringBuilder sb = new StringBuilder();
 		dbType.appendByteArrayType(sb, 0);
@@ -149,7 +149,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testSelectNextVal() throws Exception {
+	public void testSelectNextVal() {
 		OracleDatabaseType dbType = new OracleDatabaseType();
 		StringBuilder sb = new StringBuilder();
 		String sequenceName = "stuff_seq";
@@ -159,7 +159,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testOffsetSupport() throws Exception {
+	public void testOffsetSupport() {
 		assertFalse(databaseType.isOffsetSqlSupported());
 	}
 }

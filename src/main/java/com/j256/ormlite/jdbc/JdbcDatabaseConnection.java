@@ -43,7 +43,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		logger.trace("connection opened: {}", connection);
 	}
 
-	public boolean isAutoCommitSupported() throws SQLException {
+	public boolean isAutoCommitSupported() {
 		return true;
 	}
 

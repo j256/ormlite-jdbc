@@ -182,6 +182,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		// noop right now
 	}
 
+	@SuppressWarnings("unused")
 	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 		// noop since this is a single connection source
 		return true;

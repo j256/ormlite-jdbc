@@ -43,7 +43,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		String word = "word";
 		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
@@ -94,12 +94,12 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Override
 	@Test
-	public void testLimitSupport() throws Exception {
+	public void testLimitSupport() {
 		assertFalse(databaseType.isLimitSqlSupported());
 	}
 
 	@Test
-	public void testGetFieldConverterSerializable() throws Exception {
+	public void testGetFieldConverterSerializable() {
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
 		FieldConverter converter = type.getFieldConverter(DataType.SERIALIZABLE.getDataPersister());
 		assertEquals(SqlType.BLOB, converter.getSqlType());
@@ -155,7 +155,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testAppendObjectType() throws Exception {
+	public void testAppendObjectType() {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
 		type.appendSerializableType(sb, 0);
@@ -163,7 +163,7 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testAppendByteArrayType() throws Exception {
+	public void testAppendByteArrayType() {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
 		type.appendByteArrayType(sb, 0);

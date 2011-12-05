@@ -198,7 +198,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		public SqlType getSqlType() {
 			return SqlType.INTEGER;
 		}
-		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			char character = (char) (Character) javaObject;
 			return (int) character;
 		}
@@ -213,7 +213,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			int intVal = results.getInt(columnPos);
 			return (char) intVal;
 		}
-		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			int intVal = (Integer) sqlArg;
 			return (char) intVal;
 		}

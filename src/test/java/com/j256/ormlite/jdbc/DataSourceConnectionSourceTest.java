@@ -148,7 +148,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testDscsGetDatabaseTypeNoInit() throws Exception {
+	public void testDscsGetDatabaseTypeNoInit() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.getDatabaseType();
 	}
