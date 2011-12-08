@@ -65,8 +65,9 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			logger.trace("connection supports save points is {}", supportsSavePoints);
 		}
 		if (supportsSavePoints) {
-			logger.trace("save-point set with name {}", name);
-			return connection.setSavepoint(name);
+			Savepoint savepoint = connection.setSavepoint(name);
+			logger.trace("save-point {} set with name {}", savepoint, name);
+			return savepoint;
 		} else {
 			return null;
 		}
@@ -77,8 +78,13 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			connection.commit();
 			logger.trace("connection committed");
 		} else {
+			// release might clear the name so we record it beforehand
+			Object obj = savepoint.getSavepointName();
+			if (obj == null) {
+				obj = savepoint;
+			}
 			connection.releaseSavepoint(savepoint);
-			logger.trace("save-point {} is released", savepoint.getSavepointName());
+			logger.trace("save-point {} is released", obj);
 		}
 	}
 
@@ -87,8 +93,13 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			connection.rollback();
 			logger.trace("connection is rolled back");
 		} else {
+			// rollback might clear the name so we record it beforehand
+			Object obj = savepoint.getSavepointName();
+			if (obj == null) {
+				obj = savepoint;
+			}
 			connection.rollback(savepoint);
-			logger.trace("save-point {} is rolled back", savepoint.getSavepointName());
+			logger.trace("save-point {} is rolled back", obj);
 		}
 	}
 
