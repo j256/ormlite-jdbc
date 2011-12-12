@@ -3207,6 +3207,30 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(foreign.id, results.get(0).id);
 	}
 
+	@Test
+	public void testForeignNull() throws Exception {
+		Dao<Foreign, Integer> dao = createDao(Foreign.class, true);
+		Foreign foreign = new Foreign();
+		foreign.foo = null;
+		assertEquals(1, dao.create(foreign));
+		Foreign foreign2 = dao.queryForId(foreign.id);
+		assertNotNull(foreign2);
+		assertNull(foreign2.foo);
+	}
+
+	@Test
+	public void testForeignCantBeNull() throws Exception {
+		Dao<ForeignNotNull, Integer> dao = createDao(ForeignNotNull.class, true);
+		ForeignNotNull foreign = new ForeignNotNull();
+		foreign.foo = null;
+		try {
+			dao.create(foreign);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -4575,5 +4599,24 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField
 		String stuff;
+	}
+
+	protected static class Foreign {
+		public static final String FOREIGN_COLUMN_NAME = "foo_id";
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true, columnName = FOREIGN_COLUMN_NAME)
+		public Foo foo;
+		public Foreign() {
+		}
+	}
+
+	protected static class ForeignNotNull {
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(foreign = true, canBeNull = false)
+		public Foo foo;
+		public ForeignNotNull() {
+		}
 	}
 }
