@@ -74,6 +74,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 				return super.getFieldConverter(dataType);
 		}
 	}
+
 	@Override
 	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG VARCHAR");
