@@ -11,6 +11,8 @@ import static org.junit.Assert.fail;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,6 +31,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
+import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -989,6 +992,26 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testBigDecimal() throws Exception {
+		Dao<BigDecimalNumeric, Object> dao = createDao(BigDecimalNumeric.class, true);
+		BigDecimalNumeric foo = new BigDecimalNumeric();
+		if (databaseType instanceof DerbyEmbeddedDatabaseType) {
+			// some databases have miniscule default precision
+			foo.bigDecimalNumeric = new BigDecimal("12");
+		} else {
+			// some databases have miniscule default precision
+			foo.bigDecimalNumeric = new BigDecimal("12645.34324234");
+		}
+		assertEquals(1, dao.create(foo));
+
+		List<BigDecimalNumeric> results = dao.queryForAll();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(foo.id, results.get(0).id);
+		assertEquals(foo.bigDecimalNumeric, results.get(0).bigDecimalNumeric);
+	}
+
+	@Test
 	public void testAllTypes() throws Exception {
 		Dao<AllTypes, Integer> allDao = createDao(AllTypes.class, true);
 		AllTypes allTypes = new AllTypes();
@@ -1007,6 +1030,18 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		float floatVal = 123.13F;
 		double doubleVal = 1413312.1231233;
 		OurEnum enumVal = OurEnum.FIRST;
+		UUID uuidVal = UUID.randomUUID();
+		BigInteger bigIntegerVal = new BigInteger("13213123214432423423423423423423423423423423423423423");
+		BigDecimal bigDecimalVal = new BigDecimal("1321312.1231231233214432423423423423423423423423423423423423423");
+		// some databases have miniscule default precision
+		BigDecimal bigDecimalNumericVal;
+		if (databaseType instanceof DerbyEmbeddedDatabaseType) {
+			// some databases have miniscule default precision
+			bigDecimalNumericVal = new BigDecimal("12");
+		} else {
+			// some databases have miniscule default precision
+			bigDecimalNumericVal = new BigDecimal("12645.3432234");
+		}
 		allTypes.stringField = stringVal;
 		allTypes.booleanField = boolVal;
 		allTypes.dateField = dateVal;
@@ -1022,6 +1057,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		allTypes.enumField = enumVal;
 		allTypes.enumStringField = enumVal;
 		allTypes.enumIntegerField = enumVal;
+		allTypes.uuid = uuidVal;
+		allTypes.bigInteger = bigIntegerVal;
+		allTypes.bigDecimal = bigDecimalVal;
+		allTypes.bigDecimalNumeric = bigDecimalNumericVal;
 		SerialData obj = new SerialData();
 		String key = "key";
 		String value = "value";
@@ -1052,6 +1091,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_FIELD_NAME, enumVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_STRING_FIELD_NAME, enumVal, true);
 		checkQueryResult(allDao, qb, allTypes, AllTypes.ENUM_INTEGER_FIELD_NAME, enumVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.UUID_FIELD_NAME, uuidVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.BIG_INTEGER_FIELD_NAME, bigIntegerVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.BIG_DECIMAL_FIELD_NAME, bigDecimalVal, true);
+		checkQueryResult(allDao, qb, allTypes, AllTypes.BIG_DECIMAL_NUMERIC_FIELD_NAME, bigDecimalNumericVal, true);
 	}
 
 	/**
@@ -3539,6 +3582,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public static final String ENUM_FIELD_NAME = "enumField";
 		public static final String ENUM_STRING_FIELD_NAME = "enumStringField";
 		public static final String ENUM_INTEGER_FIELD_NAME = "enumIntegerField";
+		public static final String UUID_FIELD_NAME = "uuid";
+		public static final String BIG_INTEGER_FIELD_NAME = "bigInteger";
+		public static final String BIG_DECIMAL_FIELD_NAME = "bigDecimal";
+		public static final String BIG_DECIMAL_NUMERIC_FIELD_NAME = "bigDecimalNumeric";
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField(columnName = STRING_FIELD_NAME)
@@ -3573,6 +3620,14 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		OurEnum enumStringField;
 		@DatabaseField(columnName = ENUM_INTEGER_FIELD_NAME, dataType = DataType.ENUM_INTEGER)
 		OurEnum enumIntegerField;
+		@DatabaseField(columnName = UUID_FIELD_NAME)
+		UUID uuid;
+		@DatabaseField(columnName = BIG_INTEGER_FIELD_NAME)
+		BigInteger bigInteger;
+		@DatabaseField(columnName = BIG_DECIMAL_FIELD_NAME)
+		BigDecimal bigDecimal;
+		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC)
+		BigDecimal bigDecimalNumeric;
 		AllTypes() {
 		}
 	}
@@ -4617,6 +4672,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(foreign = true, canBeNull = false)
 		public Foo foo;
 		public ForeignNotNull() {
+		}
+	}
+
+	protected static class BigDecimalNumeric {
+		public static final String BIG_DECIMAL_NUMERIC_FIELD_NAME = "bigDecimalNumeric";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC)
+		BigDecimal bigDecimalNumeric;
+		BigDecimalNumeric() {
 		}
 	}
 }

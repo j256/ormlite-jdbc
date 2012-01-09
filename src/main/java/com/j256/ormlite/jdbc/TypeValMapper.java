@@ -48,7 +48,7 @@ public class TypeValMapper {
 					values = new int[] { Types.INTEGER };
 					break;
 				case LONG :
-					values = new int[] { Types.BIGINT, Types.DECIMAL, Types.NUMERIC };
+					values = new int[] { Types.BIGINT };
 					break;
 				case FLOAT :
 					values = new int[] { Types.FLOAT };
@@ -62,6 +62,9 @@ public class TypeValMapper {
 				case BLOB :
 					// the following do not need to be handled except in specific situations
 					values = new int[] { Types.BLOB };
+					break;
+				case BIG_DECIMAL :
+					values = new int[] { Types.DECIMAL, Types.NUMERIC };
 					break;
 				case UNKNOWN :
 					values = new int[] {};

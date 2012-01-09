@@ -1,6 +1,7 @@
 package com.j256.ormlite.jdbc;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -98,6 +99,10 @@ public class JdbcDatabaseResults implements DatabaseResults {
 
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
 		return resultSet.getTimestamp(columnIndex + 1);
+	}
+
+	public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+		return resultSet.getBigDecimal(columnIndex + 1);
 	}
 
 	public boolean next() throws SQLException {
