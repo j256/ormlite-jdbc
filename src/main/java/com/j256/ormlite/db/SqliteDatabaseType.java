@@ -18,13 +18,6 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 	private static final Logger logger = LoggerFactory.getLogger(SqliteDatabaseType.class);
 
 	public SqliteDatabaseType() {
-		try {
-			// make sure we are using the Xerial driver
-			Class.forName(XERIAL_DRIVER_CLASS);
-		} catch (Exception e) {
-			logger.error("WARNING: you seem to not be using the Xerial SQLite driver.  "
-					+ "See ORMLite docs on SQLite: http://ormlite.com/docs/sqlite");
-		}
 	}
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
@@ -33,6 +26,13 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType implements Databa
 
 	@Override
 	protected String getDriverClassName() {
+		try {
+			// make sure we are using the Xerial driver
+			Class.forName(XERIAL_DRIVER_CLASS);
+		} catch (Exception e) {
+			logger.error("WARNING: you seem to not be using the Xerial SQLite driver.  "
+					+ "See ORMLite docs on SQLite: http://ormlite.com/docs/sqlite");
+		}
 		return DRIVER_CLASS_NAME;
 	}
 
