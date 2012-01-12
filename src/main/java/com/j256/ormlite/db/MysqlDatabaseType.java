@@ -86,4 +86,9 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	public boolean isCreateIfNotExistsSupported() {
 		return true;
 	}
+
+	@Override
+	public boolean isCreateIndexIfNotExistsSupported() {
+		return false;
+	}
 }

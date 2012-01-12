@@ -32,6 +32,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
+import com.j256.ormlite.db.MysqlDatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -995,7 +996,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testBigDecimal() throws Exception {
 		Dao<BigDecimalNumeric, Object> dao = createDao(BigDecimalNumeric.class, true);
 		BigDecimalNumeric foo = new BigDecimalNumeric();
-		if (databaseType instanceof DerbyEmbeddedDatabaseType) {
+		if (databaseType instanceof DerbyEmbeddedDatabaseType || databaseType instanceof MysqlDatabaseType) {
 			// some databases have miniscule default precision
 			foo.bigDecimalNumeric = new BigDecimal("12");
 		} else {
@@ -1035,7 +1036,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		BigDecimal bigDecimalVal = new BigDecimal("1321312.1231231233214432423423423423423423423423423423423423423");
 		// some databases have miniscule default precision
 		BigDecimal bigDecimalNumericVal;
-		if (databaseType instanceof DerbyEmbeddedDatabaseType) {
+		if (databaseType instanceof DerbyEmbeddedDatabaseType || databaseType instanceof MysqlDatabaseType) {
 			// some databases have miniscule default precision
 			bigDecimalNumericVal = new BigDecimal("12");
 		} else {
