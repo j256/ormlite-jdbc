@@ -127,6 +127,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 		return false;
 	}
 
+	@Override
+	public boolean isCreateTableReturnsNegative() {
+		return true;
+	}
+
 	/**
 	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
 	 */
