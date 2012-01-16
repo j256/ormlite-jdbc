@@ -50,7 +50,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendLongType(StringBuilder sb, int fieldWidth) {
+	protected void appendLongType(FieldType fieldType, StringBuilder sb, int fieldWidth) {
 		sb.append("NUMERIC");
 	}
 

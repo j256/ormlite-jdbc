@@ -60,23 +60,6 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		assertEquals(0, additionalArgs.size());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testGeneratedIdLong() throws Exception {
-		TableInfo<GeneratedIdLong, Long> tableInfo =
-				new TableInfo<GeneratedIdLong, Long>(connectionSource, null, GeneratedIdLong.class);
-		StringBuilder sb = new StringBuilder();
-		List<String> additionalArgs = new ArrayList<String>();
-		List<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
-				null);
-	}
-
-	@Test
-	public void testUsernamePassword() throws Exception {
-		closeConnectionSource();
-		databaseType = new DerbyEmbeddedDatabaseType();
-	}
-
 	@Override
 	@Test
 	public void testFieldWidthSupport() {
