@@ -994,6 +994,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		if (databaseTypeClassName.equals("DerbyEmbeddedDatabaseType")
 				|| databaseTypeClassName.equals("MysqlDatabaseType")
 				|| databaseTypeClassName.equals("SqlServerDatabaseType")
+				|| databaseTypeClassName.equals("SqlServerJtdsDatabaseType")
 				|| databaseTypeClassName.equals("SqliteAndroidDatabaseType")) {
 			// some databases have miniscule default precision
 			foo.bigDecimalNumeric = new BigDecimal("12");
@@ -1038,6 +1039,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		if (databaseTypeClassName.equals("DerbyEmbeddedDatabaseType")
 				|| databaseTypeClassName.equals("MysqlDatabaseType")
 				|| databaseTypeClassName.equals("SqlServerDatabaseType")
+				|| databaseTypeClassName.equals("SqlServerJtdsDatabaseType")
 				|| databaseTypeClassName.equals("SqliteAndroidDatabaseType")) {
 			// some databases have miniscule default precision
 			bigDecimalNumericVal = new BigDecimal("12");
