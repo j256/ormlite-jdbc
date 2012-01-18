@@ -31,9 +31,6 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
-import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
-import com.j256.ormlite.db.MysqlDatabaseType;
-import com.j256.ormlite.db.SqlServerDatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -53,10 +50,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private static final boolean CLOSE_IS_NOOP = false;
 	private static final boolean UPDATE_ROWS_RETURNS_ONE = false;
-
-	protected boolean isTableExistsWorks() {
-		return true;
-	}
 
 	/* ======================================================================================== */
 
@@ -997,8 +990,11 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testBigDecimal() throws Exception {
 		Dao<BigDecimalNumeric, Object> dao = createDao(BigDecimalNumeric.class, true);
 		BigDecimalNumeric foo = new BigDecimalNumeric();
-		if (databaseType instanceof DerbyEmbeddedDatabaseType || databaseType instanceof MysqlDatabaseType
-				|| databaseType instanceof SqlServerDatabaseType) {
+		String databaseTypeClassName = databaseType.getClass().getSimpleName();
+		if (databaseTypeClassName.equals("DerbyEmbeddedDatabaseType")
+				|| databaseTypeClassName.equals("MysqlDatabaseType")
+				|| databaseTypeClassName.equals("SqlServerDatabaseType")
+				|| databaseTypeClassName.equals("SqliteAndroidDatabaseType")) {
 			// some databases have miniscule default precision
 			foo.bigDecimalNumeric = new BigDecimal("12");
 		} else {
@@ -1038,8 +1034,11 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		BigDecimal bigDecimalVal = new BigDecimal("1321312.1231231233214432423423423423423423423423423423423423423");
 		// some databases have miniscule default precision
 		BigDecimal bigDecimalNumericVal;
-		if (databaseType instanceof DerbyEmbeddedDatabaseType || databaseType instanceof MysqlDatabaseType
-				|| databaseType instanceof SqlServerDatabaseType) {
+		String databaseTypeClassName = databaseType.getClass().getSimpleName();
+		if (databaseTypeClassName.equals("DerbyEmbeddedDatabaseType")
+				|| databaseTypeClassName.equals("MysqlDatabaseType")
+				|| databaseTypeClassName.equals("SqlServerDatabaseType")
+				|| databaseTypeClassName.equals("SqliteAndroidDatabaseType")) {
 			// some databases have miniscule default precision
 			bigDecimalNumericVal = new BigDecimal("12");
 		} else {
@@ -2517,9 +2516,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testTableExists() throws Exception {
-		if (!isTableExistsWorks()) {
-			return;
-		}
 		Dao<Foo, Integer> dao = createDao(Foo.class, false);
 		assertFalse(dao.isTableExists());
 		TableUtils.createTable(connectionSource, Foo.class);
