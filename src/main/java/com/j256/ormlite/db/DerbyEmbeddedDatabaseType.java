@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
@@ -147,21 +148,17 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	/**
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
-	private static class ObjectFieldConverter implements FieldConverter {
+	private static class ObjectFieldConverter extends BaseFieldConverter implements FieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
 		}
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			InputStream stream = results.getBlobStream(columnPos);
-			if (stream == null) {
-				return null;
-			} else {
-				return sqlArgToJava(fieldType, stream, columnPos);
-			}
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getBlobStream(columnPos);
 		}
+		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 			InputStream stream = (InputStream) sqlArg;
 			try {
@@ -177,6 +174,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 				}
 			}
 		}
+		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			try {
@@ -187,6 +185,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			}
 			return new SerialBlob(outStream.toByteArray());
 		}
+		@Override
 		public boolean isStreamType() {
 			return true;
 		}
@@ -195,10 +194,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	/**
 	 * Conversion from the char Java field because Derby can't convert Character to type char. Jesus.
 	 */
-	private static class CharFieldConverter implements FieldConverter {
+	private static class CharFieldConverter extends BaseFieldConverter implements FieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.INTEGER;
 		}
+		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			char character = (char) (Character) javaObject;
 			return (int) character;
@@ -210,16 +210,13 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 			}
 			return (int) defaultStr.charAt(0);
 		}
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			int intVal = results.getInt(columnPos);
-			return (char) intVal;
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getInt(columnPos);
 		}
+		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			int intVal = (Integer) sqlArg;
 			return (char) intVal;
-		}
-		public boolean isStreamType() {
-			return false;
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
@@ -135,7 +136,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	/**
 	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
 	 */
-	private static class ByteFieldConverter implements FieldConverter {
+	private static class ByteFieldConverter extends BaseFieldConverter implements FieldConverter {
 		public SqlType getSqlType() {
 			// store it as a short
 			return SqlType.BYTE;
@@ -143,11 +144,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
-		public Object resultToJava(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			// starts as a short and then gets converted to a byte on the way out
-			short shortVal = results.getShort(columnPos);
-			return sqlArgToJava(fieldType, shortVal, columnPos);
+			return results.getShort(columnPos);
 		}
+		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlObject, int columnPos) {
 			short shortVal = (Short) sqlObject;
 			// make sure the database value doesn't overflow the byte
@@ -159,13 +160,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 				return (byte) shortVal;
 			}
 		}
+		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			// convert the Byte arg to be a short
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;
-		}
-		public boolean isStreamType() {
-			return false;
 		}
 	}
 }
