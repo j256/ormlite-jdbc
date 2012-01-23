@@ -16,12 +16,10 @@ public class DaoFactoryTest extends BaseCoreTest {
 		createTable(Foo.class, true);
 		Dao<Foo, Object> fooDao = DaoFactory.createDao(connectionSource, Foo.class);
 		Foo foo = new Foo();
-		String id = "this is the id";
-		foo.id = id;
 		assertEquals(1, fooDao.create(foo));
-		Foo foo2 = fooDao.queryForId(foo.id);
-		assertNotNull(foo2);
-		assertEquals(id, foo2.id);
+		Foo result = fooDao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
 	}
 
 	@Test
@@ -30,11 +28,9 @@ public class DaoFactoryTest extends BaseCoreTest {
 		Dao<Foo, Object> fooDao =
 				DaoFactory.createDao(connectionSource, DatabaseTableConfig.fromClass(connectionSource, Foo.class));
 		Foo foo = new Foo();
-		String id = "this is the id";
-		foo.id = id;
 		assertEquals(1, fooDao.create(foo));
-		Foo foo2 = fooDao.queryForId(foo.id);
-		assertNotNull(foo2);
-		assertEquals(id, foo2.id);
+		Foo result = fooDao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.id, result.id);
 	}
 }
