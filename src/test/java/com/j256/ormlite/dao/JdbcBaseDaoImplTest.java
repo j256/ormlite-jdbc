@@ -3276,6 +3276,34 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
+	@Test
+	public void testLimitOffset() throws Exception {
+		final Dao<Foo, Object> dao = createDao(Foo.class, true);
+		final int numPages = 10;
+		final int numPerPage = 10;
+		final List<Foo> foos = new ArrayList<Foo>();
+		dao.callBatchTasks(new Callable<Void>() {
+			public Void call() throws Exception {
+				for (int i = 0; i < numPages + numPerPage; i++) {
+					Foo foo = new Foo();
+					foos.add(foo);
+					assertEquals(1, dao.create(foo));
+				}
+				return null;
+			}
+		});
+		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
+		for (int pageC = 0; pageC < numPages; pageC++) {
+			qb.limit((long) numPerPage);
+			int offset = pageC * numPerPage;
+			qb.offset((long) offset);
+			List<Foo> results = qb.query();
+			for (int i = 0; i < results.size(); i++) {
+				assertEquals(foos.get(offset + i), results.get(i));
+			}
+		}
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {

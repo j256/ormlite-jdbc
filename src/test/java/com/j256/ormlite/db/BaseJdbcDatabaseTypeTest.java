@@ -56,7 +56,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> moreStmts = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
+		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(connectionSource, null, StringId.class);
 		FieldType fieldType = tableInfo.getIdField();
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendColumnArg(null, sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
@@ -109,8 +109,8 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		if (!databaseType.isLimitSqlSupported()) {
 			return;
 		}
-		TableInfo<Foo, String> tableInfo = new TableInfo<Foo, String>(connectionSource, null, Foo.class);
-		QueryBuilder<Foo, String> qb = new QueryBuilder<Foo, String>(databaseType, tableInfo, null);
+		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(connectionSource, null, StringId.class);
+		QueryBuilder<StringId, String> qb = new QueryBuilder<StringId, String>(databaseType, tableInfo, null);
 		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
@@ -172,7 +172,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		}
 	}
 
-	protected static class Foo {
+	protected static class StringId {
 		@DatabaseField(id = true)
 		String id;
 	}

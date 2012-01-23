@@ -50,14 +50,14 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		Dao<Foo, String> dao;
+		Dao<StringId, String> dao;
 		try {
 			connectionSource.setDatabaseType(databaseType);
-			dao = createDao(Foo.class, true);
+			dao = createDao(StringId.class, true);
 		} finally {
 			connectionSource.setDatabaseType(new H2DatabaseType());
 		}
-		QueryBuilder<Foo, String> qb = dao.queryBuilder();
+		QueryBuilder<StringId, String> qb = dao.queryBuilder();
 		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();

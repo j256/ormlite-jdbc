@@ -17,6 +17,7 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
 public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
@@ -97,6 +98,36 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				System.out.println(names[i] + "=" + strings[i]);
 			}
 		}
+	}
+
+	@Test
+	public void testLimitOffsetFormat() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
+		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(connectionSource, null, StringId.class);
+		QueryBuilder<StringId, String> qb = new QueryBuilder<StringId, String>(databaseType, tableInfo, null);
+		long limit = 1232;
+		qb.limit(limit);
+		long offset = 171;
+		qb.offset(offset);
+		String query = qb.prepareStatementString();
+		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + offset + "," + limit + " "));
+	}
+
+	@Test
+	public void testIsOffsetLimitArgument() {
+		assertTrue(databaseType.isOffsetLimitArgument());
+	}
+
+	@Test
+	public void testIsNestedSavePointsSupported() {
+		assertFalse(databaseType.isNestedSavePointsSupported());
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testfIsNestedSavePointsSupported() {
+		databaseType.appendOffsetValue(null, 0);
 	}
 
 	protected static class GeneratedIdLong {
