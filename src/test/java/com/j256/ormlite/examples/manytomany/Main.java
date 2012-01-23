@@ -157,7 +157,7 @@ public class Main {
 		if (postsForUserQuery == null) {
 			postsForUserQuery = makePostsForUserQuery();
 		}
-		postsForUserQuery.setArgumentHolder(0, user);
+		postsForUserQuery.setArgumentHolderValue(0, user);
 		return postDao.query(postsForUserQuery);
 	}
 
@@ -165,7 +165,7 @@ public class Main {
 		if (usersForPostQuery == null) {
 			usersForPostQuery = makeUsersForPostQuery();
 		}
-		usersForPostQuery.setArgumentHolder(0, post);
+		usersForPostQuery.setArgumentHolderValue(0, post);
 		return userDao.query(usersForPostQuery);
 	}
 
