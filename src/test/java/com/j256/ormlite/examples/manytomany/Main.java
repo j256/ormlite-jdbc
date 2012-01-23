@@ -2,6 +2,7 @@ package com.j256.ormlite.examples.manytomany;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
@@ -115,6 +116,63 @@ public class Main {
 		/*
 		 * show me all of a user's posts:
 		 */
+		// user1 should have 2 posts
+		List<Post> posts = lookupPostsForUser(user1);
+		assertEquals(2, posts.size());
+		assertEquals(post1.id, posts.get(0).id);
+		assertEquals(post1.contents, posts.get(0).contents);
+		assertEquals(post2.id, posts.get(1).id);
+		assertEquals(post2.contents, posts.get(1).contents);
+
+		// user2 should have only 1 post
+		posts = lookupPostsForUser(user2);
+		assertEquals(1, posts.size());
+		assertEquals(post2.contents, posts.get(0).contents);
+
+		/*
+		 * show me all of the users that have a post.
+		 */
+		// post1 should only have 1 corresponding user
+		List<User> users = lookupUsersForPost(post1);
+		assertEquals(1, users.size());
+		assertEquals(user1.id, users.get(0).id);
+
+		// post2 should have 2 corresponding users
+		users = lookupUsersForPost(post2);
+		assertEquals(2, users.size());
+		assertEquals(user1.id, users.get(0).id);
+		assertEquals(user1.name, users.get(0).name);
+		assertEquals(user2.id, users.get(1).id);
+		assertEquals(user2.name, users.get(1).name);
+	}
+
+	/*
+	 * Convenience methods to build and run our prepared queries.
+	 */
+
+	private PreparedQuery<Post> postsForUserQuery = null;
+	private PreparedQuery<User> usersForPostQuery = null;
+
+	private List<Post> lookupPostsForUser(User user) throws SQLException {
+		if (postsForUserQuery == null) {
+			postsForUserQuery = makePostsForUserQuery();
+		}
+		postsForUserQuery.setArgumentHolder(0, user);
+		return postDao.query(postsForUserQuery);
+	}
+
+	private List<User> lookupUsersForPost(Post post) throws SQLException {
+		if (usersForPostQuery == null) {
+			usersForPostQuery = makeUsersForPostQuery();
+		}
+		usersForPostQuery.setArgumentHolder(0, post);
+		return userDao.query(usersForPostQuery);
+	}
+
+	/**
+	 * Build our query for Post objects that match a User.
+	 */
+	private PreparedQuery<Post> makePostsForUserQuery() throws SQLException {
 		// build our inner query for UserPost objects
 		QueryBuilder<UserPost, Integer> userPostQb = userPostDao.queryBuilder();
 		// just select the post-id field
@@ -127,27 +185,14 @@ public class Main {
 		QueryBuilder<Post, Integer> postQb = postDao.queryBuilder();
 		// where the id matches in the post-id from the inner query
 		postQb.where().in(Post.ID_FIELD_NAME, userPostQb);
-		PreparedQuery<Post> postPrepared = postQb.prepare();
+		return postQb.prepare();
+	}
 
-		// user1 should have 2 posts
-		userSelectArg.setValue(user1);
-		List<Post> posts = postDao.query(postPrepared);
-		assertEquals(2, posts.size());
-		assertEquals(user1Post1.post.id, posts.get(0).id);
-		assertEquals(user1Post2.post.id, posts.get(1).id);
-
-		// user2 should have only 1 post
-		userSelectArg.setValue(user2);
-		// posts = postDao.query(postQb.prepare());
-		posts = postDao.query(postPrepared);
-		assertEquals(1, posts.size());
-		assertEquals(user2Post1.post.id, posts.get(0).id);
-
-		/*
-		 * show me all of the users that have a post.
-		 */
-		// build our next inner query
-		userPostQb = userPostDao.queryBuilder();
+	/**
+	 * Build our query for User objects that match a Post
+	 */
+	private PreparedQuery<User> makeUsersForPostQuery() throws SQLException {
+		QueryBuilder<UserPost, Integer> userPostQb = userPostDao.queryBuilder();
 		// this time selecting for the user-id field
 		userPostQb.selectColumns(UserPost.USER_ID_FIELD_NAME);
 		SelectArg postSelectArg = new SelectArg();
@@ -157,19 +202,6 @@ public class Main {
 		QueryBuilder<User, Integer> userQb = userDao.queryBuilder();
 		// where the user-id matches the inner query's user-id field
 		userQb.where().in(Post.ID_FIELD_NAME, userPostQb);
-		PreparedQuery<User> userPrepared = userQb.prepare();
-
-		// post1 should only have 1 corresponding user
-		postSelectArg.setValue(post1);
-		List<User> users = userDao.query(userPrepared);
-		assertEquals(1, users.size());
-		assertEquals(user1.id, users.get(0).id);
-
-		// post2 should have 2 corresponding users
-		postSelectArg.setValue(post2);
-		users = userDao.query(userPrepared);
-		assertEquals(2, users.size());
-		assertEquals(user1.id, users.get(0).id);
-		assertEquals(user2.id, users.get(1).id);
+		return userQb.prepare();
 	}
 }
