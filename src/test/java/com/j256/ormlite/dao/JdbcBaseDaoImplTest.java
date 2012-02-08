@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -533,7 +534,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Iterator<Foo> iterator = fooDao.iterator();
 		assertFalse(iterator.hasNext());
-		assertNull(iterator.next());
 	}
 
 	@Test
@@ -3302,6 +3302,32 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 				assertEquals(foos.get(offset + i), results.get(i));
 			}
 		}
+	}
+
+	@Test
+	public void testIteratorMove() throws Exception {
+		Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		Foo foo1 = new Foo();
+		assertEquals(1, dao.create(foo1));
+		Foo foo2 = new Foo();
+		assertEquals(1, dao.create(foo2));
+		Foo foo3 = new Foo();
+		assertEquals(1, dao.create(foo3));
+
+		CloseableIterator<Foo> iterator = dao.iterator(ResultSet.TYPE_SCROLL_INSENSITIVE);
+		assertEquals(foo1, iterator.next());
+		assertEquals(foo1, iterator.current());
+		assertEquals(foo2, iterator.next());
+		assertEquals(foo2, iterator.current());
+		assertEquals(foo1, iterator.previous());
+		assertEquals(foo2, iterator.next());
+		assertEquals(foo3, iterator.next());
+		assertEquals(foo1, iterator.first());
+		assertEquals(foo3, iterator.moveRelative(2));
+		assertEquals(foo3, iterator.moveRelative(0));
+		assertEquals(foo2, iterator.moveRelative(-1));
+		assertEquals(foo3, iterator.next());
+		assertEquals(null, iterator.nextThrow());
 	}
 
 	/* ==================================================================================== */

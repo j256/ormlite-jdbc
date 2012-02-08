@@ -105,8 +105,16 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes)
 			throws SQLException {
+		return compileStatement(statement, type, argFieldTypes, DEFAULT_RESULT_FLAGS);
+	}
+
+	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
+			int resultFlags) throws SQLException {
+		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
+			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
+		}
 		JdbcCompiledStatement compiledStatement =
-				new JdbcCompiledStatement(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY,
+				new JdbcCompiledStatement(connection.prepareStatement(statement, resultFlags,
 						ResultSet.CONCUR_READ_ONLY), type);
 		logger.trace("compiled statement: {}", statement);
 		return compiledStatement;
@@ -245,7 +253,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			statementSetArgs(stmt, args, argFieldTypes);
 			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
 			logger.trace("{} statement is prepared and executed: {}", label, statement);
-			if (!results.next()) {
+			if (!results.first()) {
 				// no results at all
 				return null;
 			}

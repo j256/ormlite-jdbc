@@ -23,6 +23,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	private final ResultSet resultSet;
 	private final ObjectCache objectCache;
 	private ResultSetMetaData metaData = null;
+	private boolean first = true;
 
 	public JdbcDatabaseResults(PreparedStatement preparedStmt, ResultSet resultSet, ObjectCache objectCache) {
 		this.preparedStmt = preparedStmt;
@@ -35,6 +36,38 @@ public class JdbcDatabaseResults implements DatabaseResults {
 			metaData = resultSet.getMetaData();
 		}
 		return metaData.getColumnCount();
+	}
+
+	public boolean first() throws SQLException {
+		if (first) {
+			/*
+			 * We have to do this because some databases do not like us calling first() if we are only moving forward
+			 * through the results. We do this here because Android has no such issues.
+			 */
+			first = false;
+			return next();
+		} else {
+			return resultSet.first();
+		}
+	}
+
+	public boolean next() throws SQLException {
+		// NOTE: we should not auto-close here, even if there are no more results
+		if (resultSet.next()) {
+			return true;
+		} else if (!preparedStmt.getMoreResults()) {
+			return false;
+		} else {
+			return resultSet.next();
+		}
+	}
+
+	public boolean previous() throws SQLException {
+		return resultSet.previous();
+	}
+
+	public boolean moveRelative(int offset) throws SQLException {
+		return resultSet.relative(offset);
 	}
 
 	public int findColumn(String columnName) throws SQLException {
@@ -103,17 +136,6 @@ public class JdbcDatabaseResults implements DatabaseResults {
 
 	public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
 		return resultSet.getBigDecimal(columnIndex + 1);
-	}
-
-	public boolean next() throws SQLException {
-		// NOTE: we should not auto-close here, even if there are no more results
-		if (resultSet.next()) {
-			return true;
-		} else if (!preparedStmt.getMoreResults()) {
-			return false;
-		} else {
-			return resultSet.next();
-		}
 	}
 
 	public boolean wasNull(int columnIndex) throws SQLException {
