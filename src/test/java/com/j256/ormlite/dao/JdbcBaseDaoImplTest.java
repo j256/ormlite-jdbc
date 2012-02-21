@@ -3330,6 +3330,25 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(null, iterator.nextThrow());
 	}
 
+	@Test
+	public void testBasicCacheStuff() throws Exception {
+		Dao<AllTypes, Integer> allTypesDao = createDao(AllTypes.class, true);
+		allTypesDao.setObjectCache(true);
+		Dao<ForeignWrapper, Integer> wrapperDao = createDao(ForeignWrapper.class, true);
+		wrapperDao.setObjectCache(true);
+
+		AllTypes allTypes1 = new AllTypes();
+		assertEquals(1, allTypesDao.create(allTypes1));
+		ForeignWrapper wrapper = new ForeignWrapper();
+		wrapper.foreign = allTypes1;
+		assertEquals(1, wrapperDao.create(wrapper));
+
+		ForeignWrapper wrapperResult = wrapperDao.queryForId(wrapper.id);
+		assertSame(wrapper, wrapperResult);
+		AllTypes allTypesResult = allTypesDao.queryForId(allTypes1.id);
+		assertSame(allTypes1, allTypesResult);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
