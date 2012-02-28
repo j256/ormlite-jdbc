@@ -3349,6 +3349,27 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertSame(allTypes1, allTypesResult);
 	}
 
+	@Test
+	public void testForeignColumnName() throws Exception {
+		Dao<ForeignColumnName, Integer> dao = createDao(ForeignColumnName.class, true);
+		Dao<ForeignColumnNameForeign, Integer> foreignDao = createDao(ForeignColumnNameForeign.class, true);
+
+		ForeignColumnNameForeign foreign = new ForeignColumnNameForeign();
+		foreign.name = "Buzz Lightyear";
+		assertEquals(1, foreignDao.create(foreign));
+
+		ForeignColumnName fcn = new ForeignColumnName();
+		fcn.foreign = foreign;
+		assertEquals(1, dao.create(fcn));
+
+		ForeignColumnName result = dao.queryForId(fcn.id);
+		assertNotNull(result);
+		assertEquals(foreign.id, result.foreign.id);
+		assertEquals(foreign.name, result.foreign.name);
+
+		assertEquals(1, foreignDao.refresh(result.foreign));
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -4757,6 +4778,25 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC)
 		BigDecimal bigDecimalNumeric;
 		BigDecimalNumeric() {
+		}
+	}
+
+	protected static class ForeignColumnName {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(foreign = true, foreignColumnName = ForeignColumnNameForeign.FIELD_NAME)
+		ForeignColumnNameForeign foreign;
+		public ForeignColumnName() {
+		}
+	}
+
+	protected static class ForeignColumnNameForeign {
+		public static final String FIELD_NAME = "name";
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String name;
+		public ForeignColumnNameForeign() {
 		}
 	}
 }
