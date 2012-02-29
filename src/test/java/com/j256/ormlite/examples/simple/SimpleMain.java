@@ -30,7 +30,7 @@ import com.j256.ormlite.table.TableUtils;
  * would have proper error handling.
  * </p>
  */
-public class Main {
+public class SimpleMain {
 
 	// we are using the in-memory H2 database
 	private final static String DATABASE_URL = "jdbc:h2:mem:account";
@@ -39,7 +39,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		// turn our static method into an instance of Main
-		new Main().doMain(args);
+		new SimpleMain().doMain(args);
 	}
 
 	private void doMain(String[] args) throws Exception {
