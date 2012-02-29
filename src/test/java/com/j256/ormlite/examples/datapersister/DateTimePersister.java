@@ -1,24 +1,23 @@
 package com.j256.ormlite.examples.datapersister;
 
-import java.sql.SQLException;
-
 import org.joda.time.DateTime;
 
 import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.field.types.BaseDataType;
-import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.field.types.DateTimeType;
 
 /**
  * A custom persister that is able to store the Joda {@link DateTime} class in the database as epoch-millis long
- * integer. This can be specified using {@link DatabaseField#persisterClass()} or registered with
+ * integer. This overrides the {@link DateTimeType} which uses reflection instead. This should run faster.
+ * 
+ * This can be specified using {@link DatabaseField#persisterClass()} or registered with
  * {@link DataPersisterManager#registerDataPersisters(com.j256.ormlite.field.DataPersister...)}.
  * 
  * @author graywatson
  */
-public class DateTimePersister extends BaseDataType {
+public class DateTimePersister extends DateTimeType {
 
 	private static final DateTimePersister singleTon = new DateTimePersister();
 
@@ -41,17 +40,7 @@ public class DateTimePersister extends BaseDataType {
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr) {
-		return Long.parseLong(defaultStr);
-	}
-
-	@Override
-	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-		Long millis = results.getLong(columnPos);
-		if (millis == null) {
-			return null;
-		} else {
-			return new DateTime(millis);
-		}
+	public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+		return new DateTime((Long) sqlArg);
 	}
 }
