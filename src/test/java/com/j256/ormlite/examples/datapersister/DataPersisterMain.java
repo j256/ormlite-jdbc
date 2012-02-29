@@ -80,7 +80,7 @@ public class DataPersisterMain {
 		// persist the user object to the database
 		userDao.create(user);
 
-		// if we get the user from the database then we should 
+		// if we get the user from the database then we should
 		User result = userDao.queryForId(user.getId());
 		// our result birth-date should now be null because it is too early
 		assertEquals(birthDate, result.getBirthDate());
