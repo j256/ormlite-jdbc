@@ -59,6 +59,10 @@ public class DataPersisterMain {
 	 */
 	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
+		/*
+		 * We register our own persister for DateTime objects. ORMLite actually has a built in one but it has to use
+		 * reflection.
+		 */
 		DataPersisterManager.registerDataPersisters(DateTimePersister.getSingleton());
 
 		userDao = DaoManager.createDao(connectionSource, User.class);
