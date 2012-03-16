@@ -241,8 +241,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		return isOpen;
 	}
 
+	/**
+	 * @deprecated No longer supported and can be removed. 
+	 */
+	@Deprecated
 	public void setUsesTransactions(boolean usesTransactions) {
-		this.usedSpecialConnection = usesTransactions;
 	}
 
 	/**

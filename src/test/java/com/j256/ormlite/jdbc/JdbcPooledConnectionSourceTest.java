@@ -54,7 +54,6 @@ public class JdbcPooledConnectionSourceTest {
 	public void testTransaction() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
-			pooled.setUsesTransactions(true);
 			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
 			DatabaseConnection conn2 = pooled.getReadWriteConnection();
 			pooled.saveSpecialConnection(conn2);

@@ -191,7 +191,10 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		this.databaseUrl = databaseUrl;
 	}
 
+	/**
+	 * @deprecated No longer supported and can be removed. 
+	 */
+	@Deprecated
 	public void setUsesTransactions(boolean usesTransactions) {
-		this.usedSpecialConnection = usesTransactions;
 	}
 }
