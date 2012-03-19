@@ -28,10 +28,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -274,13 +276,38 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
+	@Ignore
+	public void testCloseIteratorFirstNew() throws Exception {
+		closeConnectionSource();
+		String saveDatabaseUrl = databaseUrl;
+		DatabaseType saveDatabaseType = databaseType;
+		databaseUrl = "jdbc:h2:mem:target/h2OrmliteJdbcBaseDaoImplTest";
+		openConnectionSource();
+		try {
+			Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+			Foo foo1 = new Foo();
+			foo1.stuff = "s1";
+			fooDao.create(foo1);
+			closeConnectionSource();
+			try {
+				fooDao.iterator();
+				fail("expected exception");
+			} catch (IllegalStateException e) {
+				// expected
+			}
+		} finally {
+			databaseUrl = saveDatabaseUrl;
+			databaseType = saveDatabaseType;
+		}
+	}
+
+	@Test
 	public void testCloseIteratorFirst() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
 		connectionSource.close();
-		closeConnectionSource();
 		try {
 			fooDao.iterator();
 			fail("expected exception");
@@ -3305,6 +3332,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testLimitOffset() throws Exception {
+		if (databaseType.isOffsetSqlSupported()) {
+			return;
+		}
 		final Dao<Foo, Object> dao = createDao(Foo.class, true);
 		final int numPages = 10;
 		final int numPerPage = 10;

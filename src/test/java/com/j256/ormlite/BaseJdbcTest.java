@@ -58,27 +58,12 @@ public abstract class BaseJdbcTest {
 		// do this for everyone
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		setDatabaseParams();
-		openConnectionSource();
+		doOpenConnectionSource();
 	}
 
 	protected void openConnectionSource() throws Exception {
-		if (connectionSource != null) {
-			return;
-		}
 		if (connectionSource == null) {
-			isConnectionExpected = isConnectionExpected();
-			if (isConnectionExpected) {
-				connectionSource = new JdbcConnectionSource(databaseUrl, userName, password);
-			}
-		}
-		if (databaseType == null) {
-			if (connectionSource != null) {
-				databaseType = connectionSource.getDatabaseType();
-			}
-		} else {
-			if (connectionSource != null) {
-				connectionSource.setDatabaseType(databaseType);
-			}
+			doOpenConnectionSource();
 		}
 	}
 
@@ -191,6 +176,24 @@ public abstract class BaseJdbcTest {
 	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws Exception {
 		// drop the table and ignore any errors along the way
 		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
+	}
+
+	private void doOpenConnectionSource() throws Exception {
+		if (connectionSource == null) {
+			isConnectionExpected = isConnectionExpected();
+			if (isConnectionExpected) {
+				connectionSource = new JdbcConnectionSource(databaseUrl, userName, password);
+			}
+		}
+		if (databaseType == null) {
+			if (connectionSource != null) {
+				databaseType = connectionSource.getDatabaseType();
+			}
+		} else {
+			if (connectionSource != null) {
+				connectionSource.setDatabaseType(databaseType);
+			}
+		}
 	}
 
 	private <T, ID> Dao<T, ID> configDao(BaseDaoImpl<T, ID> dao, boolean createTable) throws Exception {
