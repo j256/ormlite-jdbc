@@ -83,8 +83,12 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			if (obj == null) {
 				obj = savepoint;
 			}
-			connection.releaseSavepoint(savepoint);
-			logger.trace("save-point {} is released", obj);
+			/*
+			 * Initially I was doing a connection.releaseSavepoint(savepoint) which was only dropping the savepoint --
+			 * not committing it like I thought. I'm still surprised there is not a commit(savepoint).
+			 */
+			connection.commit();
+			logger.trace("connection is committed for save-point {}", obj);
 		}
 	}
 

@@ -176,20 +176,24 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(foo2, acctList.get(acctList.size() - 2));
 		assertEquals(foo3, acctList.get(acctList.size() - 1));
 		int acctC = 0;
-		Iterator<Foo> iterator = fooDao.iterator();
-		while (iterator.hasNext()) {
-			Foo foo = iterator.next();
-			if (acctC == acctList.size() - 3) {
-				assertEquals(foo1, foo);
-			} else if (acctC == acctList.size() - 2) {
-				iterator.remove();
-				assertEquals(foo2, foo);
-			} else if (acctC == acctList.size() - 1) {
-				assertEquals(foo3, foo);
+		CloseableIterator<Foo> iterator = fooDao.iterator();
+		try {
+			while (iterator.hasNext()) {
+				Foo foo = iterator.next();
+				if (acctC == acctList.size() - 3) {
+					assertEquals(foo1, foo);
+				} else if (acctC == acctList.size() - 2) {
+					iterator.remove();
+					assertEquals(foo2, foo);
+				} else if (acctC == acctList.size() - 1) {
+					assertEquals(foo3, foo);
+				}
+				acctC++;
 			}
-			acctC++;
+			assertEquals(initialSize + 3, acctC);
+		} finally {
+			iterator.close();
 		}
-		assertEquals(initialSize + 3, acctC);
 	}
 
 	@Test
@@ -253,7 +257,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
@@ -264,6 +268,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			}
 		} catch (IllegalStateException e) {
 			// expected
+		} finally {
+			iterator.close();
 		}
 	}
 
@@ -273,6 +279,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
+		connectionSource.close();
 		closeConnectionSource();
 		try {
 			fooDao.iterator();
@@ -320,6 +327,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			fail("expected exception");
 		} catch (Exception e) {
 			// expected
+		} finally {
+			iterator.close();
 		}
 	}
 
@@ -348,10 +357,14 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		fooDao.callBatchTasks(new InsertCallable(numItems, fooDao));
 
 		// now delete them with the iterator to test page-size
-		Iterator<Foo> iterator = fooDao.iterator();
-		while (iterator.hasNext()) {
-			iterator.next();
-			iterator.remove();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
+		try {
+			while (iterator.hasNext()) {
+				iterator.next();
+				iterator.remove();
+			}
+		} finally {
+			iterator.close();
 		}
 	}
 
@@ -367,13 +380,17 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 				fooDao.queryBuilder().where().ge(Foo.VAL_FIELD_NAME, numItems - lastX).prepare();
 
 		// now delete them with the iterator to test page-size
-		Iterator<Foo> iterator = fooDao.iterator(preparedQuery);
-		int itemC = 0;
-		while (iterator.hasNext()) {
-			iterator.next();
-			itemC++;
+		CloseableIterator<Foo> iterator = fooDao.iterator(preparedQuery);
+		try {
+			int itemC = 0;
+			while (iterator.hasNext()) {
+				iterator.next();
+				itemC++;
+			}
+			assertEquals(lastX, itemC);
+		} finally {
+			iterator.close();
 		}
-		assertEquals(lastX, itemC);
 	}
 
 	private static class InsertCallable implements Callable<Void> {
@@ -498,21 +515,27 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	@Test
 	public void testHasNextAfterDone() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		Iterator<Foo> iterator = fooDao.iterator();
-		while (iterator.hasNext()) {
+		CloseableIterator<Foo> iterator = fooDao.iterator();
+		try {
+			while (iterator.hasNext()) {
+			}
+			assertFalse(iterator.hasNext());
+		} finally {
+			iterator.close();
 		}
-		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testNextWithoutHasNext() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		try {
 			iterator.next();
 			fail("expected exception");
 		} catch (Exception e) {
 			// expected
+		} finally {
+			iterator.close();
 		}
 	}
 
@@ -1252,14 +1275,18 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			reserved.group = group;
 			reservedDao.update(reserved);
 		}
-		Iterator<ReservedField> reservedIterator = reservedDao.iterator();
-		while (reservedIterator.hasNext()) {
-			ReservedField reserved = reservedIterator.next();
-			assertEquals(from, reserved.from);
-			assertEquals(group, reserved.group);
-			reservedIterator.remove();
+		CloseableIterator<ReservedField> iterator = reservedDao.iterator();
+		try {
+			while (iterator.hasNext()) {
+				ReservedField reserved = iterator.next();
+				assertEquals(from, reserved.from);
+				assertEquals(group, reserved.group);
+				iterator.remove();
+			}
+			assertEquals(0, reservedDao.queryForAll().size());
+		} finally {
+			iterator.close();
 		}
-		assertEquals(0, reservedDao.queryForAll().size());
 	}
 
 	@Test
@@ -3315,19 +3342,23 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, dao.create(foo3));
 
 		CloseableIterator<Foo> iterator = dao.iterator(ResultSet.TYPE_SCROLL_INSENSITIVE);
-		assertEquals(foo1, iterator.next());
-		assertEquals(foo1, iterator.current());
-		assertEquals(foo2, iterator.next());
-		assertEquals(foo2, iterator.current());
-		assertEquals(foo1, iterator.previous());
-		assertEquals(foo2, iterator.next());
-		assertEquals(foo3, iterator.next());
-		assertEquals(foo1, iterator.first());
-		assertEquals(foo3, iterator.moveRelative(2));
-		assertEquals(foo3, iterator.moveRelative(0));
-		assertEquals(foo2, iterator.moveRelative(-1));
-		assertEquals(foo3, iterator.next());
-		assertEquals(null, iterator.nextThrow());
+		try {
+			assertEquals(foo1, iterator.next());
+			assertEquals(foo1, iterator.current());
+			assertEquals(foo2, iterator.next());
+			assertEquals(foo2, iterator.current());
+			assertEquals(foo1, iterator.previous());
+			assertEquals(foo2, iterator.next());
+			assertEquals(foo3, iterator.next());
+			assertEquals(foo1, iterator.first());
+			assertEquals(foo3, iterator.moveRelative(2));
+			assertEquals(foo3, iterator.moveRelative(0));
+			assertEquals(foo2, iterator.moveRelative(-1));
+			assertEquals(foo3, iterator.next());
+			assertEquals(null, iterator.nextThrow());
+		} finally {
+			iterator.close();
+		}
 	}
 
 	@Test

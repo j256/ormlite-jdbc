@@ -58,6 +58,13 @@ public abstract class BaseJdbcTest {
 		// do this for everyone
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		setDatabaseParams();
+		openConnectionSource();
+	}
+
+	protected void openConnectionSource() throws Exception {
+		if (connectionSource != null) {
+			return;
+		}
 		if (connectionSource == null) {
 			isConnectionExpected = isConnectionExpected();
 			if (isConnectionExpected) {
@@ -87,6 +94,16 @@ public abstract class BaseJdbcTest {
 
 	@After
 	public void after() throws Exception {
+		if (connectionSource != null) {
+			for (Class<?> clazz : dropClassSet) {
+				dropTable(clazz, true);
+			}
+			dropClassSet.clear();
+			for (DatabaseTableConfig<?> tableConfig : dropTableConfigSet) {
+				dropTable(tableConfig, true);
+			}
+			dropTableConfigSet.clear();
+		}
 		closeConnectionSource();
 		DaoManager.clearCache();
 	}
@@ -117,12 +134,6 @@ public abstract class BaseJdbcTest {
 
 	protected void closeConnectionSource() throws Exception {
 		if (connectionSource != null) {
-			for (Class<?> clazz : dropClassSet) {
-				dropTable(clazz, true);
-			}
-			for (DatabaseTableConfig<?> tableConfig : dropTableConfigSet) {
-				dropTable(tableConfig, true);
-			}
 			connectionSource.close();
 			connectionSource = null;
 		}
