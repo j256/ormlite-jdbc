@@ -302,21 +302,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testCloseIteratorFirst() throws Exception {
-		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		Foo foo1 = new Foo();
-		foo1.stuff = "s1";
-		fooDao.create(foo1);
-		connectionSource.close();
-		try {
-			fooDao.iterator();
-			fail("expected exception");
-		} catch (IllegalStateException e) {
-			// expected
-		}
-	}
-
-	@Test
 	public void testCloseIteratorBeforeNext() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		Foo foo1 = new Foo();
