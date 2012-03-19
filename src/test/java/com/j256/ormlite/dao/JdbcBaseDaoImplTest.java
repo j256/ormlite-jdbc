@@ -3332,7 +3332,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testLimitOffset() throws Exception {
-		if (databaseType.isOffsetSqlSupported()) {
+		if (databaseType == null || !databaseType.isOffsetSqlSupported()) {
 			return;
 		}
 		final Dao<Foo, Object> dao = createDao(Foo.class, true);
