@@ -242,7 +242,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	/**
-	 * @deprecated No longer supported and can be removed. 
+	 * @deprecated No longer supported and can be removed.
 	 */
 	@Deprecated
 	public void setUsesTransactions(boolean usesTransactions) {
