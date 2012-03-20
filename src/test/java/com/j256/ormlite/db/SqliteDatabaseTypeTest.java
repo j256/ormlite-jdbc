@@ -130,6 +130,8 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		databaseType.appendOffsetValue(null, 0);
 	}
 
+	/* ==================================================================== */
+
 	protected static class GeneratedIdLong {
 		@DatabaseField(generatedId = true)
 		public long id;
