@@ -333,7 +333,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
-				closeConnectionSource();
+				connectionSource.close();
 				iterator.remove();
 			}
 			fail("expected exception");
