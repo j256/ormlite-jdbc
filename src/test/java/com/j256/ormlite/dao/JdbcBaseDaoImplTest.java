@@ -52,7 +52,7 @@ import com.j256.ormlite.table.TableUtils;
 public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private static final boolean CLOSE_IS_NOOP = false;
-	private static final boolean UPDATE_ROWS_RETURNS_ONE = false;
+	private static final boolean DELETE_ROWS_NO_WHERE_RETURNS_ZERO = false;
 
 	/* ======================================================================================== */
 
@@ -333,7 +333,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		try {
 			while (iterator.hasNext()) {
 				iterator.next();
-				connectionSource.close();
+				closeConnectionSource();
 				iterator.remove();
 			}
 			fail("expected exception");
@@ -433,12 +433,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			fooList.add(foo);
 		}
 
-		int deleted = fooDao.delete(fooList);
-		if (UPDATE_ROWS_RETURNS_ONE) {
-			assertEquals(1, deleted);
-		} else {
-			assertEquals(fooList.size(), deleted);
-		}
+		assertEquals(fooList.size(), fooDao.delete(fooList));
 		assertEquals(0, fooDao.queryForAll().size());
 	}
 
@@ -465,12 +460,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			}
 		});
 
-		int deleted = fooDao.deleteIds(fooIdList);
-		if (UPDATE_ROWS_RETURNS_ONE) {
-			assertEquals(1, deleted);
-		} else {
-			assertEquals(fooIdList.size(), deleted);
-		}
+		assertEquals(fooIdList.size(), fooDao.deleteIds(fooIdList));
 		assertEquals(0, fooDao.queryForAll().size());
 	}
 
@@ -495,12 +485,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		DeleteBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
 		stmtBuilder.where().in(Foo.ID_FIELD_NAME, fooIdList);
 
-		int deleted = fooDao.delete(stmtBuilder.prepare());
-		if (UPDATE_ROWS_RETURNS_ONE) {
-			assertEquals(1, deleted);
-		} else {
-			assertEquals(fooIdList.size(), deleted);
-		}
+		assertEquals(fooIdList.size(), fooDao.delete(stmtBuilder.prepare()));
 		assertEquals(0, fooDao.queryForAll().size());
 	}
 
@@ -516,8 +501,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		DeleteBuilder<Foo, Integer> stmtBuilder = fooDao.deleteBuilder();
 
 		int deleted = fooDao.delete(stmtBuilder.prepare());
-		if (UPDATE_ROWS_RETURNS_ONE) {
-			assertEquals(1, deleted);
+		if (DELETE_ROWS_NO_WHERE_RETURNS_ZERO) {
+			assertEquals(0, deleted);
 		} else {
 			assertEquals(fooN, deleted);
 		}
@@ -3479,11 +3464,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		List<ID> idList = new ArrayList<ID>();
 		idList.add(id1);
 		idList.add(id2);
-		if (UPDATE_ROWS_RETURNS_ONE) {
-			assertEquals(1, dao.deleteIds(idList));
-		} else {
-			assertEquals(2, dao.deleteIds(idList));
-		}
+		assertEquals(2, dao.deleteIds(idList));
 		assertNull(dao.queryForId(id1));
 		assertNull(dao.queryForId(id2));
 
@@ -3493,11 +3474,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		List<T> dataList = new ArrayList<T>();
 		dataList.add(data1);
 		dataList.add(data2);
-		if (UPDATE_ROWS_RETURNS_ONE) {
-			assertEquals(1, dao.delete(dataList));
-		} else {
-			assertEquals(2, dao.delete(dataList));
-		}
+		assertEquals(2, dao.delete(dataList));
 
 		assertNull(dao.queryForId(id1));
 		assertNull(dao.queryForId(id2));
