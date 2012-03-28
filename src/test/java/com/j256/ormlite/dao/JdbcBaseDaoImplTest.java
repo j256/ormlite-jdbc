@@ -28,12 +28,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
-import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -272,32 +270,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			// expected
 		} finally {
 			iterator.close();
-		}
-	}
-
-	@Test
-	@Ignore
-	public void testCloseIteratorFirstNew() throws Exception {
-		closeConnectionSource();
-		String saveDatabaseUrl = databaseUrl;
-		DatabaseType saveDatabaseType = databaseType;
-		databaseUrl = "jdbc:h2:mem:target/h2OrmliteJdbcBaseDaoImplTest";
-		openConnectionSource();
-		try {
-			Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-			Foo foo1 = new Foo();
-			foo1.stuff = "s1";
-			fooDao.create(foo1);
-			closeConnectionSource();
-			try {
-				fooDao.iterator();
-				fail("expected exception");
-			} catch (IllegalStateException e) {
-				// expected
-			}
-		} finally {
-			databaseUrl = saveDatabaseUrl;
-			databaseType = saveDatabaseType;
 		}
 	}
 
@@ -3401,6 +3373,64 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(1, foreignDao.refresh(result.foreign));
 	}
 
+	@Test
+	public void testVersionField() throws Exception {
+		Dao<VersionField, Integer> dao = createDao(VersionField.class, true);
+
+		VersionField foo1 = new VersionField();
+		assertEquals(1, dao.create(foo1));
+
+		assertEquals(1, foo1.id);
+		assertEquals(0, foo1.version);
+
+		assertEquals(1, dao.update(foo1));
+		assertEquals(1, foo1.version);
+
+		assertEquals(1, dao.update(foo1));
+		assertEquals(2, foo1.version);
+
+		VersionField result = dao.queryForId(foo1.id);
+		// we update this one to a new version number
+		assertEquals(1, dao.update(result));
+		assertEquals(3, result.version);
+
+		// the old one doesn't change
+		assertEquals(2, foo1.version);
+		// but when we try to update the earlier foo, the version doesn't match
+		assertEquals(0, dao.update(foo1));
+	}
+
+	@Test
+	public void testVersionFieldInsertOrUpdate() throws Exception {
+		Dao<VersionField, Integer> dao = createDao(VersionField.class, true);
+
+		VersionField foo1 = new VersionField();
+		assertEquals(1, dao.create(foo1));
+
+		assertEquals(1, foo1.id);
+		assertEquals(0, foo1.version);
+
+		CreateOrUpdateStatus status = dao.createOrUpdate(foo1);
+		assertTrue(status.isUpdated());
+		assertEquals(1, status.getNumLinesChanged());
+		assertEquals(1, foo1.version);
+
+		status = dao.createOrUpdate(foo1);
+		assertTrue(status.isUpdated());
+		assertEquals(1, status.getNumLinesChanged());
+		assertEquals(2, foo1.version);
+
+		VersionField result = dao.queryForId(foo1.id);
+		// we update this one to a new version number
+		assertEquals(1, dao.update(result));
+		assertEquals(3, result.version);
+
+		// the old one doesn't change
+		assertEquals(2, foo1.version);
+		// but when we try to update the earlier foo, the version doesn't match
+		assertEquals(0, dao.update(foo1));
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -4820,6 +4850,15 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField
 		String name;
 		public ForeignColumnNameForeign() {
+		}
+	}
+
+	protected static class VersionField {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(version = true)
+		int version;
+		public VersionField() {
 		}
 	}
 }
