@@ -230,6 +230,8 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 			properties.setProperty("password", password);
 		}
 		JdbcDatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
+		// by default auto-commit is set to true
+		connection.setAutoCommit(true);
 		logger.debug("opened connection to {} got #{}", url, connection.hashCode());
 		return connection;
 	}
