@@ -47,7 +47,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return true;
 	}
 
-	public boolean getAutoCommit() throws SQLException {
+	public boolean isAutoCommit() throws SQLException {
 		boolean autoCommit = connection.getAutoCommit();
 		logger.trace("connection autoCommit is {}", autoCommit);
 		return autoCommit;
