@@ -100,6 +100,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	@Test
 	public void testClose() throws Exception {
 		Connection conn = createMock(Connection.class);
+		conn.setAutoCommit(true);
 		conn.close();
 		Driver driver = createMock(Driver.class);
 		String url = "jdbc:bar:baz";
@@ -125,6 +126,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testConnectionClosed() throws Exception {
 		Connection conn = createMock(Connection.class);
+		conn.setAutoCommit(true);
 		expect(conn.isClosed()).andReturn(true);
 		Driver driver = createMock(Driver.class);
 		String url = "jdbc:bar:baz";

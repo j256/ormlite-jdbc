@@ -173,7 +173,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		/*
 		 * If we have auto-commit turned off then we must roll-back any outstanding connections.
 		 */
-		if (!connection.isAutoCommit()) {
+		if (!connection.isClosed() && !connection.isAutoCommit()) {
 			connection.rollback(null);
 			connection.setAutoCommit(true);
 		}
