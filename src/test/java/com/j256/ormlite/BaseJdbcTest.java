@@ -52,6 +52,7 @@ public abstract class BaseJdbcTest {
 
 	@Before
 	public void before() throws Exception {
+		DaoManager.clearCache();
 		if (connectionSource != null) {
 			return;
 		}

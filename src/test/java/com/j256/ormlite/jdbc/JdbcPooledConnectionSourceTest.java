@@ -2,7 +2,9 @@ package com.j256.ormlite.jdbc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -11,9 +13,13 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.table.TableUtils;
 
 public class JdbcPooledConnectionSourceTest {
 
@@ -451,12 +457,63 @@ public class JdbcPooledConnectionSourceTest {
 	@Test
 	public void testIsOpen() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
-		pooled.setUrl("jdbc:h2:mem:baz");
-		assertTrue(pooled.isOpen());
-		DatabaseConnection conn = pooled.getReadOnlyConnection();
-		pooled.releaseConnection(conn);
-		assertTrue(pooled.isOpen());
-		pooled.close();
-		assertFalse(pooled.isOpen());
+		try {
+			pooled.setUrl("jdbc:h2:mem:baz");
+			assertTrue(pooled.isOpen());
+			DatabaseConnection conn = pooled.getReadOnlyConnection();
+			pooled.releaseConnection(conn);
+			assertTrue(pooled.isOpen());
+		} finally {
+			pooled.close();
+			assertFalse(pooled.isOpen());
+		}
+	}
+
+	@Test
+	public void testSetAutoCommit() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		try {
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			conn1.setAutoCommit(false);
+			pooled.releaseConnection(conn1);
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			assertSame(conn1, conn2);
+			assertTrue(conn2.isAutoCommit());
+		} finally {
+			pooled.close();
+		}
+	}
+
+	@Test
+	public void testConnectionRollback() throws Exception {
+		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
+		Dao<Foo, Integer> dao = null;
+		DatabaseConnection conn = null;
+		try {
+			TableUtils.createTable(pooled, Foo.class);
+			dao = DaoManager.createDao(pooled, Foo.class);
+			conn = dao.startThreadConnection();
+			dao.setAutoCommit(conn, false);
+			Foo foo = new Foo();
+			assertEquals(1, dao.create(foo));
+			assertNotNull(dao.queryForId(foo.id));
+			dao.endThreadConnection(conn);
+			assertNull(dao.queryForId(foo.id));
+		} finally {
+			TableUtils.dropTable(pooled, Foo.class, true);
+			if (dao != null) {
+				dao.endThreadConnection(conn);
+			}
+			pooled.close();
+		}
+	}
+
+	protected static class Foo {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		public Foo() {
+		}
 	}
 }

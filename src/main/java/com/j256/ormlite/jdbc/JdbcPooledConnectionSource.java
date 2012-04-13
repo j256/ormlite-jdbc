@@ -171,15 +171,17 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			return;
 		}
 		/*
-		 * If we have auto-commit turned off then we must roll-back any outstanding connections.
+		 * If the connection is not close and has auto-commit turned off then we must roll-back any outstanding
+		 * statements and set auto-commit back to true.
 		 */
-		if (!connection.isClosed() && !connection.isAutoCommit()) {
+		boolean isClosed = connection.isClosed();
+		if (!isClosed && !connection.isAutoCommit()) {
 			connection.rollback(null);
 			connection.setAutoCommit(true);
 		}
 		synchronized (lock) {
 			releaseCount++;
-			if (connection.isClosed()) {
+			if (isClosed) {
 				// it's already closed so just drop it
 				ConnectionMetaData meta = connectionMap.remove(connection);
 				if (meta == null) {
