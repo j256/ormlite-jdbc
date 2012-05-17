@@ -30,7 +30,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
 	private final static String DATABASE_NAME = "Derby";
 
-	private static FieldConverter objectConverter;
+	private static FieldConverter serializableConverter;
 	private static FieldConverter booleanConverter;
 	private static FieldConverter charConverter;
 
@@ -67,10 +67,10 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 				}
 				return charConverter;
 			case SERIALIZABLE :
-				if (objectConverter == null) {
-					objectConverter = new ObjectFieldConverter();
+				if (serializableConverter == null) {
+					serializableConverter = new SerializableFieldConverter();
 				}
-				return objectConverter;
+				return serializableConverter;
 			default :
 				return super.getFieldConverter(dataType);
 		}
@@ -148,7 +148,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	/**
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
-	private static class ObjectFieldConverter extends BaseFieldConverter implements FieldConverter {
+	private static class SerializableFieldConverter extends BaseFieldConverter implements FieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
 		}

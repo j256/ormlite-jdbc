@@ -220,6 +220,9 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 
 	/**
 	 * Make a connection to the database.
+	 * 
+	 * @param logger
+	 *            This is here so we can use the right logger associated with the sub-class.
 	 */
 	protected JdbcDatabaseConnection makeConnection(Logger logger) throws SQLException {
 		Properties properties = new Properties();
