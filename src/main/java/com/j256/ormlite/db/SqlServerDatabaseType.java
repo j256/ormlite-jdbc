@@ -166,5 +166,8 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;
 		}
+		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+			return sqlArgToJava(fieldType, Short.parseShort(stringValue), columnPos);
+		}
 	}
 }

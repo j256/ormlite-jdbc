@@ -189,6 +189,9 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		public boolean isStreamType() {
 			return true;
 		}
+		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+			throw new SQLException("Parsing string value for serializable types is not supported");
+		}
 	}
 
 	/**
@@ -217,6 +220,9 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			int intVal = (Integer) sqlArg;
 			return (char) intVal;
+		}
+		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
+			return sqlArgToJava(fieldType, Integer.parseInt(stringValue), columnPos);
 		}
 	}
 }
