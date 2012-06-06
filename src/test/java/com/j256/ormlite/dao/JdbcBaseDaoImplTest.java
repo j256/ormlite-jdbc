@@ -53,6 +53,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private static final boolean CLOSE_IS_NOOP = false;
 	private static final boolean DELETE_ROWS_NO_WHERE_RETURNS_ZERO = false;
+	private static final boolean AUTO_COMMIT_SUPPORTED = true;
 
 	/* ======================================================================================== */
 
@@ -310,7 +311,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 				closeConnectionSource();
 				iterator.remove();
 			}
-			fail("expected exception");
+			if (!CLOSE_IS_NOOP) {
+				fail("expected exception");
+			}
 		} catch (Exception e) {
 			// expected
 		} finally {
@@ -3469,6 +3472,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	@Test
 	public void testConnectionMethods() throws Exception {
+		if (!AUTO_COMMIT_SUPPORTED) {
+			return;
+		}
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		DatabaseConnection conn = null;
 		try {
