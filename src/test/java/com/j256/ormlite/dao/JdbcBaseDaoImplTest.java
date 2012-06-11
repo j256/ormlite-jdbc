@@ -3508,6 +3508,48 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
+	@Test
+	public void testAutoCommit() throws Exception {
+		if (!AUTO_COMMIT_SUPPORTED) {
+			return;
+		}
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		DatabaseConnection conn1 = null;
+		try {
+			conn1 = dao.startThreadConnection();
+			assertTrue(dao.isAutoCommit(conn1));
+			dao.setAutoCommit(conn1, false);
+			assertFalse(dao.isAutoCommit(conn1));
+
+			final Foo foo = new Foo();
+			assertEquals(1, dao.create(foo));
+			assertNotNull(dao.queryForId(foo.id));
+
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						DatabaseConnection conn2 = dao.startThreadConnection();
+						try {
+							assertNotNull(dao.queryForId(foo.id));
+						} finally {
+							if (conn2 != null) {
+								dao.endThreadConnection(conn2);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+
+		} finally {
+			if (conn1 != null) {
+				dao.setAutoCommit(conn1, true);
+				dao.endThreadConnection(conn1);
+			}
+		}
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
