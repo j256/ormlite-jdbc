@@ -43,7 +43,7 @@ public class SimpleMain {
 	}
 
 	private void doMain(String[] args) throws Exception {
-		JdbcConnectionSource connectionSource = null;
+		ConnectionSource connectionSource = null;
 		try {
 			// create our data-source for the database
 			connectionSource = new JdbcConnectionSource(DATABASE_URL);
