@@ -1239,16 +1239,24 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		ReservedField res = new ReservedField();
 		res.from = from;
 		assertEquals(1, reservedDao.create(res));
+
 		int id = res.select;
 		ReservedField res2 = reservedDao.queryForId(id);
 		assertNotNull(res2);
 		assertEquals(id, res2.select);
+
 		String group = "group-string";
 		for (ReservedField reserved : reservedDao) {
 			assertEquals(from, reserved.from);
 			reserved.group = group;
 			reservedDao.update(reserved);
 		}
+
+		List<ReservedField> results =
+				reservedDao.queryBuilder().where().eq(ReservedField.GROUP_FIELD, "group-string").query();
+		assertEquals(1, results.size());
+		assertEquals(res.select, results.get(0).select);
+
 		CloseableIterator<ReservedField> iterator = reservedDao.iterator();
 		try {
 			while (iterator.hasNext()) {
@@ -4021,6 +4029,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	// for testing reserved words as field names
 	protected static class ReservedField {
+		public static final String GROUP_FIELD = "group";
 		@DatabaseField(id = true)
 		public int select;
 		@DatabaseField
@@ -4029,7 +4038,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public String table;
 		@DatabaseField
 		public String where;
-		@DatabaseField
+		@DatabaseField(columnName = GROUP_FIELD)
 		public String group;
 		@DatabaseField
 		public String order;
