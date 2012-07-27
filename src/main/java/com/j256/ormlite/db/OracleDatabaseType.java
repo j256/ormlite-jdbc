@@ -1,8 +1,14 @@
 package com.j256.ormlite.db;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import com.j256.ormlite.field.BaseFieldConverter;
+import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Oracle database type information used to create the tables, etc..
@@ -20,6 +26,8 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	private final static String DATABASE_URL_PORTION = "oracle";
 	private final static String DRIVER_CLASS_NAME = "oracle.jdbc.driver.OracleDriver";
 	private final static String DATABASE_NAME = "Oracle";
+
+	private final static FieldConverter booleanConverter = new BooleanFieldConverter();
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -62,6 +70,28 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
 		sb.append("LONG RAW");
+	}
+
+	@Override
+	protected void appendBigDecimalNumericType(StringBuilder sb, int fieldWidth) {
+		// from stew
+		sb.append("NUMBER(*," + fieldWidth + ")");
+	}
+
+	@Override
+	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
+		// from stew
+		sb.append("CHAR(1)");
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(DataPersister dataPersister) {
+		switch (dataPersister.getSqlType()) {
+			case BOOLEAN :
+				return booleanConverter;
+			default :
+				return super.getFieldConverter(dataPersister);
+		}
 	}
 
 	@Override
@@ -122,5 +152,88 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	public boolean isOffsetSqlSupported() {
 		// there is no easy way to do this in this database type
 		return false;
+	}
+
+	@Override
+	public boolean isBatchUseTransaction() {
+		// from stew
+		return true;
+	}
+
+	@Override
+	public boolean isSelectSequenceBeforeInsert() {
+		// from stew
+		return true;
+	}
+
+	@Override
+	public boolean isEntityNamesMustBeUpCase() {
+		// from stew
+		return true;
+	}
+
+	/**
+	 * Booleans in Oracle are stored as the character '1' or '0'. You can change the characters by specifying a format
+	 * string. It must be a string with 2 characters. The first character is the value for TRUE, the second is FALSE.
+	 * 
+	 * <p>
+	 * 
+	 * <pre>
+	 * @DatabaseField(format = "YN")
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * Thanks much to stew.
+	 */
+	protected static class BooleanFieldConverter extends BaseFieldConverter implements FieldConverter {
+
+		private static final String TRUE_FALSE_FORMAT = "10";
+
+		public SqlType getSqlType() {
+			return SqlType.CHAR;
+		}
+
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			return javaToSqlArg(fieldType, Boolean.parseBoolean(defaultStr));
+		}
+
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
+			String format = getTrueFalseFormat(fieldType);
+			return ((Boolean) obj ? format.charAt(0) : format.charAt(1));
+		}
+
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getChar(columnPos);
+		}
+
+		@Override
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
+			String format = getTrueFalseFormat(fieldType);
+			return ((Character) sqlArg == format.charAt(0) ? Boolean.TRUE : Boolean.FALSE);
+		}
+
+		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
+			if (stringValue.length() == 0) {
+				return Boolean.FALSE;
+			} else {
+				return sqlArgToJava(fieldType, stringValue.charAt(0), columnPos);
+			}
+		}
+
+		private String getTrueFalseFormat(FieldType fieldType) throws SQLException {
+			String format = fieldType.getFormat();
+			if (format == null) {
+				return TRUE_FALSE_FORMAT;
+			}
+			if (format.length() == 2) {
+				return format;
+			} else {
+				throw new SQLException(
+						"Invalid boolean format must have 2 characters that represent true/false like \"10\": "
+								+ format);
+			}
+		}
 	}
 }
