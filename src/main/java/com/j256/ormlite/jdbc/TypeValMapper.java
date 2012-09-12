@@ -72,6 +72,9 @@ public class TypeValMapper {
 				case BIG_DECIMAL :
 					values = new int[] { Types.DECIMAL, Types.NUMERIC };
 					break;
+				case OTHER :
+					values = new int[] { Types.OTHER };
+					break;
 				case UNKNOWN :
 					values = new int[] {};
 					break;
