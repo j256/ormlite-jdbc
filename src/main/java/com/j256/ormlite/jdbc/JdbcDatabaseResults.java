@@ -62,12 +62,20 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
+	public boolean last() throws SQLException {
+		return resultSet.last();
+	}
+
 	public boolean previous() throws SQLException {
 		return resultSet.previous();
 	}
 
 	public boolean moveRelative(int offset) throws SQLException {
 		return resultSet.relative(offset);
+	}
+
+	public boolean moveAbsolute(int position) throws SQLException {
+		return resultSet.absolute(position);
 	}
 
 	public int findColumn(String columnName) throws SQLException {
