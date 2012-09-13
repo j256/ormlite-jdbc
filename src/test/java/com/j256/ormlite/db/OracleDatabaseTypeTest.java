@@ -88,7 +88,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 				null);
 		assertTrue(sb.toString().contains(" PRIMARY KEY"));
 		assertEquals(1, statementsBefore.size());
-		assertTrue(statementsBefore.get(0).contains(GENERATED_ID_SEQ));
+		assertTrue(statementsBefore.get(0) + " should contain sequence",
+				statementsBefore.get(0).contains(GENERATED_ID_SEQ.toUpperCase()));
 		assertEquals(0, additionalArgs.size());
 	}
 
