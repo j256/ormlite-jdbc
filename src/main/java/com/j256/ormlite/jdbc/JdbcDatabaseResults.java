@@ -153,4 +153,16 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	public ObjectCache getObjectCache() {
 		return objectCache;
 	}
+
+	public void close() throws SQLException {
+		resultSet.close();
+	}
+
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
 }
