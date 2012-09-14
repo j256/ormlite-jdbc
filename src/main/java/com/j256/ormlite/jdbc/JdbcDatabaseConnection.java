@@ -129,6 +129,14 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		logger.trace("connection closed: {}", connection);
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	/**
 	 * Returns whether the connection has already been closed. Used by {@link JdbcConnectionSource}.
 	 */

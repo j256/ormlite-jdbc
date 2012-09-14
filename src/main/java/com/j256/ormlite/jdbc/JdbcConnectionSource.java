@@ -145,6 +145,14 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		}
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	public String getUrl() {
 		return url;
 	}

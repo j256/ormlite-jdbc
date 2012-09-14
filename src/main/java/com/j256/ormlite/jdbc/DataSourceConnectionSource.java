@@ -165,6 +165,14 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		// unfortunately, you will need to close the DataSource directly since there is no close on the interface
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	public DatabaseType getDatabaseType() {
 		if (!initialized) {
 			throw new IllegalStateException(getClass().getSimpleName() + ".initialize() was not called");

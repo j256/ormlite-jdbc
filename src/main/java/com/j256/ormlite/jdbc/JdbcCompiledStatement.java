@@ -67,6 +67,14 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		preparedStatement.close();
 	}
 
+	public void closeQuietly() {
+		try {
+			close();
+		} catch (SQLException e) {
+			// ignored
+		}
+	}
+
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
 		if (obj == null) {
 			preparedStatement.setNull(parameterIndex + 1, TypeValMapper.getTypeValForSqlType(sqlType));
