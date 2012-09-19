@@ -55,31 +55,31 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
+	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BIT");
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		// TINYINT exists but it gives 0-255 unsigned
 		// http://msdn.microsoft.com/en-us/library/ms187745.aspx
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendDateType(StringBuilder sb, int fieldWidth) {
+	protected void appendDateType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		// TIMESTAMP is some sort of internal database type
 		// http://www.sqlteam.com/article/timestamps-vs-datetime-data-types
 		sb.append("DATETIME");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("IMAGE");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
+	protected void appendSerializableType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("IMAGE");
 	}
 

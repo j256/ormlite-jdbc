@@ -30,22 +30,22 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
+	protected void appendLongStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("LONGVARCHAR");
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
+	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BIT");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BINARY");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
+	protected void appendSerializableType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BINARY");
 	}
 

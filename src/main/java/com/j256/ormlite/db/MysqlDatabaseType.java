@@ -50,7 +50,7 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	}
 
 	@Override
-	protected void appendDateType(StringBuilder sb, int fieldWidth) {
+	protected void appendDateType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		/**
 		 * TIMESTAMP in MySQL does some funky stuff with the last-modification time. Values are 'not null' by default
 		 * with an automatic default of CURRENT_TIMESTAMP. Strange design decision.
@@ -59,7 +59,7 @@ public class MysqlDatabaseType extends BaseDatabaseType implements DatabaseType 
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
+	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("TINYINT(1)");
 	}
 

@@ -26,6 +26,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	private final static String DATABASE_URL_PORTION = "oracle";
 	private final static String DRIVER_CLASS_NAME = "oracle.jdbc.driver.OracleDriver";
 	private final static String DATABASE_NAME = "Oracle";
+	private static final String BOOLEAN_INTEGER_FORMAT = "integer";
 
 	private final static FieldConverter booleanConverter = new BooleanFieldConverter();
 
@@ -43,45 +44,48 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	}
 
 	@Override
-	protected void appendStringType(StringBuilder sb, int fieldWidth) {
+	protected void appendStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("VARCHAR2(").append(fieldWidth).append(")");
 	}
 
 	@Override
-	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
+	protected void appendLongStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("LONG");
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("SMALLINT");
 	}
 
 	@Override
-	protected void appendLongType(FieldType fieldType, StringBuilder sb, int fieldWidth) {
+	protected void appendLongType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("NUMERIC");
 	}
 
 	@Override
-	protected void appendByteArrayType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("LONG RAW");
 	}
 
 	@Override
-	protected void appendSerializableType(StringBuilder sb, int fieldWidth) {
+	protected void appendSerializableType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("LONG RAW");
 	}
 
 	@Override
-	protected void appendBigDecimalNumericType(StringBuilder sb, int fieldWidth) {
+	protected void appendBigDecimalNumericType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		// from stew
 		sb.append("NUMBER(*," + fieldWidth + ")");
 	}
 
 	@Override
-	protected void appendBooleanType(StringBuilder sb, int fieldWidth) {
-		// from stew
-		sb.append("CHAR(1)");
+	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		if (BOOLEAN_INTEGER_FORMAT.equalsIgnoreCase(fieldType.getFormat())) {
+			sb.append("INTEGER");
+		} else {
+			sb.append("CHAR(1)");
+		}
 	}
 
 	@Override
@@ -111,7 +115,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	@Override
 	protected void configureId(StringBuilder sb, FieldType fieldType, List<String> statementsBefore,
 			List<String> additionalArgs, List<String> queriesAfter) {
-		sb.append("PRIMARY KEY ");
+		// no PRIMARY KEY per stew
 	}
 
 	@Override
@@ -179,7 +183,14 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	 * <p>
 	 * 
 	 * <pre>
-	 * @DatabaseField(format = "YN")
+	 * &#64;DatabaseField(format = "YN")
+	 * </pre>
+	 * 
+	 * You can also specify the format as "integer" to use an integer column type and the value 1 (really non-0) for
+	 * true and 0 for false:
+	 * 
+	 * <pre>
+	 * &#64;DatabaseField(format = "integer")
 	 * </pre>
 	 * 
 	 * </p>
@@ -201,7 +212,11 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
 			String format = getTrueFalseFormat(fieldType);
-			return ((Boolean) obj ? format.charAt(0) : format.charAt(1));
+			if (format == BOOLEAN_INTEGER_FORMAT) {
+				return ((Boolean) obj ? Integer.valueOf(1) : Integer.valueOf(0));
+			} else {
+				return ((Boolean) obj ? format.charAt(0) : format.charAt(1));
+			}
 		}
 
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
@@ -211,7 +226,11 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 			String format = getTrueFalseFormat(fieldType);
-			return ((Character) sqlArg == format.charAt(0) ? Boolean.TRUE : Boolean.FALSE);
+			if (format == BOOLEAN_INTEGER_FORMAT) {
+				return ((Integer) sqlArg == 0 ? Boolean.FALSE : Boolean.TRUE);
+			} else {
+				return ((Character) sqlArg == format.charAt(0) ? Boolean.TRUE : Boolean.FALSE);
+			}
 		}
 
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
@@ -227,11 +246,13 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 			if (format == null) {
 				return TRUE_FALSE_FORMAT;
 			}
-			if (format.length() == 2) {
+			if (format.equalsIgnoreCase(BOOLEAN_INTEGER_FORMAT)) {
+				return BOOLEAN_INTEGER_FORMAT;
+			} else if (format.length() == 2 && format.charAt(0) != format.charAt(1)) {
 				return format;
 			} else {
 				throw new SQLException(
-						"Invalid boolean format must have 2 characters that represent true/false like \"10\": "
+						"Invalid boolean format must have 2 different characters that represent true/false like \"10\": "
 								+ format);
 			}
 		}

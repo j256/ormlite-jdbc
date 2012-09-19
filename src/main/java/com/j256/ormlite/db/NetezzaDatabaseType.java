@@ -34,7 +34,7 @@ public class NetezzaDatabaseType extends BaseDatabaseType implements DatabaseTyp
 	}
 
 	@Override
-	protected void appendByteType(StringBuilder sb, int fieldWidth) {
+	protected void appendByteType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("BYTEINT");
 	}
 

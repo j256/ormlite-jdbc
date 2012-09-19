@@ -145,7 +145,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testObject() {
 		OracleDatabaseType dbType = new OracleDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendByteArrayType(sb, 0);
+		dbType.appendByteArrayType(sb, null, 0);
 		assertEquals("LONG RAW", sb.toString());
 	}
 

@@ -77,7 +77,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testDateTime() {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendDateType(sb, 0);
+		dbType.appendDateType(sb, null, 0);
 		assertEquals("DATETIME", sb.toString());
 	}
 
@@ -85,7 +85,7 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	public void testObject() {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendByteArrayType(sb, 0);
+		dbType.appendByteArrayType(sb, null, 0);
 		assertEquals("BLOB", sb.toString());
 	}
 }
