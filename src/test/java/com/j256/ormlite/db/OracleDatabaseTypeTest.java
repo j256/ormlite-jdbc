@@ -86,7 +86,6 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
 				null);
-		assertTrue(sb.toString().contains(" PRIMARY KEY"));
 		assertEquals(1, statementsBefore.size());
 		assertTrue(statementsBefore.get(0) + " should contain sequence",
 				statementsBefore.get(0).contains(GENERATED_ID_SEQ.toUpperCase()));
@@ -104,7 +103,6 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(null, sb, idField, additionalArgs, statementsBefore, null, null);
-		assertTrue(sb.toString().contains(" PRIMARY KEY"));
 		assertEquals(1, statementsBefore.size());
 		String seqName =
 				databaseType.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(),
