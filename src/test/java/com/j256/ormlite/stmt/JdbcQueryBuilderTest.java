@@ -20,6 +20,9 @@ import org.junit.Test;
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.QueryBuilderTest.Bar;
+import com.j256.ormlite.stmt.QueryBuilderTest.Baz;
+import com.j256.ormlite.stmt.QueryBuilderTest.Bing;
 
 public class JdbcQueryBuilderTest extends BaseJdbcTest {
 
@@ -817,6 +820,194 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		List<Foo> results = fooDao.query(fooDao.queryBuilder().where().idEq(fooDao, foo).prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo.id, results.get(0).id);
+	}
+
+	@Test
+	public void testSimpleJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
+	public void testReverseJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		bazQb.where().eq(Baz.ID_FIELD, baz1.id);
+		List<Bar> results = barDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = barDao.queryBuilder().join(bazQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.val, results.get(0).val);
+	}
+
+	@Test
+	public void testJoinDoubleWhere() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		// both have bar1
+		baz2.bar = bar1;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		bazQb.where().eq(Baz.ID_FIELD, baz1.id);
+		List<Baz> results = bazQb.join(barQb).query();
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
+	public void testJoinOrder() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+		barQb.orderBy(Bar.ID_FIELD, true);
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().orderBy(Baz.ID_FIELD, true).join(barQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bar1.id, results.get(0).bar.id);
+	}
+
+	@Test
+	public void testLeftJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+		Baz baz3 = new Baz();
+		// no bar
+		assertEquals(1, bazDao.create(baz3));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		List<Baz> results = bazDao.queryBuilder().query();
+		assertEquals(3, results.size());
+		results = bazDao.queryBuilder().join(barQb).query();
+		assertEquals(2, results.size());
+		results = bazDao.queryBuilder().leftJoin(barQb).query();
+		assertEquals(3, results.size());
+	}
+
+	@Test
+	public void testMultipleJoin() throws Exception {
+		Dao<Bar, Integer> barDao = createDao(Bar.class, true);
+		Dao<Baz, Integer> bazDao = createDao(Baz.class, true);
+		Dao<Bing, Integer> bingDao = createDao(Bing.class, true);
+
+		Bar bar1 = new Bar();
+		bar1.val = 2234;
+		assertEquals(1, barDao.create(bar1));
+		Bar bar2 = new Bar();
+		bar2.val = 324322234;
+		assertEquals(1, barDao.create(bar2));
+
+		Baz baz1 = new Baz();
+		baz1.bar = bar1;
+		assertEquals(1, bazDao.create(baz1));
+		Baz baz2 = new Baz();
+		baz2.bar = bar2;
+		assertEquals(1, bazDao.create(baz2));
+
+		Bing bing1 = new Bing();
+		bing1.baz = baz1;
+		assertEquals(1, bingDao.create(bing1));
+		Bing bing2 = new Bing();
+		bing2.baz = baz2;
+		assertEquals(1, bingDao.create(bing2));
+
+		QueryBuilder<Bar, Integer> barQb = barDao.queryBuilder();
+		barQb.where().eq(Bar.VAL_FIELD, bar1.val);
+
+		QueryBuilder<Baz, Integer> bazQb = bazDao.queryBuilder();
+		assertEquals(2, bazQb.query().size());
+		bazQb.join(barQb);
+
+		List<Bing> results = bingDao.queryBuilder().join(bazQb).query();
+		assertEquals(1, results.size());
+		assertEquals(bing1.id, results.get(0).id);
+		assertEquals(baz1.id, results.get(0).baz.id);
+		bazDao.refresh(results.get(0).baz);
+		assertEquals(bar1.id, results.get(0).baz.bar.id);
 	}
 
 	/* ============================================================== */
