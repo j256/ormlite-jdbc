@@ -38,6 +38,18 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		return metaData.getColumnCount();
 	}
 
+	public String[] getColumnNames() throws SQLException {
+		int colN = getColumnCount();
+		String[] columnNames = new String[colN];
+		if (metaData == null) {
+			metaData = resultSet.getMetaData();
+		}
+		for (int colC = 0; colC < colN; colC++) {
+			columnNames[colC] = metaData.getColumnName(colC + 1);
+		}
+		return columnNames;
+	}
+
 	public boolean first() throws SQLException {
 		if (first) {
 			/*
