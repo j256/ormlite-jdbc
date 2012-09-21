@@ -21,29 +21,25 @@ public class JdbcDatabaseResults implements DatabaseResults {
 
 	private final PreparedStatement preparedStmt;
 	private final ResultSet resultSet;
+	private final ResultSetMetaData metaData;
 	private final ObjectCache objectCache;
-	private ResultSetMetaData metaData = null;
 	private boolean first = true;
 
-	public JdbcDatabaseResults(PreparedStatement preparedStmt, ResultSet resultSet, ObjectCache objectCache) {
+	public JdbcDatabaseResults(PreparedStatement preparedStmt, ResultSet resultSet, ObjectCache objectCache)
+			throws SQLException {
 		this.preparedStmt = preparedStmt;
 		this.resultSet = resultSet;
+		this.metaData = resultSet.getMetaData();
 		this.objectCache = objectCache;
 	}
 
 	public int getColumnCount() throws SQLException {
-		if (metaData == null) {
-			metaData = resultSet.getMetaData();
-		}
 		return metaData.getColumnCount();
 	}
 
 	public String[] getColumnNames() throws SQLException {
-		int colN = getColumnCount();
+		int colN = metaData.getColumnCount();
 		String[] columnNames = new String[colN];
-		if (metaData == null) {
-			metaData = resultSet.getMetaData();
-		}
 		for (int colC = 0; colC < colN; colC++) {
 			columnNames[colC] = metaData.getColumnName(colC + 1);
 		}

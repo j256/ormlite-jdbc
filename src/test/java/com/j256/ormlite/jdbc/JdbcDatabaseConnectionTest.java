@@ -121,6 +121,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		expect(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)).andReturn(
 				prepStmt);
 		expect(prepStmt.executeQuery()).andReturn(resultSet);
+		expect(resultSet.getMetaData()).andReturn(null);
 		expect(resultSet.next()).andReturn(false);
 		expect(prepStmt.getMoreResults()).andReturn(false);
 		// should close the statement
