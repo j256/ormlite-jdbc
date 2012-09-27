@@ -22,9 +22,9 @@
 		<version>2</version>
 	</parent>
 	<scm>
-		<url>http://ormlite.svn.sourceforge.net/viewvc/ormlite/ormlite-jdbc/trunk/</url>
-		<connection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/trunk</connection>
-		<developerConnection>scm:svn:https://ormlite.svn.sourceforge.net/svnroot/ormlite/ormlite-jdbc/trunk</developerConnection>
+		<url>https://svn.code.sf.net/p/ormlite/code/ormlite-jdbc/trunk</url>
+		<connection>scm:svn:https://svn.code.sf.net/p/ormlite/code/ormlite-jdbc/trunk</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/ormlite/code/ormlite-jdbc/trunk</developerConnection>
 	</scm>
 	<developers>
 		<developer>
