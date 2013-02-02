@@ -226,6 +226,7 @@
 		<ormlite-version>${project.version}</ormlite-version>
 		<commons-logging-version>1.1</commons-logging-version>
 		<log4j-version>1.2.12</log4j-version>
+		<log4j2-version>2.0-beta4</log4j2-version>
 		<slf4j-version>1.7.2</slf4j-version>
 	</properties>
 	<dependencies>
@@ -252,12 +253,6 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- THESE ARE FOR TESTING PURPOSES ONLY -->
-		<!-- <dependency> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> <version>${commons-logging-version}</version> 
-			<scope>test</scope> </dependency> <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> <version>${log4j-version}</version> 
-			<scope>test</scope> <exclusions> <exclusion> <groupId>com.sun.jmx</groupId> <artifactId>jmxri</artifactId> </exclusion> <exclusion> 
-			<groupId>com.sun.jdmk</groupId> <artifactId>jmxtools</artifactId> </exclusion> <exclusion> <groupId>javax.activation</groupId> 
-			<artifactId>activation</artifactId> </exclusion> <exclusion> <groupId>javax.jms</groupId> <artifactId>jms</artifactId> </exclusion> 
-			<exclusion> <groupId>javax.mail</groupId> <artifactId>mail</artifactId> </exclusion> </exclusions> </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -304,6 +299,12 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j2-version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
