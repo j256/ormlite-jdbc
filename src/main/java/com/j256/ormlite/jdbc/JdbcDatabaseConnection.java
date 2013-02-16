@@ -14,6 +14,7 @@ import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.VersionUtils;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
@@ -28,6 +29,8 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
  */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
+	private static final String JDBC_VERSION = "VERSION__4.44-dSNAPSHOT__";
+
 	private static Logger logger = LoggerFactory.getLogger(JdbcDatabaseConnection.class);
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
 
@@ -37,6 +40,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	private Connection connection;
 	private Boolean supportsSavePoints = null;
+
+	static {
+		VersionUtils.checkCoreVersusJdbcVersions(JDBC_VERSION);
+	}
 
 	public JdbcDatabaseConnection(Connection connection) {
 		this.connection = connection;

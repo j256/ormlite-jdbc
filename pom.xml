@@ -199,12 +199,12 @@
 					</execution>
 				</executions>
 				<configuration>
-					<ignoreMissingFile>true</ignoreMissingFile>
-					<file>src/main/resources/com/j256/ormlite/jdbc/VERSION.txt</file>
-					<outputFile>target/classes/com/j256/ormlite/jdbc/VERSION.txt</outputFile>
+					<ignoreMissingFile>false</ignoreMissingFile>
+					<file>src/main/java/com/j256/ormlite/jdbc/JdbcDatabaseConnection.java</file>
+					<outputFile>src/main/java/com/j256/ormlite/jdbc/JdbcDatabaseConnection.java</outputFile>
 					<regex>true</regex>
-					<token>^.*$</token>
-					<value>${version}</value>
+					<token>(VERSION__).*(__)</token>
+					<value>$1${version}$2</value>
 				</configuration>
 			</plugin>
 		</plugins>

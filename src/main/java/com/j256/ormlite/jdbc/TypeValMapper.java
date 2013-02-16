@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.VersionUtils;
 
 /**
  * Map from {@link SqlType} to the constants in the {@link Types} class.
@@ -16,11 +15,6 @@ import com.j256.ormlite.misc.VersionUtils;
 public class TypeValMapper {
 
 	private static final Map<SqlType, int[]> typeToValMap = new HashMap<SqlType, int[]>();
-
-	static {
-		// verifies that we have the right version -- not sure where else to do this
-		VersionUtils.checkCoreVersusJdbcVersions();
-	}
 
 	static {
 		for (SqlType sqlType : SqlType.values()) {
