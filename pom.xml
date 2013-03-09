@@ -22,9 +22,9 @@
 		<version>2</version>
 	</parent>
 	<scm>
-		<url>https://svn.code.sf.net/p/ormlite/code/ormlite-jdbc/trunk</url>
-		<connection>scm:svn:https://svn.code.sf.net/p/ormlite/code/ormlite-jdbc/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/ormlite/code/ormlite-jdbc/trunk</developerConnection>
+		<url>https://github.com/j256/ormlite-jdbc</url>
+		<connection>scm:git:ssh://git@github.com/j256/ormlite-jdbc.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/j256/ormlite-jdbc.git</developerConnection>
 	</scm>
 	<developers>
 		<developer>
