@@ -1,5 +1,3 @@
-BACKGROUND:
-
 This package provides the JDBC specific functionality.  You will also need to download the
 ormlite-core package as well.  Android users should download the ormlite-android package instead of
 this JDBC one.
