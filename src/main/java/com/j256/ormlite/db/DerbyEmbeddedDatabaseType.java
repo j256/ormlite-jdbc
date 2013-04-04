@@ -148,7 +148,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	/**
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
-	private static class SerializableFieldConverter extends BaseFieldConverter implements FieldConverter {
+	private static class SerializableFieldConverter extends BaseFieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
 		}
@@ -197,7 +197,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 	/**
 	 * Conversion from the char Java field because Derby can't convert Character to type char. Jesus.
 	 */
-	private static class CharFieldConverter extends BaseFieldConverter implements FieldConverter {
+	private static class CharFieldConverter extends BaseFieldConverter {
 		public SqlType getSqlType() {
 			return SqlType.INTEGER;
 		}

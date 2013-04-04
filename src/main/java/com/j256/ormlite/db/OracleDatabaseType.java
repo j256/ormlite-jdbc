@@ -197,7 +197,7 @@ public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType
 	 * 
 	 * Thanks much to stew.
 	 */
-	protected static class BooleanFieldConverter extends BaseFieldConverter implements FieldConverter {
+	protected static class BooleanFieldConverter extends BaseFieldConverter {
 
 		private static final String TRUE_FALSE_FORMAT = "10";
 

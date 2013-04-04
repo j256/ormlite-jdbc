@@ -136,7 +136,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	/**
 	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
 	 */
-	private static class ByteFieldConverter extends BaseFieldConverter implements FieldConverter {
+	private static class ByteFieldConverter extends BaseFieldConverter {
 		public SqlType getSqlType() {
 			// store it as a short
 			return SqlType.BYTE;
