@@ -46,7 +46,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	private int maxConnectionsFree = DEFAULT_MAX_CONNECTIONS_FREE;
 	private long maxConnectionAgeMillis = DEFAULT_MAX_CONNECTION_AGE_MILLIS;
 	private List<ConnectionMetaData> connFreeList = new ArrayList<ConnectionMetaData>();
-	private Map<DatabaseConnection, ConnectionMetaData> connectionMap =
+	protected final Map<DatabaseConnection, ConnectionMetaData> connectionMap =
 			new HashMap<DatabaseConnection, ConnectionMetaData>();
 	private final Object lock = new Object();
 	private ConnectionTester tester = null;
@@ -145,24 +145,6 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		}
 	}
 
-	private ConnectionMetaData getFreeConnection() {
-		synchronized (lock) {
-			long now = System.currentTimeMillis();
-			while (connFreeList.size() > 0) {
-				// take the first one off of the list
-				ConnectionMetaData connMetaData = connFreeList.remove(0);
-				// is it already expired
-				if (connMetaData.isExpired(now)) {
-					// close expired connection
-					closeConnectionQuietly(connMetaData);
-				} else {
-					return connMetaData;
-				}
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
 		checkInitializedSqlException();
@@ -201,6 +183,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 				logger.error("should have found connection {} in the map", connection);
 				closeConnection(connection);
 			} else {
+				meta.noteUsed();
 				connFreeList.add(meta);
 				logger.debug("cache released connection {}", meta);
 				if (connFreeList.size() > maxConnectionsFree) {
@@ -338,6 +321,60 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		return testLoopCount;
 	}
 
+	/**
+	 * This should be inside of synchronized (lock) stanza.
+	 */
+	protected void closeConnection(DatabaseConnection connection) throws SQLException {
+		// this can return null if we are closing the pool
+		ConnectionMetaData meta = connectionMap.remove(connection);
+		connection.close();
+		logger.debug("closed connection {}", meta);
+		closeCount++;
+	}
+
+	/**
+	 * Must be called inside of synchronized(lock)
+	 */
+	protected void closeConnectionQuietly(ConnectionMetaData connMetaData) {
+		try {
+			// close expired connection
+			closeConnection(connMetaData.connection);
+		} catch (SQLException e) {
+			// we ignore this
+		}
+	}
+
+	protected boolean testConnection(ConnectionMetaData connMetaData) {
+		try {
+			// issue our ping statement
+			long result = connMetaData.connection.queryForLong(pingStatment);
+			logger.debug("tested connection {}, got {}", connMetaData, result);
+			return true;
+		} catch (Exception e) {
+			logger.debug(e, "testing connection {} threw exception: {}", connMetaData, e);
+			return false;
+		}
+	}
+
+	private ConnectionMetaData getFreeConnection() {
+		synchronized (lock) {
+			long now = System.currentTimeMillis();
+			while (connFreeList.size() > 0) {
+				// take the first one off of the list
+				ConnectionMetaData connMetaData = connFreeList.remove(0);
+				// is it already expired
+				if (connMetaData.isExpired(now)) {
+					// close expired connection
+					closeConnectionQuietly(connMetaData);
+				} else {
+					connMetaData.noteUsed();
+					return connMetaData;
+				}
+			}
+		}
+		return null;
+	}
+
 	private void checkInitializedSqlException() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
@@ -351,46 +388,12 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	/**
-	 * This should be inside of synchronized (lock) stanza.
-	 */
-	private void closeConnection(DatabaseConnection connection) throws SQLException {
-		// this can return null if we are closing the pool
-		ConnectionMetaData meta = connectionMap.remove(connection);
-		connection.close();
-		logger.debug("closed connection {}", meta);
-		closeCount++;
-	}
-
-	/**
-	 * Must be called inside of synchronized(lock)
-	 */
-	private void closeConnectionQuietly(ConnectionMetaData connMetaData) {
-		try {
-			// close expired connection
-			closeConnection(connMetaData.connection);
-		} catch (SQLException e) {
-			// we ignore this
-		}
-	}
-
-	private boolean testConnection(ConnectionMetaData connMetaData) {
-		try {
-			// issue our ping statement
-			long result = connMetaData.connection.queryForLong(pingStatment);
-			logger.debug("tested connection {}, got {}", connMetaData, result);
-			return true;
-		} catch (Exception e) {
-			logger.debug(e, "testing connection {} threw exception: {}", connMetaData, e);
-			return false;
-		}
-	}
-
-	/**
 	 * Class to hold the connection and its meta data.
 	 */
-	private static class ConnectionMetaData {
+	protected static class ConnectionMetaData {
 		public final DatabaseConnection connection;
 		private final long expiresMillis;
+		private long lastUsed;
 
 		public ConnectionMetaData(DatabaseConnection connection, long maxConnectionAgeMillis) {
 			this.connection = connection;
@@ -400,10 +403,19 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			} else {
 				this.expiresMillis = now + maxConnectionAgeMillis;
 			}
+			this.lastUsed = now;
 		}
 
 		public boolean isExpired(long now) {
 			return (expiresMillis <= now);
+		}
+
+		public long getLastUsed() {
+			return lastUsed;
+		}
+
+		public void noteUsed() {
+			this.lastUsed = System.currentTimeMillis();
 		}
 
 		@Override
