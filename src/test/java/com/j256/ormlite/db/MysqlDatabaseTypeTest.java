@@ -88,4 +88,12 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		dbType.appendByteArrayType(sb, null, 0);
 		assertEquals("BLOB", sb.toString());
 	}
+
+	@Test
+	public void testLongStringSchema() {
+		MysqlDatabaseType dbType = new MysqlDatabaseType();
+		StringBuilder sb = new StringBuilder();
+		dbType.appendLongStringType(sb, null, 0);
+		assertEquals("TEXT", sb.toString());
+	}
 }
