@@ -149,7 +149,7 @@ public class JdbcDatabaseResultsTest extends BaseCoreTest {
 		expect(resultSet.getBytes(colN + 1)).andReturn(val);
 		replay(preparedStatement, resultSet);
 		JdbcDatabaseResults results = new JdbcDatabaseResults(preparedStatement, resultSet, null);
-		assertEquals(val, results.getBytes(colN));
+		assertTrue(results.getBytes(colN).equals(val));
 		verify(preparedStatement, resultSet);
 	}
 
