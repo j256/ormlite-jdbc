@@ -935,7 +935,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		assertEquals(bar2.id, results.get(1).bar.id);
 
 		// reset the query to change the order direction
-		barQb.clear();
+		barQb.reset();
 		barQb.orderBy(Bar.VAL_FIELD, false);
 		results = bazDao.queryBuilder().join(barQb).query();
 		assertEquals(2, results.size());

@@ -2810,7 +2810,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(id, results.get(0).id);
 
 		// this should match none
-		where.clear();
+		where.reset();
 		where.and(where.eq(Foo.VAL_FIELD_NAME, val), where.eq(Foo.ID_FIELD_NAME, id),
 				where.eq(Foo.ID_FIELD_NAME, notId));
 		results = where.query();
@@ -2841,7 +2841,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertEquals(id, results.get(0).id);
 
 		// this should match none
-		where.clear();
+		where.reset();
 		where.eq(Foo.VAL_FIELD_NAME, val);
 		where.eq(Foo.ID_FIELD_NAME, id);
 		where.eq(Foo.ID_FIELD_NAME, notId);
