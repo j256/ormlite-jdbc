@@ -11,6 +11,7 @@ import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.BaseConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.support.DatabaseConnectionProxyFactory;
 
 /**
  * Implementation of the ConnectionSource interface that supports what is needed by ORMLite. This is not thread-safe nor
@@ -33,6 +34,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	private DatabaseConnection connection;
 	protected DatabaseType databaseType;
 	protected boolean initialized = false;
+	private static DatabaseConnectionProxyFactory connectionProxyFactory;
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
@@ -227,12 +229,19 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	}
 
 	/**
+	 * Set to enable connection proxying. Set to null to disable.
+	 */
+	public static void setDatabaseConnectionProxyFactory(DatabaseConnectionProxyFactory connectionProxyFactory) {
+		JdbcConnectionSource.connectionProxyFactory = connectionProxyFactory;
+	}
+
+	/**
 	 * Make a connection to the database.
 	 * 
 	 * @param logger
 	 *            This is here so we can use the right logger associated with the sub-class.
 	 */
-	protected JdbcDatabaseConnection makeConnection(Logger logger) throws SQLException {
+	protected DatabaseConnection makeConnection(Logger logger) throws SQLException {
 		Properties properties = new Properties();
 		if (username != null) {
 			properties.setProperty("user", username);
@@ -240,9 +249,12 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		if (password != null) {
 			properties.setProperty("password", password);
 		}
-		JdbcDatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
+		DatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
 		// by default auto-commit is set to true
 		connection.setAutoCommit(true);
+		if (connectionProxyFactory != null) {
+			connection = connectionProxyFactory.createProxy(connection);
+		}
 		logger.debug("opened connection to {} got #{}", url, connection.hashCode());
 		return connection;
 	}
