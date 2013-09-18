@@ -3872,7 +3872,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date dateField;
 		@DatabaseField(columnName = DATE_LONG_FIELD_NAME, dataType = DataType.DATE_LONG)
 		Date dateLongField;
-		@DatabaseField(columnName = DATE_STRING_FIELD_NAME, dataType = DataType.DATE_STRING, format = DEFAULT_DATE_STRING_FORMAT)
+		@DatabaseField(columnName = DATE_STRING_FIELD_NAME, dataType = DataType.DATE_STRING,
+				format = DEFAULT_DATE_STRING_FORMAT)
 		Date dateStringField;
 		@DatabaseField(columnName = CHAR_FIELD_NAME)
 		char charField;
@@ -3917,7 +3918,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date dateField;
 		@DatabaseField(dataType = DataType.DATE_LONG, defaultValue = DEFAULT_DATE_LONG_VALUE)
 		Date dateLongField;
-		@DatabaseField(dataType = DataType.DATE_STRING, defaultValue = DEFAULT_DATE_STRING_VALUE, format = DEFAULT_DATE_STRING_FORMAT)
+		@DatabaseField(dataType = DataType.DATE_STRING, defaultValue = DEFAULT_DATE_STRING_VALUE,
+				format = DEFAULT_DATE_STRING_FORMAT)
 		Date dateStringField;
 		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
 		boolean booleanField;
