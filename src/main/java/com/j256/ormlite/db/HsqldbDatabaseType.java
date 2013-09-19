@@ -41,12 +41,12 @@ public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType
 
 	@Override
 	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
-		sb.append("BINARY");
+		sb.append("VARBINARY(255)");
 	}
 
 	@Override
 	protected void appendSerializableType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
-		sb.append("BINARY");
+		sb.append("VARBINARY(255)");
 	}
 
 	@Override
