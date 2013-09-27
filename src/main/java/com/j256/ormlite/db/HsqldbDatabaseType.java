@@ -10,7 +10,7 @@ import com.j256.ormlite.field.SqlType;
  * 
  * @author graywatson
  */
-public class HsqldbDatabaseType extends BaseDatabaseType implements DatabaseType {
+public class HsqldbDatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "hsqldb";
 	private final static String DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";

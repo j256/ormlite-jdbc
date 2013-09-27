@@ -15,7 +15,7 @@ import com.j256.ormlite.field.FieldType;
  * 
  * @author graywatson
  */
-public class Db2DatabaseType extends BaseDatabaseType implements DatabaseType {
+public class Db2DatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "db2";
 	private final static String DATABASE_NAME = "DB2";

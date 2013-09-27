@@ -3558,6 +3558,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		}
 	}
 
+	@Test
+	public void testFewFields() throws Exception {
+		Dao<FewFields, Object> dao = createDao(FewFields.class, true);
+		FewFields few = new FewFields();
+		assertEquals(1, dao.create(few));
+
+		FewFields result = dao.queryForId(few.id);
+		assertNotNull(result);
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
@@ -4989,6 +4999,13 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		@DatabaseField(version = true)
 		int version;
 		public VersionField() {
+		}
+	}
+
+	protected static class FewFields {
+		@DatabaseField(generatedId = true)
+		int id;
+		public FewFields() {
 		}
 	}
 }

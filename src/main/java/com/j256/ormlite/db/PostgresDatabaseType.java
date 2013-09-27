@@ -9,7 +9,7 @@ import com.j256.ormlite.field.FieldType;
  * 
  * @author graywatson
  */
-public class PostgresDatabaseType extends BaseDatabaseType implements DatabaseType {
+public class PostgresDatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "postgresql";
 	private final static String DRIVER_CLASS_NAME = "org.postgresql.Driver";

@@ -6,7 +6,7 @@ package com.j256.ormlite.db;
  * 
  * @author graywatson
  */
-public class DerbyClientServerDatabaseType extends DerbyEmbeddedDatabaseType implements DatabaseType {
+public class DerbyClientServerDatabaseType extends DerbyEmbeddedDatabaseType {
 
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.ClientDriver";
 	private final static String DATABASE_NAME = "Derby Client/Server";

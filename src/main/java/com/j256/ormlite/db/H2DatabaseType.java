@@ -9,7 +9,7 @@ import com.j256.ormlite.field.FieldType;
  * 
  * @author graywatson
  */
-public class H2DatabaseType extends BaseDatabaseType implements DatabaseType {
+public class H2DatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "h2";
 	private final static String DRIVER_CLASS_NAME = "org.h2.Driver";

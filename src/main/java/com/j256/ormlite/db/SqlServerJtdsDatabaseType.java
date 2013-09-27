@@ -19,7 +19,7 @@ package com.j256.ormlite.db;
  * 
  * @author graywatson
  */
-public class SqlServerJtdsDatabaseType extends SqlServerDatabaseType implements DatabaseType {
+public class SqlServerJtdsDatabaseType extends SqlServerDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "jtds";
 	private final static String DRIVER_CLASS_NAME = "net.sourceforge.jtds.jdbc.Driver";

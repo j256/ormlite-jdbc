@@ -24,7 +24,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements DatabaseType {
+public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 
 	protected final static String DATABASE_URL_PORTION = "derby";
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -143,6 +143,11 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType implements Datab
 		 * does of course.
 		 */
 		return false;
+	}
+
+	@Override
+	public void appendInsertNoColumns(StringBuilder sb) {
+		sb.append("VALUES(DEFAULT)");
 	}
 
 	/**

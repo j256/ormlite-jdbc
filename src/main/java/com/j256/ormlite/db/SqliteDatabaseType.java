@@ -8,7 +8,7 @@ import com.j256.ormlite.logger.LoggerFactory;
  * 
  * @author graywatson
  */
-public class SqliteDatabaseType extends BaseSqliteDatabaseType implements DatabaseType {
+public class SqliteDatabaseType extends BaseSqliteDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "sqlite";
 	private final static String DRIVER_CLASS_NAME = "org.sqlite.JDBC";

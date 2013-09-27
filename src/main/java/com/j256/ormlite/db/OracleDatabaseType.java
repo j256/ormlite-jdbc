@@ -21,7 +21,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class OracleDatabaseType extends BaseDatabaseType implements DatabaseType {
+public class OracleDatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "oracle";
 	private final static String DRIVER_CLASS_NAME = "oracle.jdbc.driver.OracleDriver";

@@ -14,7 +14,7 @@ import com.j256.ormlite.field.FieldType;
  * 
  * @author Richard Kooijman
  */
-public class NetezzaDatabaseType extends BaseDatabaseType implements DatabaseType {
+public class NetezzaDatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "netezza";
 	private final static String DRIVER_CLASS_NAME = "org.netezza.Driver";

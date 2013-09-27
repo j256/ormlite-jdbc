@@ -19,7 +19,7 @@ import com.j256.ormlite.support.DatabaseResults;
  * 
  * @author graywatson
  */
-public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseType {
+public class SqlServerDatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "sqlserver";
 	private final static String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
@@ -131,6 +131,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType implements DatabaseT
 	@Override
 	public boolean isCreateTableReturnsNegative() {
 		return true;
+	}
+
+	@Override
+	public void appendInsertNoColumns(StringBuilder sb) {
+		sb.append("DEFAULT VALUES");
 	}
 
 	/**
