@@ -135,8 +135,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 
 	@Override
 	public void appendInsertNoColumns(StringBuilder sb) {
-		// may be: sb.append("DEFAULT VALUES");
-		super.appendInsertNoColumns(sb);
+		sb.append("DEFAULT VALUES");
 	}
 
 	/**
