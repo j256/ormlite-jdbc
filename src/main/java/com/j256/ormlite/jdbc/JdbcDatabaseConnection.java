@@ -173,12 +173,19 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 				ResultSet resultSet = stmt.getGeneratedKeys();
 				ResultSetMetaData metaData = resultSet.getMetaData();
 				int colN = metaData.getColumnCount();
+				boolean wasSet = false;
 				while (resultSet.next()) {
 					for (int colC = 1; colC <= colN; colC++) {
 						// get the id column data so we can pass it back to the caller thru the keyHolder
 						Number id = getIdColumnData(resultSet, metaData, colC);
 						keyHolder.addKey(id);
+						wasSet = true;
 					}
+				}
+				if (!wasSet) {
+					throw new SQLException(
+							"no generated-keys were returned from statement, maybe a schema mismatch between entity and database table?: "
+									+ statement);
 				}
 			}
 			return rowN;

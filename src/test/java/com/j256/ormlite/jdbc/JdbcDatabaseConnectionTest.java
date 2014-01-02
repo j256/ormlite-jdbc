@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import org.junit.Test;
 
@@ -99,12 +100,18 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		expect(prepStmt.executeUpdate()).andReturn(1);
 		expect(prepStmt.getGeneratedKeys()).andReturn(resultSet);
 		expect(resultSet.getMetaData()).andReturn(metaData);
+		expect(resultSet.next()).andReturn(true);
+		expect(metaData.getColumnCount()).andReturn(1);
+		expect(metaData.getColumnType(1)).andReturn(Types.INTEGER);
+		int keyHolderVal = 123131;
+		expect(resultSet.getInt(1)).andReturn(keyHolderVal);
+		keyHolder.addKey(keyHolderVal);
 		expect(resultSet.next()).andReturn(false);
 		// should close the statement
 		prepStmt.close();
-		replay(connection, prepStmt, keyHolder, resultSet);
+		replay(connection, prepStmt, keyHolder, resultSet, metaData);
 		jdc.insert(statement, new Object[0], new FieldType[0], keyHolder);
-		verify(connection, prepStmt, keyHolder, resultSet);
+		verify(connection, prepStmt, keyHolder, resultSet, metaData);
 	}
 
 	@Test
@@ -197,6 +204,17 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		}
 	}
 
+	@Test(expected = SQLException.class)
+	public void testGeneratedIdNoReturn() throws Exception {
+		createDao(FooNotGeneratedId.class, true);
+		Dao<FooInt, Object> genDao = createDao(FooInt.class, false);
+		FooInt foo = new FooInt();
+		foo.stuff = "hello";
+		genDao.create(foo);
+	}
+
+	/* =================================================================================================== */
+
 	protected static class Foo {
 		@DatabaseField
 		public long id;
@@ -221,6 +239,16 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		@DatabaseField
 		public String stuff;
 		FooString() {
+		}
+	}
+
+	@DatabaseTable(tableName = FOOINT_TABLE_NAME)
+	protected static class FooNotGeneratedId {
+		@DatabaseField
+		public int id;
+		@DatabaseField
+		public String stuff;
+		FooNotGeneratedId() {
 		}
 	}
 }
