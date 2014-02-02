@@ -448,6 +448,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		checkPartialList(partialDao.queryForAll(), ids, firsts, lasts, false, false);
 
 		Set<String> columnNames = new HashSet<String>();
+		columnNames.add(PartialData.ID_FIELD_NAME);
 		QueryBuilder<PartialData, Integer> qb = partialDao.queryBuilder();
 		qb.selectColumns(columnNames);
 		List<PartialData> partialList = partialDao.query(qb.prepare());
@@ -485,6 +486,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		checkPartialIterator(partialDao.iterator(), ids, firsts, lasts, false, false);
 
 		Set<String> columnNames = new HashSet<String>();
+		columnNames.add(PartialData.ID_FIELD_NAME);
 		QueryBuilder<PartialData, Integer> qb = partialDao.queryBuilder();
 		qb.selectColumns(columnNames);
 		Iterator<PartialData> iterator = partialDao.iterator(qb.prepare());
@@ -1196,10 +1198,11 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	}
 
 	protected static class PartialData {
+		public static final String ID_FIELD_NAME = "id";
 		public static final String FIRST_FIELD_NAME = "first";
 		public static final String LAST_FIELD_NAME = "last";
 
-		@DatabaseField(generatedId = true)
+		@DatabaseField(generatedId = true, columnName = ID_FIELD_NAME)
 		public int id;
 		@DatabaseField(columnName = FIRST_FIELD_NAME)
 		public String first;
