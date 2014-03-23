@@ -429,6 +429,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	 */
 	private class ConnectionTester extends Thread {
 
+		// class field to reduce gc
 		private Set<ConnectionMetaData> testedSet = new HashSet<ConnectionMetaData>();
 
 		@Override
@@ -471,6 +472,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 						// we're closed
 						return false;
 					}
+					// add a tested connection back into the free-list
 					if (connMetaData != null) {
 						// we do this so we don't have to double lock in the loop
 						connFreeList.add(connMetaData);
