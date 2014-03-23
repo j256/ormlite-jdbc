@@ -166,6 +166,13 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		resultSet.close();
 	}
 
+	/**
+	 * Returns the underlying JDBC ResultSet object.
+	 */
+	public ResultSet getResultSet() {
+		return resultSet;
+	}
+
 	public void closeQuietly() {
 		try {
 			close();
