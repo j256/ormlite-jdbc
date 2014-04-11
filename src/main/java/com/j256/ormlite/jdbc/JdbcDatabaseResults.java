@@ -173,7 +173,11 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		return resultSet;
 	}
 
-	public void closeQuietly() {
+    public ResultSetMetaData getResultSetMetaData() throws SQLException {
+        return metaData;
+    }
+
+    public void closeQuietly() {
 		try {
 			close();
 		} catch (SQLException e) {
