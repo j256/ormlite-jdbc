@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.j256.ormlite.dao.ObjectCache;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -162,8 +164,16 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		return objectCache;
 	}
 
-	public void close() throws SQLException {
-		resultSet.close();
+	public void close() throws IOException {
+		try {
+			resultSet.close();
+		} catch (SQLException e) {
+			throw new IOException("could not close result set", e);
+		}
+	}
+
+	public void closeQuietly() {
+		IOUtils.closeQuietly(this);
 	}
 
 	/**
@@ -171,13 +181,5 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	 */
 	public ResultSet getResultSet() {
 		return resultSet;
-	}
-
-	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
 	}
 }

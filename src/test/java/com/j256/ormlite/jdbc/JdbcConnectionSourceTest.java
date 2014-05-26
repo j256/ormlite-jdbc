@@ -13,6 +13,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -28,11 +29,13 @@ import com.j256.ormlite.support.DatabaseConnection;
 public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test
-	public void testSimpleDataSource() {
+	public void testSimpleDataSource() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		String url = "foo:bar:baz";
+		String url = "jdbc:h2:mem:baz";
 		sds.setUrl(url);
 		assertEquals(url, sds.getUrl());
+		sds.initialize();
+		sds.close();
 	}
 
 	@Test
@@ -40,6 +43,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		String url = "jdbc:h2:mem:baz";
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		assertEquals(url, sds.getUrl());
+		sds.close();
 	}
 
 	@Test
@@ -49,6 +53,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		String url = "jdbc:h2:mem:ormlite-up;USER=" + username + ";PASSWORD=" + password;
 		JdbcConnectionSource sds = new JdbcConnectionSource(url, username, password);
 		assertNotNull(sds.getReadOnlyConnection());
+		sds.close();
 	}
 
 	@Test
@@ -63,6 +68,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			assertNotNull(sds.getReadOnlyConnection());
+			sds.close();
 			verify(driver);
 		} finally {
 			DriverManager.deregisterDriver(driver);
@@ -78,6 +84,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.setUsername(username);
 		sds.setPassword(password);
 		assertNotNull(sds.getReadOnlyConnection());
+		sds.close();
 	}
 
 	@Test(expected = SQLException.class)
@@ -92,6 +99,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			sds.getReadOnlyConnection();
+			sds.close();
 		} finally {
 			DriverManager.deregisterDriver(driver);
 		}
@@ -120,7 +128,9 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 
 	@Test(expected = SQLException.class)
 	public void testInitNoUrl() throws Exception {
-		new JdbcConnectionSource().initialize();
+		JdbcConnectionSource cs = new JdbcConnectionSource();
+		cs.initialize();
+		cs.close();
 	}
 
 	@Test(expected = SQLException.class)
@@ -138,6 +148,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			assertNotNull(sds.getReadOnlyConnection());
 			sds.getReadOnlyConnection();
+			sds.close();
 			fail("Should not get here");
 		} finally {
 			DriverManager.deregisterDriver(driver);
@@ -150,9 +161,10 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.setUrl(url);
 		sds.initialize();
+		sds.close();
 	}
 
-	@Test(expected = SQLException.class)
+	@Test(expected = IOException.class)
 	public void testCloseBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.close();
@@ -162,30 +174,35 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	public void testGetReadOnlyConnectionBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.getReadOnlyConnection();
+		sds.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testGetReadWriteConnectionBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.getReadWriteConnection();
+		sds.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testReleaseConnectionBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.releaseConnection(null);
+		sds.close();
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testGetDatabaseTypeBeforeInitialize() {
+	public void testGetDatabaseTypeBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.getDatabaseType();
+		sds.close();
 	}
 
 	@Test
 	public void testDoubleInit() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource("jdbc:h2:mem:baz");
 		sds.initialize();
+		sds.close();
 	}
 
 	@Test
@@ -197,6 +214,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.saveSpecialConnection(conn1);
 		sds.clearSpecialConnection(conn1);
 		sds.releaseConnection(conn1);
+		sds.close();
 	}
 
 	@Test
@@ -206,6 +224,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.setDatabaseType(new H2DatabaseType());
 		sds.initialize();
 		assertTrue(sds.getDatabaseType() instanceof H2DatabaseType);
+		sds.close();
 	}
 
 	@Test

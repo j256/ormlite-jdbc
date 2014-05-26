@@ -113,8 +113,6 @@ public abstract class BaseJdbcTest {
 			}
 		} catch (UnknownHostException e) {
 			return false;
-		} catch (IOException e) {
-			throw e;
 		}
 	}
 

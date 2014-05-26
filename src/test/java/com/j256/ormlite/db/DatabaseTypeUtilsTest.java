@@ -46,6 +46,7 @@ public class DatabaseTypeUtilsTest {
 		try {
 			String dbUrl = "jdbc:h2:mem:ormlitetest";
 			dataSource = new JdbcConnectionSource(dbUrl, new H2DatabaseType());
+			dataSource.close();
 		} finally {
 			if (dataSource != null) {
 				dataSource.getReadOnlyConnection().close();

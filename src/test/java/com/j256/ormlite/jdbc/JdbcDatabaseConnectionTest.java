@@ -81,8 +81,10 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		expect(prepStmt.executeUpdate()).andReturn(1);
 		// should close the statement
 		prepStmt.close();
+		connection.close();
 		replay(connection, prepStmt);
 		jdc.update(statement, new Object[0], new FieldType[0]);
+		jdc.close();
 		verify(connection, prepStmt);
 	}
 
@@ -109,8 +111,10 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		expect(resultSet.next()).andReturn(false);
 		// should close the statement
 		prepStmt.close();
+		connection.close();
 		replay(connection, prepStmt, keyHolder, resultSet, metaData);
 		jdc.insert(statement, new Object[0], new FieldType[0], keyHolder);
+		jdc.close();
 		verify(connection, prepStmt, keyHolder, resultSet, metaData);
 	}
 
@@ -133,8 +137,10 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		expect(prepStmt.getMoreResults()).andReturn(false);
 		// should close the statement
 		prepStmt.close();
+		connection.close();
 		replay(connection, prepStmt, keyHolder, resultSet, rowMapper);
 		jdc.queryForOne(statement, new Object[0], new FieldType[0], rowMapper, null);
+		jdc.close();
 		verify(connection, prepStmt, keyHolder, resultSet, rowMapper);
 	}
 

@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.VersionUtils;
 import com.j256.ormlite.stmt.GenericRowMapper;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
@@ -135,17 +137,17 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return compiledStatement;
 	}
 
-	public void close() throws SQLException {
-		connection.close();
+	public void close() throws IOException {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			throw new IOException("could not close SQL connection", e);
+		}
 		logger.trace("connection closed: {}", connection);
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	/**

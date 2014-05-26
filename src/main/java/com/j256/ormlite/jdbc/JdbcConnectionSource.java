@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -8,6 +9,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.BaseConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -136,9 +138,9 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		initialized = true;
 	}
 
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
+			throw new IOException(getClass().getSimpleName() + " was not initialized properly");
 		}
 		if (connection != null) {
 			connection.close();
@@ -148,11 +150,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	public String getUrl() {
@@ -241,6 +239,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	 * @param logger
 	 *            This is here so we can use the right logger associated with the sub-class.
 	 */
+	@SuppressWarnings("resource")
 	protected DatabaseConnection makeConnection(Logger logger) throws SQLException {
 		Properties properties = new Properties();
 		if (username != null) {

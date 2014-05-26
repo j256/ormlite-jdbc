@@ -1,7 +1,6 @@
 package com.j256.ormlite.db;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +14,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
@@ -172,11 +172,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 			} catch (Exception e) {
 				throw SqlExceptionUtil.create("Could not read serialized object from result blob", e);
 			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// ignore close exception
-				}
+				IOUtils.closeQuietly(stream);
 			}
 		}
 		@Override

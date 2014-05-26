@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.logger.Log.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
@@ -89,8 +91,10 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public void close() throws SQLException {
-		checkInitializedSqlException();
+	public void close() throws IOException {
+		if (!initialized) {
+			throw new IOException(getClass().getSimpleName() + " was not initialized properly");
+		}
 		logger.debug("closing");
 		synchronized (lock) {
 			// close the outstanding connections in the list
@@ -327,7 +331,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	protected void closeConnection(DatabaseConnection connection) throws SQLException {
 		// this can return null if we are closing the pool
 		ConnectionMetaData meta = connectionMap.remove(connection);
-		connection.close();
+		IOUtils.closeThrowSqlException(connection, "SQL connection");
 		logger.debug("closed connection {}", meta);
 		closeCount++;
 	}

@@ -1,5 +1,6 @@
 package com.j256.ormlite.jdbc;
 
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -9,6 +10,7 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.BaseConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -127,7 +129,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		if (isSavedConnection(connection)) {
 			// ignore the release because we will close it at the end of the connection
 		} else {
-			connection.close();
+			IOUtils.closeThrowSqlException(connection, "SQL connection");
 		}
 	}
 
@@ -158,19 +160,15 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	 * This typically closes the connection source but because there is not a close() method on the {@link DataSource}
 	 * (grrrr), this close method does _nothing_. You must close the underlying data-source yourself.
 	 */
-	public void close() throws SQLException {
+	public void close() throws IOException {
 		if (!initialized) {
-			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
+			throw new IOException(getClass().getSimpleName() + ".initialize() was not called");
 		}
 		// unfortunately, you will need to close the DataSource directly since there is no close on the interface
 	}
 
 	public void closeQuietly() {
-		try {
-			close();
-		} catch (SQLException e) {
-			// ignored
-		}
+		IOUtils.closeQuietly(this);
 	}
 
 	public DatabaseType getDatabaseType() {

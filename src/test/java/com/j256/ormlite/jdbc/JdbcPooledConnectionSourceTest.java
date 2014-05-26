@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -18,6 +19,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
 
@@ -182,7 +184,7 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test(expected = IOException.class)
 	public void testCloseNoInit() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		pooled.close();
@@ -194,7 +196,7 @@ public class JdbcPooledConnectionSourceTest {
 		try {
 			pooled.getReadWriteConnection();
 		} finally {
-			pooled.close();
+			IOUtils.closeQuietly(pooled);
 		}
 	}
 
@@ -204,27 +206,29 @@ public class JdbcPooledConnectionSourceTest {
 		try {
 			pooled.releaseConnection(null);
 		} finally {
-			pooled.close();
+			IOUtils.closeQuietly(pooled);
 		}
 	}
 
 	@Test(expected = SQLException.class)
 	public void testSaveTransaction() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
+		pooled.initialize();
 		try {
 			pooled.saveSpecialConnection(null);
 		} finally {
-			pooled.close();
+			IOUtils.closeQuietly(pooled);
 		}
 	}
 
 	@Test(expected = SQLException.class)
-	public void testClearTransaction() throws Exception {
+	public void testClearTransaction() throws SQLException {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
+		pooled.initialize();
 		try {
 			pooled.clearSpecialConnection(null);
 		} finally {
-			pooled.close();
+			IOUtils.closeQuietly(pooled);
 		}
 	}
 
@@ -301,18 +305,22 @@ public class JdbcPooledConnectionSourceTest {
 	public void testConstructors() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
+		pooled.close();
 
 		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, null, null);
 		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
+		pooled.close();
 
 		DatabaseType databaseType = DatabaseTypeUtils.createDatabaseType(DEFAULT_DATABASE_URL);
 		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, databaseType);
 		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
 		assertSame(databaseType, pooled.getDatabaseType());
+		pooled.close();
 
 		pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL, null, null, databaseType);
 		assertEquals(DEFAULT_DATABASE_URL, pooled.getUrl());
 		assertSame(databaseType, pooled.getDatabaseType());
+		pooled.close();
 	}
 
 	@Test
