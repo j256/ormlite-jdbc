@@ -43,7 +43,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		int colN = metaData.getColumnCount();
 		String[] columnNames = new String[colN];
 		for (int colC = 0; colC < colN; colC++) {
-			columnNames[colC] = metaData.getColumnName(colC + 1);
+			columnNames[colC] = metaData.getColumnLabel(colC + 1);
 		}
 		return columnNames;
 	}
