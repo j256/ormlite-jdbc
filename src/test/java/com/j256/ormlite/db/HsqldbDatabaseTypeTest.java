@@ -53,7 +53,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		Field field = GeneratedId.class.getField("id");
 		DatabaseType mockDb = createMock(DatabaseType.class);
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
-		expect(mockDb.getFieldConverter(isA(DataPersister.class))).andReturn(null);
+		expect(mockDb.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(null);
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(true);
 		replay(mockDb);
 		connectionSource.setDatabaseType(mockDb);

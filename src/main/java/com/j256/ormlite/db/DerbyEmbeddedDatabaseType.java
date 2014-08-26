@@ -53,7 +53,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(DataPersister dataType) {
+	public FieldConverter getFieldConverter(DataPersister dataType, FieldType fieldType) {
 		// we are only overriding certain types
 		switch (dataType.getSqlType()) {
 			case BOOLEAN :
@@ -72,7 +72,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 				}
 				return serializableConverter;
 			default :
-				return super.getFieldConverter(dataType);
+				return super.getFieldConverter(dataType, fieldType);
 		}
 	}
 

@@ -1,14 +1,11 @@
 package com.j256.ormlite.db;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.field.BaseFieldConverter;
 import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * Oracle database type information used to create the tables, etc..
@@ -27,8 +24,6 @@ public class OracleDatabaseType extends BaseDatabaseType {
 	private final static String DRIVER_CLASS_NAME = "oracle.jdbc.driver.OracleDriver";
 	private final static String DATABASE_NAME = "Oracle";
 	private static final String BOOLEAN_INTEGER_FORMAT = "integer";
-
-	private final static FieldConverter booleanConverter = new BooleanFieldConverter();
 
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
@@ -89,12 +84,24 @@ public class OracleDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	public FieldConverter getFieldConverter(DataPersister dataPersister) {
+	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
 		switch (dataPersister.getSqlType()) {
 			case BOOLEAN :
-				return booleanConverter;
+				/*
+				 * Booleans in Oracle are stored as the character '1' or '0'. You can change the characters by
+				 * specifying a format string. It must be a string with 2 characters. The first character is the value
+				 * for TRUE, the second is FALSE. See {@link BooleanCharType}.
+				 * 
+				 * You can also specify the format as "integer" to use an integer column type and the value 1 (really
+				 * non-0) for true and 0 for false. See {@link BooleanIntegerType}.
+				 */
+				if (BOOLEAN_INTEGER_FORMAT.equalsIgnoreCase(fieldType.getFormat())) {
+					return DataType.BOOLEAN_INTEGER.getDataPersister();
+				} else {
+					return DataType.BOOLEAN_CHAR.getDataPersister();
+				}
 			default :
-				return super.getFieldConverter(dataPersister);
+				return super.getFieldConverter(dataPersister, fieldType);
 		}
 	}
 
@@ -174,87 +181,5 @@ public class OracleDatabaseType extends BaseDatabaseType {
 	public boolean isEntityNamesMustBeUpCase() {
 		// from stew
 		return true;
-	}
-
-	/**
-	 * Booleans in Oracle are stored as the character '1' or '0'. You can change the characters by specifying a format
-	 * string. It must be a string with 2 characters. The first character is the value for TRUE, the second is FALSE.
-	 * 
-	 * <p>
-	 * 
-	 * <pre>
-	 * &#64;DatabaseField(format = "YN")
-	 * </pre>
-	 * 
-	 * You can also specify the format as "integer" to use an integer column type and the value 1 (really non-0) for
-	 * true and 0 for false:
-	 * 
-	 * <pre>
-	 * &#64;DatabaseField(format = "integer")
-	 * </pre>
-	 * 
-	 * </p>
-	 * 
-	 * Thanks much to stew.
-	 */
-	protected static class BooleanFieldConverter extends BaseFieldConverter {
-
-		private static final String TRUE_FALSE_FORMAT = "10";
-
-		public SqlType getSqlType() {
-			return SqlType.CHAR;
-		}
-
-		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
-			return javaToSqlArg(fieldType, Boolean.parseBoolean(defaultStr));
-		}
-
-		@Override
-		public Object javaToSqlArg(FieldType fieldType, Object obj) throws SQLException {
-			String format = getTrueFalseFormat(fieldType);
-			if (format == BOOLEAN_INTEGER_FORMAT) {
-				return ((Boolean) obj ? Integer.valueOf(1) : Integer.valueOf(0));
-			} else {
-				return ((Boolean) obj ? format.charAt(0) : format.charAt(1));
-			}
-		}
-
-		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-			return results.getChar(columnPos);
-		}
-
-		@Override
-		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
-			String format = getTrueFalseFormat(fieldType);
-			if (format == BOOLEAN_INTEGER_FORMAT) {
-				return ((Integer) sqlArg == 0 ? Boolean.FALSE : Boolean.TRUE);
-			} else {
-				return ((Character) sqlArg == format.charAt(0) ? Boolean.TRUE : Boolean.FALSE);
-			}
-		}
-
-		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
-			if (stringValue.length() == 0) {
-				return Boolean.FALSE;
-			} else {
-				return sqlArgToJava(fieldType, stringValue.charAt(0), columnPos);
-			}
-		}
-
-		private String getTrueFalseFormat(FieldType fieldType) throws SQLException {
-			String format = fieldType.getFormat();
-			if (format == null) {
-				return TRUE_FALSE_FORMAT;
-			}
-			if (format.equalsIgnoreCase(BOOLEAN_INTEGER_FORMAT)) {
-				return BOOLEAN_INTEGER_FORMAT;
-			} else if (format.length() == 2 && format.charAt(0) != format.charAt(1)) {
-				return format;
-			} else {
-				throw new SQLException(
-						"Invalid boolean format must have 2 different characters that represent true/false like \"10\": "
-								+ format);
-			}
-		}
 	}
 }
