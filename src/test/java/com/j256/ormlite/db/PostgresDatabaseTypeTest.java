@@ -58,7 +58,9 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		Field field = GeneratedId.class.getField("id");
 		DatabaseType mockDb = createMock(DatabaseType.class);
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
-		expect(mockDb.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(null);
+		DataPersister dataPersister = createMock(DataPersister.class);
+		expect(mockDb.getDataPersister(isA(DataPersister.class), isA(FieldType.class))).andReturn(dataPersister);
+		expect(mockDb.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(dataPersister);
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(mockDb);
 		connectionSource.setDatabaseType(mockDb);

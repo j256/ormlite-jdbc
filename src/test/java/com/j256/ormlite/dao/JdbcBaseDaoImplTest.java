@@ -815,9 +815,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	public void testFieldConfig() throws Exception {
 		List<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		fieldConfigs.add(new DatabaseFieldConfig("id", "id2", DataType.UNKNOWN, null, 0, false, false, true, null,
-				false, null, false, null, false, null, false, null, null, false, 0, 0));
+				false, null, false, null, false, null, false, null, null, false, -1, 0));
 		fieldConfigs.add(new DatabaseFieldConfig("stuff", "stuffy", DataType.UNKNOWN, null, 0, false, false, false,
-				null, false, null, false, null, false, null, false, null, null, false, 0, 0));
+				null, false, null, false, null, false, null, false, null, null, false, -1, 0));
 		DatabaseTableConfig<NoAnno> tableConfig = new DatabaseTableConfig<NoAnno>(NoAnno.class, "noanno", fieldConfigs);
 		Dao<NoAnno, Integer> noAnnotaionDao = createDao(tableConfig, true);
 		NoAnno noa = new NoAnno();
