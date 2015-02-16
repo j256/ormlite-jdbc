@@ -53,9 +53,9 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 				return super.getFieldConverter(dataType, fieldType);
 		}
 	}
-	
+
 	@Override
-	protected void appendUUIDType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendUuidType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("UNIQUEIDENTIFIER");
 	}
 

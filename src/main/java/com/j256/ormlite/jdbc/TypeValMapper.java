@@ -66,8 +66,9 @@ public class TypeValMapper {
 				case BIG_DECIMAL :
 					values = new int[] { Types.DECIMAL, Types.NUMERIC };
 					break;
-					
-				case UUID:
+				case UUID :
+					values = new int[] { Types.OTHER };
+					break;
 				case OTHER :
 					values = new int[] { Types.OTHER };
 					break;
