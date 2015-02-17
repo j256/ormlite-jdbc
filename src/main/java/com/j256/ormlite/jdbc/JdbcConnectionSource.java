@@ -17,7 +17,8 @@ import com.j256.ormlite.support.DatabaseConnectionProxyFactory;
 
 /**
  * Implementation of the ConnectionSource interface that supports what is needed by ORMLite. This is not thread-safe nor
- * synchronized. For other dataSources, see the {@link DataSourceConnectionSource} class.
+ * synchronized and under the covers uses a single database connection. For other dataSources, see the
+ * {@link DataSourceConnectionSource} class.
  * 
  * <p>
  * <b> NOTE: </b> If you are using the Spring type wiring in Java, {@link #initialize} should be called after all of the
@@ -209,6 +210,10 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 
 	public boolean isOpen() {
 		return connection != null;
+	}
+
+	public boolean isSingleConnection() {
+		return true;
 	}
 
 	// not required

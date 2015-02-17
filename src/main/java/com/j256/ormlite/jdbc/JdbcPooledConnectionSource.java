@@ -237,6 +237,11 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		return isOpen;
 	}
 
+	@Override
+	public boolean isSingleConnection() {
+		return false;
+	}
+
 	/**
 	 * @deprecated No longer supported and can be removed.
 	 */
