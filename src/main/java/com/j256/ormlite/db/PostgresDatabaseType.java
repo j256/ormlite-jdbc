@@ -29,7 +29,7 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	protected void appendUuidType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+	protected void appendUuidNativeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("UUID");
 	}
 
