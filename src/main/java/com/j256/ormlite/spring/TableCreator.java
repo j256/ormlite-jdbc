@@ -23,8 +23,7 @@ import com.j256.ormlite.table.TableUtils;
  * 
  * <p>
  * Here is an example of spring wiring.
- * 
- * <blockquote>
+ * </p>
  * 
  * <pre>
  * &lt;!-- our database type factory-bean --&gt;
@@ -38,8 +37,6 @@ import com.j256.ormlite.table.TableUtils;
  * 	&lt;/property&gt;
  * &lt;/bean&gt;
  * </pre>
- * 
- * </blockquote>
  * 
  * @author graywatson
  */

@@ -8,12 +8,13 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 /**
+ * <p>
  * Spring bean that can be used to create Dao's of certain classes without needing their own Dao class.
+ * </p>
  * 
  * <p>
  * Here is an example of spring wiring. See the Spring example in the documentation for more info.
- * 
- * <blockquote>
+ * </p>
  * 
  * <pre>
  * 	&lt;bean id="accountDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao"&gt;
@@ -21,10 +22,6 @@ import com.j256.ormlite.table.DatabaseTableConfig;
  * 		&lt;constructor-arg index="1" value="com.j256.ormlite.examples.spring.Account" /&gt;
  * 	&lt;/bean&gt;
  * </pre>
- * 
- * </blockquote>
- * 
- * </p>
  * 
  * @author graywatson
  */
