@@ -24,11 +24,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
@@ -1441,10 +1441,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		List<AllTypesDefault> allList = allDao.queryForAll();
 		assertEquals(1, allList.size());
 		all.stringField = DEFAULT_STRING_VALUE;
-		DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+		DateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.US);
 		all.dateField = defaultDateFormat.parse(DEFAULT_DATE_VALUE);
 		all.dateLongField = new Date(Long.parseLong(DEFAULT_DATE_LONG_VALUE));
-		DateFormat defaultDateStringFormat = new SimpleDateFormat(DEFAULT_DATE_STRING_FORMAT);
+		DateFormat defaultDateStringFormat = new SimpleDateFormat(DEFAULT_DATE_STRING_FORMAT, Locale.US);
 		all.dateStringField = defaultDateStringFormat.parse(DEFAULT_DATE_STRING_VALUE);
 		all.booleanField = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
 		all.booleanObj = Boolean.parseBoolean(DEFAULT_BOOLEAN_VALUE);
@@ -3445,7 +3445,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
-	@Ignore
 	public void testAutoCommitClose() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		DatabaseConnection conn = null;

@@ -20,9 +20,6 @@ import org.junit.Test;
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.QueryBuilderTest.Bar;
-import com.j256.ormlite.stmt.QueryBuilderTest.Baz;
-import com.j256.ormlite.stmt.QueryBuilderTest.Bing;
 
 public class JdbcQueryBuilderTest extends BaseJdbcTest {
 
@@ -433,43 +430,6 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		qb.where().ne(Foo.VAL_COLUMN_NAME, foo1.val).and().ne(Foo.VAL_COLUMN_NAME, foo2.val);
 		results = fooDao.query(qb.prepare());
 		assertEquals(0, results.size());
-	}
-
-	@Test
-	public void testPartialQueryAllRetrieval() throws Exception {
-		Dao<PartialData, Integer> partialDao = createDao(PartialData.class, true);
-		List<String> firsts = new ArrayList<String>();
-		List<String> lasts = new ArrayList<String>();
-		List<Integer> ids = new ArrayList<Integer>();
-
-		createPartial(partialDao, ids, firsts, lasts, "bill", "rambo");
-		createPartial(partialDao, ids, firsts, lasts, "zippy", "dingo");
-		createPartial(partialDao, ids, firsts, lasts, "crappy", "bladdero");
-		checkPartialList(partialDao.queryForAll(), ids, firsts, lasts, false, false);
-
-		Set<String> columnNames = new HashSet<String>();
-		columnNames.add(PartialData.ID_FIELD_NAME);
-		QueryBuilder<PartialData, Integer> qb = partialDao.queryBuilder();
-		qb.selectColumns(columnNames);
-		List<PartialData> partialList = partialDao.query(qb.prepare());
-		checkPartialList(partialList, ids, firsts, lasts, true, true);
-
-		columnNames = new HashSet<String>();
-		columnNames.add(PartialData.FIRST_FIELD_NAME);
-		qb.selectColumns(columnNames);
-		partialList = partialDao.query(qb.prepare());
-		checkPartialList(partialList, ids, firsts, lasts, false, true);
-
-		columnNames = new HashSet<String>();
-		columnNames.add(PartialData.LAST_FIELD_NAME);
-		qb.selectColumns(columnNames);
-		partialList = partialDao.query(qb.prepare());
-		checkPartialList(partialList, ids, firsts, lasts, false, false);
-
-		for (PartialData partialData : partialDao) {
-			assertEquals(1, partialDao.delete(partialData));
-		}
-		assertEquals(0, partialDao.queryForAll().size());
 	}
 
 	@Test
@@ -1208,5 +1168,41 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		public String first;
 		@DatabaseField(columnName = LAST_FIELD_NAME)
 		public String last;
+	}
+
+	protected static class Bar {
+		public static final String ID_FIELD = "id";
+		public static final String VAL_FIELD = "val";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
+		public Bar() {
+		}
+	}
+
+	protected static class Baz {
+		public static final String ID_FIELD = "id";
+		public static final String VAL_FIELD = "val";
+		public static final String BAR_FIELD = "bar";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(columnName = VAL_FIELD)
+		int val;
+		@DatabaseField(foreign = true, columnName = BAR_FIELD)
+		Bar bar;
+		public Baz() {
+		}
+	}
+
+	protected static class Bing {
+		public static final String ID_FIELD = "id";
+		public static final String BAZ_FIELD = "baz";
+		@DatabaseField(generatedId = true, columnName = ID_FIELD)
+		int id;
+		@DatabaseField(foreign = true, columnName = BAZ_FIELD)
+		Baz baz;
+		public Bing() {
+		}
 	}
 }
