@@ -1,6 +1,7 @@
 package com.j256.ormlite.jdbc;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -97,15 +98,22 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		}
 
 		// see if we have a single connection data-source
-		DatabaseConnection conn1 = null;
-		DatabaseConnection conn2 = null;
+		DatabaseConnection jdbcConn1 = null;
+		DatabaseConnection jdbcConn2 = null;
 		try {
-			conn1 = getReadWriteConnection();
-			conn2 = getReadWriteConnection();
-			isSingleConnection = isSingleConnection(conn1, conn2);
+			Connection conn1 = dataSource.getConnection();
+			Connection conn2 = dataSource.getConnection();
+			// sanity check for testing
+			if (conn1 == null || conn2 == null) {
+				isSingleConnection = true;
+			} else {
+				jdbcConn1 = new JdbcDatabaseConnection(conn1);
+				jdbcConn2 = new JdbcDatabaseConnection(conn2);
+				isSingleConnection = isSingleConnection(jdbcConn1, jdbcConn2);
+			}
 		} finally {
-			IOUtils.closeQuietly(conn1);
-			IOUtils.closeQuietly(conn2);
+			IOUtils.closeQuietly(jdbcConn1);
+			IOUtils.closeQuietly(jdbcConn2);
 		}
 
 		initialized = true;
