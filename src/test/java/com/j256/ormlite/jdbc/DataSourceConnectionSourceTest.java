@@ -24,8 +24,10 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	public void testDscsUrl() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
 		expect(dataSource.getConnection()).andReturn(null);
-		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
+		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
 		replay(dataSource);
+		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
 		dcs.getReadOnlyConnection();
 		dcs.close();
 		verify(dataSource);
@@ -35,13 +37,22 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	public void testDscsSetUrl() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
 		Connection conn = createMock(Connection.class);
+		conn.setAutoCommit(true);
+		conn.setAutoCommit(true);
+		conn.setAutoCommit(false);
+		expect(conn.getAutoCommit()).andReturn(false);
+		conn.setAutoCommit(true);
+		conn.close();
+		conn.close();
 		conn.close();
 		expect(dataSource.getConnection()).andReturn(conn);
+		expect(dataSource.getConnection()).andReturn(conn);
+		expect(dataSource.getConnection()).andReturn(conn);
+		replay(dataSource, conn);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.setDataSource(dataSource);
 		dcs.setDatabaseUrl(DEFAULT_DATABASE_URL);
 		dcs.initialize();
-		replay(dataSource, conn);
 		DatabaseConnection jdbcConn = dcs.getReadOnlyConnection();
 		jdbcConn.close();
 		dcs.close();
@@ -52,12 +63,14 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	public void testDscsSetDatabaseType() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
 		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
+		replay(dataSource);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.setDataSource(dataSource);
 		dcs.setDatabaseUrl(DEFAULT_DATABASE_URL);
 		dcs.setDatabaseType(new H2DatabaseType());
 		dcs.initialize();
-		replay(dataSource);
 		dcs.getReadOnlyConnection();
 		dcs.close();
 		verify(dataSource);
@@ -73,11 +86,15 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	@Test
 	public void testDscsDoubleInit() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
+		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
+		replay(dataSource);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, connectionSource.getDatabaseType());
 		dcs.initialize();
 		assertEquals(connectionSource.getDatabaseType(), dcs.getDatabaseType());
 		dcs.releaseConnection(createMock(DatabaseConnection.class));
 		dcs.close();
+		verify(dataSource);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -122,9 +139,11 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		DataSource dataSource = createMock(DataSource.class);
 		Connection conn = createMock(Connection.class);
 		conn.close();
+		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
 		expect(dataSource.getConnection()).andReturn(conn);
-		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
 		replay(dataSource, conn);
+		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
 		DatabaseConnection jdbcConn = dcs.getReadWriteConnection();
 		jdbcConn.close();
 		dcs.close();
@@ -138,9 +157,11 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		conn.close();
 		String userName = "user";
 		String password = "password";
+		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
 		expect(dataSource.getConnection(userName, password)).andReturn(conn);
-		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
 		replay(dataSource, conn);
+		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
 		DatabaseConnection jdbcConn = dcs.getReadOnlyConnection(userName, password);
 		jdbcConn.close();
 		dcs.close();
@@ -170,11 +191,13 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	@Test
 	public void testDscsGetReadOnlyAndClose() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
-		DataSourceConnectionSource dscs = new DataSourceConnectionSource(dataSource, new H2DatabaseType());
 		Connection conn = createMock(Connection.class);
 		conn.close();
+		expect(dataSource.getConnection()).andReturn(null);
+		expect(dataSource.getConnection()).andReturn(null);
 		expect(dataSource.getConnection()).andReturn(conn);
 		replay(dataSource, conn);
+		DataSourceConnectionSource dscs = new DataSourceConnectionSource(dataSource, new H2DatabaseType());
 		DatabaseConnection dbConn = dscs.getReadOnlyConnection();
 		dscs.releaseConnection(dbConn);
 		dscs.close();
