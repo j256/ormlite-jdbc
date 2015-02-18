@@ -46,8 +46,8 @@ public class JdbcSingleConnectionSource extends JdbcConnectionSource implements 
 
 	/**
 	 * Create a data source for a particular database URL. The databaseType is usually determined from the databaseUrl
-	 * so most users should call {@link #JdbcConnectionSource(String)} instead. If, however, you need to force the class
-	 * to use a specific DatabaseType then this constructor should be used.
+	 * so most users should call {@link #JdbcSingleConnectionSource(String, Connection)} instead. If, however, you need
+	 * to force the class to use a specific DatabaseType then this constructor should be used.
 	 * 
 	 * @param url
 	 *            The database URL which should start jdbc:...
