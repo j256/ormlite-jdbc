@@ -40,7 +40,7 @@ public class OracleDatabaseType extends BaseDatabaseType {
 
 	@Override
 	protected void appendStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
-		sb.append("VARCHAR2(").append(fieldWidth).append(")");
+		sb.append("VARCHAR2(").append(fieldWidth).append(')');
 	}
 
 	@Override
