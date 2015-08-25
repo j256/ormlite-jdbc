@@ -62,6 +62,7 @@ public class TableCreator {
 	 * Possibly create the tables is the {@link #AUTO_CREATE_TABLES} system property is set to "true".
 	 *
 	 * @throws SQLException
+	 *	Throws a SQLException on error.
 	 */
 	public void maybeCreateTables() throws SQLException {
 		initialize();
@@ -71,6 +72,7 @@ public class TableCreator {
 	 * If you are using the Spring type wiring, this should be called after all of the set methods.
 	 *
 	 * @throws SQLException
+	 *	Throws a SQLException on error.
 	 */
 	public void initialize() throws SQLException {
 		if (!Boolean.parseBoolean(System.getProperty(AUTO_CREATE_TABLES))) {
