@@ -5,12 +5,12 @@ import java.util.List;
 
 /**
  * Utility class which helps with managing database specific classes.
- * 
+ *
  * @author graywatson
  */
 public class DatabaseTypeUtils {
 
-	private static List<DatabaseType> databaseTypes = new ArrayList<DatabaseType>();
+	private final static List<DatabaseType> databaseTypes = new ArrayList<DatabaseType>();
 
 	static {
 		// new drivers need to be added here
@@ -38,10 +38,12 @@ public class DatabaseTypeUtils {
 
 	/**
 	 * Creates and returns a {@link DatabaseType} for the database URL.
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *             if the url format is not recognized, the database type is unknown, or the class could not be
 	 *             constructed.
+         * @param databaseUrl
+         * @return 
 	 */
 	public static DatabaseType createDatabaseType(String databaseUrl) {
 		String dbTypePart = extractDbType(databaseUrl);
