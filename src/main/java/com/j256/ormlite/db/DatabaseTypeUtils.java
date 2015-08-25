@@ -43,7 +43,9 @@ public class DatabaseTypeUtils {
 	 *             if the url format is not recognized, the database type is unknown, or the class could not be
 	 *             constructed.
          * @param databaseUrl
-         * @return 
+         *             DSN of database as a JDBC URL.
+         * @return
+         *             The created database type for the passed database URL.
 	 */
 	public static DatabaseType createDatabaseType(String databaseUrl) {
 		String dbTypePart = extractDbType(databaseUrl);
