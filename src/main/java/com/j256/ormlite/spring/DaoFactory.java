@@ -41,6 +41,7 @@ public class DaoFactory {
 	 * @param clazz
 	 *	Which class to create a DAO for.
 	 * @return
+         *	Returns the DAO for the specified class.
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
 		return DaoManager.createDao(connectionSource, clazz);
@@ -60,6 +61,7 @@ public class DaoFactory {
 	 * @param tableConfig
 	 *	Table configuration.
 	 * @return
+         *	Returns the DAO for the specified class.
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
 			throws SQLException {
