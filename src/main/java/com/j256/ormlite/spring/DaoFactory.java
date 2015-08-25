@@ -32,9 +32,14 @@ public class DaoFactory {
 	 *
          * @throws SQLException
 	 * @param <ID>
+	 *	The class of the ID column associated with the class. The T class does not require an ID field. The class
+	 *	needs an ID parameter however so you can use Void or Object to satisfy the compiler.
 	 * @param <T>
+	 *	The class that the code will be operating on.
 	 * @param connectionSource
+	 *	Source of our database connections.
 	 * @param clazz
+	 *	Which class to create a DAO for.
 	 * @return
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, Class<T> clazz) throws SQLException {
@@ -46,9 +51,14 @@ public class DaoFactory {
 	 *
          * @throws SQLException
 	 * @param <ID>
+	 *	The class of the ID column associated with the class. The T class does not require an ID field. The class
+	 *	needs an ID parameter however so you can use Void or Object to satisfy the compiler.
 	 * @param <T>
+	 *	The class that the code will be operating on.
 	 * @param connectionSource
+	 *	Source of our database connections.
 	 * @param tableConfig
+	 *	Table configuration.
 	 * @return
 	 */
 	public static <T, ID> Dao<T, ID> createDao(ConnectionSource connectionSource, DatabaseTableConfig<T> tableConfig)
