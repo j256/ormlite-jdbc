@@ -31,6 +31,7 @@ public class DaoFactory {
 	 * Create and return a Dao based on the arguments.
 	 *
          * @throws SQLException
+         *	Throws a SQLException on error.
 	 * @param <ID>
 	 *	The class of the ID column associated with the class. The T class does not require an ID field. The class
 	 *	needs an ID parameter however so you can use Void or Object to satisfy the compiler.
@@ -51,6 +52,7 @@ public class DaoFactory {
 	 * Create and return a Dao based on the arguments.
 	 *
          * @throws SQLException
+         *	Throws a SQLException on error.
 	 * @param <ID>
 	 *	The class of the ID column associated with the class. The T class does not require an ID field. The class
 	 *	needs an ID parameter however so you can use Void or Object to satisfy the compiler.
