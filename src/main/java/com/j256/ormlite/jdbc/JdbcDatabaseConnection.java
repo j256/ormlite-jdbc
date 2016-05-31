@@ -52,21 +52,25 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		logger.trace("connection opened: {}", connection);
 	}
 
+	@Override
 	public boolean isAutoCommitSupported() {
 		return true;
 	}
 
+	@Override
 	public boolean isAutoCommit() throws SQLException {
 		boolean autoCommit = connection.getAutoCommit();
 		logger.trace("connection autoCommit is {}", autoCommit);
 		return autoCommit;
 	}
 
+	@Override
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		connection.setAutoCommit(autoCommit);
 		logger.trace("connection set autoCommit to {}", autoCommit);
 	}
 
+	@Override
 	public Savepoint setSavePoint(String name) throws SQLException {
 		if (supportsSavePoints == null) {
 			DatabaseMetaData metaData = connection.getMetaData();
@@ -82,6 +86,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void commit(Savepoint savepoint) throws SQLException {
 		if (savepoint == null) {
 			connection.commit();
@@ -101,6 +106,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public void rollback(Savepoint savepoint) throws SQLException {
 		if (savepoint == null) {
 			connection.rollback();
@@ -116,6 +122,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
@@ -125,6 +132,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return statement.getUpdateCount();
 	}
 
+	@Override
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
 			int resultFlags) throws SQLException {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
@@ -137,6 +145,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		return compiledStatement;
 	}
 
+	@Override
 	public void close() throws IOException {
 		try {
 			connection.close();
@@ -146,6 +155,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		logger.trace("connection closed: {}", connection);
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
@@ -153,12 +163,14 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	/**
 	 * Returns whether the connection has already been closed. Used by {@link JdbcConnectionSource}.
 	 */
+	@Override
 	public boolean isClosed() throws SQLException {
 		boolean isClosed = connection.isClosed();
 		logger.trace("connection is closed returned {}", isClosed);
 		return isClosed;
 	}
 
+	@Override
 	public int insert(String statement, Object[] args, FieldType[] argFieldTypes, GeneratedKeyHolder keyHolder)
 			throws SQLException {
 		PreparedStatement stmt;
@@ -196,24 +208,29 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public int update(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		return update(statement, args, argFieldTypes, "update");
 	}
 
+	@Override
 	public int delete(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// it's a call to executeUpdate
 		return update(statement, args, argFieldTypes, "delete");
 	}
 
+	@Override
 	public <T> Object queryForOne(String statement, Object[] args, FieldType[] argFieldTypes,
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
 		return queryForOne(statement, args, argFieldTypes, rowMapper, objectCache, "query for one");
 	}
 
+	@Override
 	public long queryForLong(String statement) throws SQLException {
 		return queryForLong(statement, noArgs, noArgTypes);
 	}
 
+	@Override
 	public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
 		// don't care about the object cache here
 		Object result = queryForOne(statement, args, argFieldTypes, longWrapper, null, "query for long");
@@ -226,6 +243,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
+	@Override
 	public boolean isTableExists(String tableName) throws SQLException {
 		DatabaseMetaData metaData = connection.getMetaData();
 		logger.trace("Got meta data from connection");
@@ -281,9 +299,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			GenericRowMapper<T> rowMapper, ObjectCache objectCache, String label) throws SQLException {
 		PreparedStatement stmt =
 				connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		DatabaseResults results = null;
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
-			DatabaseResults results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
+			results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
 			logger.trace("{} statement is prepared and executed: {}", label, statement);
 			if (!results.first()) {
 				// no results at all
@@ -296,6 +315,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 				return first;
 			}
 		} finally {
+			IOUtils.closeQuietly(results);
 			stmt.close();
 		}
 	}
@@ -340,6 +360,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	 * Row mapper that handles a single long result.
 	 */
 	private static class OneLongWrapper implements GenericRowMapper<Long> {
+		@Override
 		public Long mapRow(DatabaseResults rs) throws SQLException {
 			// maps the first column (sql #1)
 			return rs.getLong(0);
