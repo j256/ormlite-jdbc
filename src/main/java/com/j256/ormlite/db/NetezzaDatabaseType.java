@@ -20,6 +20,7 @@ public class NetezzaDatabaseType extends BaseDatabaseType {
 	private final static String DRIVER_CLASS_NAME = "org.netezza.Driver";
 	private final static String DATABASE_NAME = "Netezza";
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
@@ -29,6 +30,7 @@ public class NetezzaDatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

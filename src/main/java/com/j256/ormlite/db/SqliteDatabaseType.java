@@ -20,6 +20,7 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType {
 	public SqliteDatabaseType() {
 	}
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
@@ -36,6 +37,7 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

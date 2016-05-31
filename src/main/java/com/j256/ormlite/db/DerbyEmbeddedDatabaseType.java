@@ -34,6 +34,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	private static FieldConverter booleanConverter;
 	private static FieldConverter charConverter;
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		if (!DATABASE_URL_PORTION.equals(dbTypePart)) {
 			return false;
@@ -48,6 +49,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}
@@ -154,12 +156,15 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
 	private static class SerializableFieldConverter extends BaseFieldConverter {
+		@Override
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
 		}
+		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
+		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getBlobStream(columnPos);
 		}
@@ -190,6 +195,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 		public boolean isStreamType() {
 			return true;
 		}
+		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
 			throw new SQLException("Parsing string value for serializable types is not supported");
 		}
@@ -199,6 +205,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	 * Conversion from the char Java field because Derby can't convert Character to type char. Jesus.
 	 */
 	private static class CharFieldConverter extends BaseFieldConverter {
+		@Override
 		public SqlType getSqlType() {
 			return SqlType.INTEGER;
 		}
@@ -207,6 +214,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 			char character = (char) (Character) javaObject;
 			return (int) character;
 		}
+		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			if (defaultStr.length() != 1) {
 				throw new SQLException("Problems with field " + fieldType + ", default string to long: '" + defaultStr
@@ -214,6 +222,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 			}
 			return (int) defaultStr.charAt(0);
 		}
+		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getInt(columnPos);
 		}
@@ -222,6 +231,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 			int intVal = (Integer) sqlArg;
 			return (char) intVal;
 		}
+		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 			return sqlArgToJava(fieldType, Integer.parseInt(stringValue), columnPos);
 		}

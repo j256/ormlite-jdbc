@@ -21,6 +21,7 @@ public class Db2DatabaseType extends BaseDatabaseType {
 	private final static String DATABASE_NAME = "DB2";
 	private final static String DRIVER_CLASS_NAME = "COM.ibm.db2.jdbc.app.DB2Driver";
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
@@ -30,6 +31,7 @@ public class Db2DatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

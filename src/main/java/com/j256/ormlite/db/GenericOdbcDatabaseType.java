@@ -16,6 +16,7 @@ public class GenericOdbcDatabaseType extends BaseDatabaseType {
 	private final static String DRIVER_CLASS_NAME = "sun.jdbc.odbc.JdbcOdbcDriver";
 	private final static String DATABASE_NAME = "ODBC";
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
@@ -25,6 +26,7 @@ public class GenericOdbcDatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}

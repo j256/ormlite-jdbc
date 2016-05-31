@@ -28,6 +28,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 	private final static FieldConverter byteConverter = new ByteFieldConverter();
 	private final static FieldConverter booleanConverter = new BooleanNumberFieldConverter();
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
@@ -37,6 +38,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}
@@ -147,13 +149,16 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 	 * Conversion from the byte Java field to the SMALLINT Jdbc type because TINYINT looks to be 0-255 and unsigned.
 	 */
 	private static class ByteFieldConverter extends BaseFieldConverter {
+		@Override
 		public SqlType getSqlType() {
 			// store it as a short
 			return SqlType.BYTE;
 		}
+		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
+		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			// starts as a short and then gets converted to a byte on the way out
 			return results.getShort(columnPos);
@@ -176,6 +181,7 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;
 		}
+		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 			return sqlArgToJava(fieldType, Short.parseShort(stringValue), columnPos);
 		}

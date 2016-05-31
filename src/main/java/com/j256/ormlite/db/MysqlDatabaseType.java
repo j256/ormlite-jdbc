@@ -29,6 +29,7 @@ public class MysqlDatabaseType extends BaseDatabaseType {
 
 	private String createTableSuffix = DEFAULT_CREATE_TABLE_SUFFIX;
 
+	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
 		return DATABASE_URL_PORTION.equals(dbTypePart);
 	}
@@ -38,6 +39,7 @@ public class MysqlDatabaseType extends BaseDatabaseType {
 		return DRIVER_CLASS_NAME;
 	}
 
+	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
 	}
