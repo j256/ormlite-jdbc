@@ -357,7 +357,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 		try {
 			// issue our ping statement
 			long result = connMetaData.connection.queryForLong(pingStatment);
-			logger.debug("tested connection {}, got {}", connMetaData, result);
+			logger.trace("tested connection {}, got {}", connMetaData, result);
 			return true;
 		} catch (Exception e) {
 			logger.debug(e, "testing connection {} threw exception: {}", connMetaData, e);

@@ -35,10 +35,12 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		this.objectCache = objectCache;
 	}
 
+	@Override
 	public int getColumnCount() throws SQLException {
 		return metaData.getColumnCount();
 	}
 
+	@Override
 	public String[] getColumnNames() throws SQLException {
 		int colN = metaData.getColumnCount();
 		String[] columnNames = new String[colN];
@@ -48,6 +50,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		return columnNames;
 	}
 
+	@Override
 	public boolean first() throws SQLException {
 		if (first) {
 			/*
@@ -61,6 +64,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
+	@Override
 	public boolean next() throws SQLException {
 		// NOTE: we should not auto-close here, even if there are no more results
 		if (resultSet.next()) {
@@ -72,26 +76,32 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
+	@Override
 	public boolean last() throws SQLException {
 		return resultSet.last();
 	}
 
+	@Override
 	public boolean previous() throws SQLException {
 		return resultSet.previous();
 	}
 
+	@Override
 	public boolean moveRelative(int offset) throws SQLException {
 		return resultSet.relative(offset);
 	}
 
+	@Override
 	public boolean moveAbsolute(int position) throws SQLException {
 		return resultSet.absolute(position);
 	}
 
+	@Override
 	public int findColumn(String columnName) throws SQLException {
 		return resultSet.findColumn(columnName) - 1;
 	}
 
+	@Override
 	public InputStream getBlobStream(int columnIndex) throws SQLException {
 		Blob blob = resultSet.getBlob(columnIndex + 1);
 		if (blob == null) {
@@ -101,10 +111,12 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
+	@Override
 	public boolean getBoolean(int columnIndex) throws SQLException {
 		return resultSet.getBoolean(columnIndex + 1);
 	}
 
+	@Override
 	public char getChar(int columnIndex) throws SQLException {
 		String string = resultSet.getString(columnIndex + 1);
 		if (string == null || string.length() == 0) {
@@ -116,54 +128,67 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
+	@Override
 	public byte getByte(int columnIndex) throws SQLException {
 		return resultSet.getByte(columnIndex + 1);
 	}
 
+	@Override
 	public byte[] getBytes(int columnIndex) throws SQLException {
 		return resultSet.getBytes(columnIndex + 1);
 	}
 
+	@Override
 	public double getDouble(int columnIndex) throws SQLException {
 		return resultSet.getDouble(columnIndex + 1);
 	}
 
+	@Override
 	public float getFloat(int columnIndex) throws SQLException {
 		return resultSet.getFloat(columnIndex + 1);
 	}
 
+	@Override
 	public int getInt(int columnIndex) throws SQLException {
 		return resultSet.getInt(columnIndex + 1);
 	}
 
+	@Override
 	public long getLong(int columnIndex) throws SQLException {
 		return resultSet.getLong(columnIndex + 1);
 	}
 
+	@Override
 	public short getShort(int columnIndex) throws SQLException {
 		return resultSet.getShort(columnIndex + 1);
 	}
 
+	@Override
 	public String getString(int columnIndex) throws SQLException {
 		return resultSet.getString(columnIndex + 1);
 	}
 
+	@Override
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
 		return resultSet.getTimestamp(columnIndex + 1);
 	}
 
+	@Override
 	public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
 		return resultSet.getBigDecimal(columnIndex + 1);
 	}
 
+	@Override
 	public boolean wasNull(int columnIndex) throws SQLException {
 		return resultSet.wasNull();
 	}
 
+	@Override
 	public ObjectCache getObjectCache() {
 		return objectCache;
 	}
 
+	@Override
 	public void close() throws IOException {
 		try {
 			resultSet.close();
@@ -172,6 +197,7 @@ public class JdbcDatabaseResults implements DatabaseResults {
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}

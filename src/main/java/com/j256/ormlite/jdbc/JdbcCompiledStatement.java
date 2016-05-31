@@ -28,6 +28,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		this.type = type;
 	}
 
+	@Override
 	public int getColumnCount() throws SQLException {
 		if (metaData == null) {
 			metaData = preparedStatement.getMetaData();
@@ -35,6 +36,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return metaData.getColumnCount();
 	}
 
+	@Override
 	public String getColumnName(int column) throws SQLException {
 		if (metaData == null) {
 			metaData = preparedStatement.getMetaData();
@@ -42,6 +44,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return metaData.getColumnName(column + 1);
 	}
 
+	@Override
 	public int runUpdate() throws SQLException {
 		// this can be a UPDATE, DELETE, or ... just not a SELECT
 		if (!type.isOkForUpdate()) {
@@ -50,6 +53,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return preparedStatement.executeUpdate();
 	}
 
+	@Override
 	public DatabaseResults runQuery(ObjectCache objectCache) throws SQLException {
 		if (!type.isOkForQuery()) {
 			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
@@ -57,6 +61,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery(), objectCache);
 	}
 
+	@Override
 	public int runExecute() throws SQLException {
 		if (!type.isOkForExecute()) {
 			throw new IllegalArgumentException("Cannot call execute on a " + type + " statement");
@@ -65,6 +70,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		return preparedStatement.getUpdateCount();
 	}
 
+	@Override
 	public void close() throws IOException {
 		try {
 			preparedStatement.close();
@@ -73,14 +79,17 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
 
+	@Override
 	public void cancel() throws SQLException {
 		preparedStatement.cancel();
 	}
 
+	@Override
 	public void setObject(int parameterIndex, Object obj, SqlType sqlType) throws SQLException {
 		if (obj == null) {
 			preparedStatement.setNull(parameterIndex + 1, TypeValMapper.getTypeValForSqlType(sqlType));
@@ -89,10 +98,12 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		}
 	}
 
+	@Override
 	public void setMaxRows(int max) throws SQLException {
 		preparedStatement.setMaxRows(max);
 	}
 
+	@Override
 	public void setQueryTimeout(long millis) throws SQLException {
 		preparedStatement.setQueryTimeout(Long.valueOf(millis).intValue() / 1000);
 	}

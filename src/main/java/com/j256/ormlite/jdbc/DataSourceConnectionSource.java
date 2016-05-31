@@ -119,6 +119,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		initialized = true;
 	}
 
+	@Override
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
@@ -133,6 +134,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		return getReadWriteConnection(username, password);
 	}
 
+	@Override
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
@@ -144,6 +146,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		return new JdbcDatabaseConnection(dataSource.getConnection());
 	}
 
+	@Override
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
@@ -166,6 +169,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		return new JdbcDatabaseConnection(dataSource.getConnection(username, password));
 	}
 
+	@Override
 	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 		/*
 		 * This is fine to not be synchronized since it is only this thread we care about. Other threads will set this
@@ -174,6 +178,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		return saveSpecial(connection);
 	}
 
+	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		clearSpecial(connection, logger);
 	}
@@ -182,6 +187,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	 * This typically closes the connection source but because there is not a close() method on the {@link DataSource}
 	 * (grrrr), this close method does _nothing_. You must close the underlying data-source yourself.
 	 */
+	@Override
 	public void close() throws IOException {
 		if (!initialized) {
 			throw new IOException(getClass().getSimpleName() + ".initialize() was not called");
@@ -189,10 +195,12 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		// unfortunately, you will need to close the DataSource directly since there is no close on the interface
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
 
+	@Override
 	public DatabaseType getDatabaseType() {
 		if (!initialized) {
 			throw new IllegalStateException(getClass().getSimpleName() + ".initialize() was not called");
@@ -203,6 +211,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	/**
 	 * Unfortunately we cannot tell if the related data source has been closed so this just returns true.
 	 */
+	@Override
 	public boolean isOpen() {
 		return true;
 	}
@@ -216,6 +225,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	 * they are different. I guess that's the best that we can do.
 	 * </p>
 	 */
+	@Override
 	public boolean isSingleConnection() {
 		return isSingleConnection;
 	}

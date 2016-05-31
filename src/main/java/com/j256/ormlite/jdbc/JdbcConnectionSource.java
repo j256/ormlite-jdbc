@@ -139,6 +139,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		initialized = true;
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (!initialized) {
 			throw new IOException(getClass().getSimpleName() + " was not initialized properly");
@@ -150,6 +151,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		}
 	}
 
+	@Override
 	public void closeQuietly() {
 		IOUtils.closeQuietly(this);
 	}
@@ -162,6 +164,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		this.url = url;
 	}
 
+	@Override
 	public DatabaseConnection getReadOnlyConnection() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
@@ -169,6 +172,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		return getReadWriteConnection();
 	}
 
+	@Override
 	public DatabaseConnection getReadWriteConnection() throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
@@ -184,6 +188,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		return connection;
 	}
 
+	@Override
 	public void releaseConnection(DatabaseConnection connection) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
@@ -191,16 +196,19 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		// noop right now
 	}
 
+	@Override
 	@SuppressWarnings("unused")
 	public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
 		// noop since this is a single connection source
 		return true;
 	}
 
+	@Override
 	public void clearSpecialConnection(DatabaseConnection connection) {
 		// noop since this is a single connection source
 	}
 
+	@Override
 	public DatabaseType getDatabaseType() {
 		if (!initialized) {
 			throw new IllegalStateException(getClass().getSimpleName() + " was not initialized properly");
@@ -208,10 +216,12 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		return databaseType;
 	}
 
+	@Override
 	public boolean isOpen() {
 		return connection != null;
 	}
 
+	@Override
 	public boolean isSingleConnection() {
 		return true;
 	}
