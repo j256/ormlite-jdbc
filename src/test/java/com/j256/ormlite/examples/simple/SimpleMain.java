@@ -209,6 +209,7 @@ public class SimpleMain {
 		try {
 			// try something in a transaction
 			transactionManager.callInTransaction(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					// we do the delete
 					assertEquals(1, accountDao.delete(account));

@@ -47,6 +47,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 							new Class<?>[] { Connection.class }, this);
 		}
 
+		@Override
 		public DatabaseConnection getDatabaseConnectionProxy() {
 			return databaseConnection;
 		}
@@ -55,6 +56,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 			return connectionProxy;
 		}
 
+		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			// System.err.println("Running method on Connection." + method.getName());
 			try {
@@ -71,6 +73,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 			}
 		}
 
+		@Override
 		public boolean isOkay() {
 			for (WrappedPreparedStatement wrappedStatement : wrappedStatements) {
 				if (!wrappedStatement.isOkay()) {
@@ -80,6 +83,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 			return true;
 		}
 
+		@Override
 		public void close() {
 			wrappedStatements.clear();
 		}
@@ -102,6 +106,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 			return (PreparedStatement) statementProxy;
 		}
 
+		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			// System.err.println("Running method on PreparedStatement." + method.getName());
 			try {

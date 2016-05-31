@@ -87,6 +87,7 @@ public class JdbcTransactionManagerTest extends BaseJdbcTest {
 		final TransactionManager mgr = new TransactionManager(connectionSource);
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				testTransactionManager(mgr, null, fooDao);
 				return null;
@@ -103,6 +104,7 @@ public class JdbcTransactionManagerTest extends BaseJdbcTest {
 		try {
 			final int val = 13431231;
 			int returned = mgr.callInTransaction(new Callable<Integer>() {
+				@Override
 				public Integer call() throws Exception {
 					// we delete it inside a transaction
 					assertEquals(1, fooDao.delete(foo1));

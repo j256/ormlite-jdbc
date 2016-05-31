@@ -218,6 +218,7 @@ public abstract class BaseJdbcTest {
 
 		private Class<? extends Throwable> tClass = null;
 
+		@Override
 		public Statement apply(Statement statement, FrameworkMethod method, Object junitClassObject) {
 			for (Annotation annotation : method.getAnnotations()) {
 				if (annotation.annotationType() == ExpectedBehavior.class) {
