@@ -13,14 +13,17 @@ public class JavaUtilLog implements Log {
 		this.logger = java.util.logging.Logger.getLogger(className);
 	}
 
+	@Override
 	public boolean isLevelEnabled(com.j256.ormlite.logger.Log.Level level) {
 		return logger.isLoggable(levelToJavaLevel(level));
 	}
 
+	@Override
 	public void log(com.j256.ormlite.logger.Log.Level level, String msg) {
 		logger.log(levelToJavaLevel(level), msg);
 	}
 
+	@Override
 	public void log(com.j256.ormlite.logger.Log.Level level, String msg, Throwable throwable) {
 		logger.log(levelToJavaLevel(level), msg, throwable);
 	}

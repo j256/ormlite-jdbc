@@ -14,6 +14,7 @@ public class CommonsLoggingLog implements Log {
 		this.log = org.apache.commons.logging.LogFactory.getLog(className);
 	}
 
+	@Override
 	public boolean isLevelEnabled(Level level) {
 		switch (level) {
 			case TRACE :
@@ -33,6 +34,7 @@ public class CommonsLoggingLog implements Log {
 		}
 	}
 
+	@Override
 	public void log(Level level, String msg) {
 		switch (level) {
 			case TRACE :
@@ -59,6 +61,7 @@ public class CommonsLoggingLog implements Log {
 		}
 	}
 
+	@Override
 	public void log(Level level, String msg, Throwable t) {
 		switch (level) {
 			case TRACE :
