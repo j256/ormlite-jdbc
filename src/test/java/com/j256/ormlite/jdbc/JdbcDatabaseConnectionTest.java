@@ -129,11 +129,12 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 		JdbcDatabaseConnection jdc = new JdbcDatabaseConnection(connection);
 		String statement = "statement";
-		expect(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)).andReturn(
-				prepStmt);
+		expect(connection.prepareStatement(statement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY))
+				.andReturn(prepStmt);
 		expect(prepStmt.executeQuery()).andReturn(resultSet);
 		expect(resultSet.getMetaData()).andReturn(null);
 		expect(resultSet.next()).andReturn(false);
+		resultSet.close();
 		expect(prepStmt.getMoreResults()).andReturn(false);
 		// should close the statement
 		prepStmt.close();
@@ -224,6 +225,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	protected static class Foo {
 		@DatabaseField
 		public long id;
+
 		Foo() {
 		}
 	}
@@ -234,6 +236,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		FooInt() {
 		}
 	}
@@ -244,6 +247,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		public String id;
 		@DatabaseField
 		public String stuff;
+
 		FooString() {
 		}
 	}
@@ -254,6 +258,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		FooNotGeneratedId() {
 		}
 	}

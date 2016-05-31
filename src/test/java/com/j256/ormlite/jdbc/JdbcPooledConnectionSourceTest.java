@@ -135,7 +135,8 @@ public class JdbcPooledConnectionSourceTest {
 	@Test
 	public void testClosedConnction() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
-		pooled.setCheckConnectionsEveryMillis(100);
+		long checkEveryMillis = 250;
+		pooled.setCheckConnectionsEveryMillis(checkEveryMillis);
 		try {
 			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
 			assertEquals(0, pooled.getReleaseCount());
@@ -145,7 +146,7 @@ public class JdbcPooledConnectionSourceTest {
 			assertEquals(1, pooled.getCurrentConnectionsFree());
 
 			// wait a bit
-			Thread.sleep(200);
+			Thread.sleep(checkEveryMillis + 50);
 
 			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
 			// should get the same connection
@@ -158,7 +159,7 @@ public class JdbcPooledConnectionSourceTest {
 			conn2.close();
 
 			// wait a bit
-			Thread.sleep(200);
+			Thread.sleep(checkEveryMillis + 50);
 			DatabaseConnection conn3 = pooled.getReadOnlyConnection();
 			// now it should be different
 			assertTrue(conn3 != conn1);
@@ -397,7 +398,7 @@ public class JdbcPooledConnectionSourceTest {
 			conn1.queryForLong(pingStatement);
 			pooled.releaseConnection(conn1);
 			// make it test ok once
-			Thread.sleep(delay * 2);
+			Thread.sleep(delay + 50);
 			DatabaseConnection conn2 = pooled.getReadWriteConnection();
 			assertSame(conn1, conn2);
 			conn2.queryForLong(pingStatement);
@@ -405,7 +406,7 @@ public class JdbcPooledConnectionSourceTest {
 			// close it behind the pool's back, bad dog
 			conn2.close();
 			// now it should find out that the connection is bad and pull it
-			Thread.sleep(delay * 2);
+			Thread.sleep(delay + 50);
 			DatabaseConnection conn3 = pooled.getReadWriteConnection();
 			assertNotSame(conn2, conn3);
 			// this should work
