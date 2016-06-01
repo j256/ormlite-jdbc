@@ -87,8 +87,8 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		}
 		if (databaseType == null) {
 			if (databaseUrl == null) {
-				throw new IllegalStateException("either the databaseUri or the databaseType must be set on "
-						+ getClass().getSimpleName());
+				throw new IllegalStateException(
+						"either the databaseUri or the databaseType must be set on " + getClass().getSimpleName());
 			}
 			databaseType = DatabaseTypeUtils.createDatabaseType(databaseUrl);
 		}
@@ -240,12 +240,5 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 
 	public void setDatabaseUrl(String databaseUrl) {
 		this.databaseUrl = databaseUrl;
-	}
-
-	/**
-	 * @deprecated No longer supported and can be removed.
-	 */
-	@Deprecated
-	public void setUsesTransactions(boolean usesTransactions) {
 	}
 }
