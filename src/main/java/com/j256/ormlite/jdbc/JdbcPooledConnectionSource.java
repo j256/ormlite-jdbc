@@ -110,13 +110,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
 		// set the connection to be read-only in JDBC-land? would need to set read-only or read-write
-		return getReadWriteConnection();
+		return getReadWriteConnection(tableName);
 	}
 
 	@Override
-	public DatabaseConnection getReadWriteConnection() throws SQLException {
+	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
 		checkInitializedSqlException();
 		DatabaseConnection conn = getSavedConnection();
 		if (conn != null) {
@@ -233,20 +233,13 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public boolean isOpen() {
+	public boolean isOpen(String tableName) {
 		return isOpen;
 	}
 
 	@Override
-	public boolean isSingleConnection() {
+	public boolean isSingleConnection(String tableName) {
 		return false;
-	}
-
-	/**
-	 * @deprecated No longer supported and can be removed.
-	 */
-	@Deprecated
-	public void setUsesTransactions(boolean usesTransactions) {
 	}
 
 	/**

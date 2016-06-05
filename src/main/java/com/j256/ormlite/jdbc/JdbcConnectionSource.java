@@ -165,15 +165,15 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	}
 
 	@Override
-	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
 		}
-		return getReadWriteConnection();
+		return getReadWriteConnection(tableName);
 	}
 
 	@Override
-	public DatabaseConnection getReadWriteConnection() throws SQLException {
+	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
 		}
@@ -217,12 +217,12 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	}
 
 	@Override
-	public boolean isOpen() {
+	public boolean isOpen(String tableName) {
 		return connection != null;
 	}
 
 	@Override
-	public boolean isSingleConnection() {
+	public boolean isSingleConnection(String tableName) {
 		return true;
 	}
 

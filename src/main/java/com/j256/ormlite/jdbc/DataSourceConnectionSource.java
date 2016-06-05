@@ -120,22 +120,23 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	}
 
 	@Override
-	public DatabaseConnection getReadOnlyConnection() throws SQLException {
+	public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		return getReadWriteConnection();
+		return getReadWriteConnection(tableName);
 	}
 
-	public DatabaseConnection getReadOnlyConnection(String username, String password) throws SQLException {
+	public DatabaseConnection getReadOnlyConnection(String tableName, String username, String password)
+			throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
-		return getReadWriteConnection(username, password);
+		return getReadWriteConnection(tableName, username, password);
 	}
 
 	@Override
-	public DatabaseConnection getReadWriteConnection() throws SQLException {
+	public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
@@ -158,7 +159,8 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 		}
 	}
 
-	public DatabaseConnection getReadWriteConnection(String username, String password) throws SQLException {
+	public DatabaseConnection getReadWriteConnection(String tableName, String username, String password)
+			throws SQLException {
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
@@ -212,7 +214,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	 * Unfortunately we cannot tell if the related data source has been closed so this just returns true.
 	 */
 	@Override
-	public boolean isOpen() {
+	public boolean isOpen(String tableName) {
 		return true;
 	}
 
@@ -226,7 +228,7 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	 * </p>
 	 */
 	@Override
-	public boolean isSingleConnection() {
+	public boolean isSingleConnection(String tableName) {
 		return isSingleConnection;
 	}
 

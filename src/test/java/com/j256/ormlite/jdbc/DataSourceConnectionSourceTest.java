@@ -20,6 +20,8 @@ import com.j256.ormlite.support.DatabaseConnection;
 
 public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 
+	private static final String TABLE_NAME = "sometable";
+
 	@Test
 	public void testDscsUrl() throws Exception {
 		DataSource dataSource = createMock(DataSource.class);
@@ -28,7 +30,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		expect(dataSource.getConnection()).andReturn(null);
 		replay(dataSource);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
-		dcs.getReadOnlyConnection();
+		dcs.getReadOnlyConnection(TABLE_NAME);
 		dcs.close();
 		verify(dataSource);
 	}
@@ -53,7 +55,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		dcs.setDataSource(dataSource);
 		dcs.setDatabaseUrl(DEFAULT_DATABASE_URL);
 		dcs.initialize();
-		DatabaseConnection jdbcConn = dcs.getReadOnlyConnection();
+		DatabaseConnection jdbcConn = dcs.getReadOnlyConnection(TABLE_NAME);
 		jdbcConn.close();
 		dcs.close();
 		verify(dataSource, conn);
@@ -71,7 +73,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		dcs.setDatabaseUrl(DEFAULT_DATABASE_URL);
 		dcs.setDatabaseType(new H2DatabaseType());
 		dcs.initialize();
-		dcs.getReadOnlyConnection();
+		dcs.getReadOnlyConnection(TABLE_NAME);
 		dcs.close();
 		verify(dataSource);
 	}
@@ -109,28 +111,28 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testDscsGetReadOnlyNoInit() throws Exception {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadOnlyConnection();
+		dcs.getReadOnlyConnection(TABLE_NAME);
 		dcs.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDscsGetReadOnlyNoInitUP() throws Exception {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadOnlyConnection("username", "password");
+		dcs.getReadOnlyConnection(TABLE_NAME, "username", "password");
 		dcs.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDscsGetReadWriteNoInit() throws Exception {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadWriteConnection();
+		dcs.getReadWriteConnection(TABLE_NAME);
 		dcs.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testDscsGetReadWriteNoInitUP() throws Exception {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadWriteConnection("username", "password");
+		dcs.getReadWriteConnection(TABLE_NAME, "username", "password");
 		dcs.close();
 	}
 
@@ -144,7 +146,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		expect(dataSource.getConnection()).andReturn(conn);
 		replay(dataSource, conn);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
-		DatabaseConnection jdbcConn = dcs.getReadWriteConnection();
+		DatabaseConnection jdbcConn = dcs.getReadWriteConnection(TABLE_NAME);
 		jdbcConn.close();
 		dcs.close();
 		verify(dataSource, conn);
@@ -162,7 +164,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		expect(dataSource.getConnection(userName, password)).andReturn(conn);
 		replay(dataSource, conn);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource(dataSource, DEFAULT_DATABASE_URL);
-		DatabaseConnection jdbcConn = dcs.getReadOnlyConnection(userName, password);
+		DatabaseConnection jdbcConn = dcs.getReadOnlyConnection(TABLE_NAME, userName, password);
 		jdbcConn.close();
 		dcs.close();
 		verify(dataSource, conn);
@@ -198,7 +200,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		expect(dataSource.getConnection()).andReturn(conn);
 		replay(dataSource, conn);
 		DataSourceConnectionSource dscs = new DataSourceConnectionSource(dataSource, new H2DatabaseType());
-		DatabaseConnection dbConn = dscs.getReadOnlyConnection();
+		DatabaseConnection dbConn = dscs.getReadOnlyConnection(TABLE_NAME);
 		dscs.releaseConnection(dbConn);
 		dscs.close();
 		verify(dataSource, conn);

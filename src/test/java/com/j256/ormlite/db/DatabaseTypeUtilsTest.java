@@ -49,7 +49,7 @@ public class DatabaseTypeUtilsTest {
 			dataSource.close();
 		} finally {
 			if (dataSource != null) {
-				dataSource.getReadOnlyConnection().close();
+				dataSource.getReadOnlyConnection(null).close();
 			}
 		}
 	}

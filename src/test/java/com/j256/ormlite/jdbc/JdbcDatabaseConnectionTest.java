@@ -26,11 +26,12 @@ import com.j256.ormlite.table.DatabaseTable;
 
 public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
+	private static final String FOO_TABLE_NAME = "foo";
 	private static final String FOOINT_TABLE_NAME = "fooint";
 
 	@Test
 	public void testQueryForLong() throws Exception {
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
 			Dao<Foo, Object> dao = createDao(Foo.class, true);
 			Foo foo = new Foo();
@@ -45,7 +46,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryForLongNoResult() throws Exception {
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
 			createDao(Foo.class, true);
 			databaseConnection.queryForLong("select id from foo");
@@ -56,7 +57,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testQueryForLongTooManyResults() throws Exception {
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
 			Dao<Foo, Object> dao = createDao(Foo.class, true);
 			Foo foo = new Foo();
@@ -147,7 +148,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 	@Test
 	public void testQueryKeyHolderNoKeys() throws Exception {
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
 			createDao(Foo.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
@@ -163,7 +164,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	@Test
 	public void testIdColumnInteger() throws Exception {
 		// NOTE: this doesn't seem to generate an INTEGER type, oh well
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOOINT_TABLE_NAME);
 		try {
 			createDao(FooInt.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
@@ -180,7 +181,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	@Test
 	public void testIdColumnInvalid() throws Exception {
 		// NOTE: this doesn't seem to generate an INTEGER type, oh well
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOOINT_TABLE_NAME);
 		try {
 			createDao(FooInt.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
@@ -197,7 +198,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	@Test
 	public void testIdColumnChangedFromStringToNumber() throws Exception {
 		// NOTE: trying to get the database to return a string as a result but could not figure it out
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection();
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOOINT_TABLE_NAME);
 		try {
 			createDao(FooString.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
@@ -222,6 +223,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 	/* =================================================================================================== */
 
+	@DatabaseTable(tableName = FOO_TABLE_NAME)
 	protected static class Foo {
 		@DatabaseField
 		public long id;

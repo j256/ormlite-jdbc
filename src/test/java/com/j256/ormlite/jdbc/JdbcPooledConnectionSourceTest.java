@@ -31,21 +31,21 @@ public class JdbcPooledConnectionSourceTest {
 	public void testBasic() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			assertNotSame(conn1, conn2);
 			pooled.releaseConnection(conn2);
-			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			DatabaseConnection conn3 = pooled.getReadWriteConnection(null);
 			assertNotSame(conn1, conn3);
 			assertSame(conn2, conn3);
-			DatabaseConnection conn4 = pooled.getReadWriteConnection();
+			DatabaseConnection conn4 = pooled.getReadWriteConnection(null);
 			assertNotSame(conn1, conn4);
 			assertNotSame(conn3, conn4);
 			pooled.releaseConnection(conn1);
 			pooled.releaseConnection(conn3);
-			DatabaseConnection conn5 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn5 = pooled.getReadOnlyConnection(null);
 			assertSame(conn1, conn5);
-			DatabaseConnection conn6 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn6 = pooled.getReadOnlyConnection(null);
 			assertSame(conn3, conn6);
 			conn1.close();
 			conn2.close();
@@ -62,18 +62,18 @@ public class JdbcPooledConnectionSourceTest {
 	public void testTransaction() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			pooled.saveSpecialConnection(conn2);
-			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			DatabaseConnection conn3 = pooled.getReadWriteConnection(null);
 			assertSame(conn2, conn3);
 			pooled.releaseConnection(conn3);
 			pooled.releaseConnection(conn1);
-			DatabaseConnection conn4 = pooled.getReadWriteConnection();
+			DatabaseConnection conn4 = pooled.getReadWriteConnection(null);
 			assertSame(conn2, conn4);
 			pooled.releaseConnection(conn4);
 			pooled.clearSpecialConnection(conn2);
-			DatabaseConnection conn5 = pooled.getReadWriteConnection();
+			DatabaseConnection conn5 = pooled.getReadWriteConnection(null);
 			assertSame(conn1, conn5);
 			conn1.close();
 			conn2.close();
@@ -90,13 +90,13 @@ public class JdbcPooledConnectionSourceTest {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
 			pooled.setMaxConnectionsFree(2);
-			DatabaseConnection conn1 = pooled.getReadWriteConnection();
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
-			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadWriteConnection(null);
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
+			DatabaseConnection conn3 = pooled.getReadWriteConnection(null);
 			pooled.releaseConnection(conn1);
 			pooled.releaseConnection(conn2);
 			pooled.releaseConnection(conn3);
-			DatabaseConnection conn4 = pooled.getReadWriteConnection();
+			DatabaseConnection conn4 = pooled.getReadWriteConnection(null);
 			// not conn1 which should be closed
 			assertSame(conn2, conn4);
 		} finally {
@@ -109,7 +109,7 @@ public class JdbcPooledConnectionSourceTest {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		DatabaseConnection conn1;
 		try {
-			conn1 = pooled.getReadOnlyConnection();
+			conn1 = pooled.getReadOnlyConnection(null);
 		} finally {
 			pooled.close();
 		}
@@ -122,10 +122,10 @@ public class JdbcPooledConnectionSourceTest {
 		try {
 			long maxAge = 500;
 			pooled.setMaxConnectionAgeMillis(maxAge);
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
 			pooled.releaseConnection(conn1);
 			Thread.sleep(maxAge + 1);
-			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection(null);
 			assertNotSame(conn1, conn2);
 		} finally {
 			pooled.close();
@@ -138,7 +138,7 @@ public class JdbcPooledConnectionSourceTest {
 		long checkEveryMillis = 250;
 		pooled.setCheckConnectionsEveryMillis(checkEveryMillis);
 		try {
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
 			assertEquals(0, pooled.getReleaseCount());
 			assertEquals(0, pooled.getCurrentConnectionsFree());
 			pooled.releaseConnection(conn1);
@@ -148,7 +148,7 @@ public class JdbcPooledConnectionSourceTest {
 			// wait a bit
 			Thread.sleep(checkEveryMillis + 50);
 
-			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection(null);
 			// should get the same connection
 			assertSame(conn1, conn2);
 			pooled.releaseConnection(conn2);
@@ -160,7 +160,7 @@ public class JdbcPooledConnectionSourceTest {
 
 			// wait a bit
 			Thread.sleep(checkEveryMillis + 50);
-			DatabaseConnection conn3 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn3 = pooled.getReadOnlyConnection(null);
 			// now it should be different
 			assertTrue(conn3 != conn1);
 			assertEquals(0, pooled.getCurrentConnectionsFree());
@@ -178,7 +178,7 @@ public class JdbcPooledConnectionSourceTest {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
 			pooled.setMaxConnectionAgeMillis(Long.MAX_VALUE);
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
 			pooled.releaseConnection(conn1);
 		} finally {
 			pooled.close();
@@ -195,7 +195,7 @@ public class JdbcPooledConnectionSourceTest {
 	public void testGetReadWriteNoInit() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		try {
-			pooled.getReadWriteConnection();
+			pooled.getReadWriteConnection(null);
 		} finally {
 			IOUtils.closeQuietly(pooled);
 		}
@@ -237,7 +237,7 @@ public class JdbcPooledConnectionSourceTest {
 	public void testUsageCounts() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
 			assertEquals(1, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
 			assertEquals(1, pooled.getMaxConnectionsEverUsed());
@@ -246,7 +246,7 @@ public class JdbcPooledConnectionSourceTest {
 			assertEquals(0, pooled.getCloseCount());
 			assertEquals(1, pooled.getMaxConnectionsEverUsed());
 			assertEquals(1, pooled.getCurrentConnectionsManaged());
-			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection(null);
 			assertEquals(2, pooled.getOpenCount());
 			assertEquals(0, pooled.getCloseCount());
 			assertEquals(2, pooled.getMaxConnectionsEverUsed());
@@ -269,7 +269,7 @@ public class JdbcPooledConnectionSourceTest {
 	public void testReleaseAlreadyClosed() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
 			conn1.close();
 			pooled.releaseConnection(conn1);
 		} finally {
@@ -374,12 +374,12 @@ public class JdbcPooledConnectionSourceTest {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		String pingStatement = pooled.getDatabaseType().getPingStatement();
 		try {
-			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadWriteConnection(null);
 			conn1.queryForLong(pingStatement);
 			pooled.releaseConnection(conn1);
 			// close it behind the pool's back, bad dog
 			conn1.close();
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			assertSame(conn1, conn2);
 			conn2.queryForLong(pingStatement);
 		} finally {
@@ -394,12 +394,12 @@ public class JdbcPooledConnectionSourceTest {
 		pooled.setCheckConnectionsEveryMillis(delay);
 		String pingStatement = pooled.getDatabaseType().getPingStatement();
 		try {
-			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadWriteConnection(null);
 			conn1.queryForLong(pingStatement);
 			pooled.releaseConnection(conn1);
 			// make it test ok once
 			Thread.sleep(delay + 50);
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			assertSame(conn1, conn2);
 			conn2.queryForLong(pingStatement);
 			pooled.releaseConnection(conn2);
@@ -407,7 +407,7 @@ public class JdbcPooledConnectionSourceTest {
 			conn2.close();
 			// now it should find out that the connection is bad and pull it
 			Thread.sleep(delay + 50);
-			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			DatabaseConnection conn3 = pooled.getReadWriteConnection(null);
 			assertNotSame(conn2, conn3);
 			// this should work
 			conn3.queryForLong(pingStatement);
@@ -425,12 +425,12 @@ public class JdbcPooledConnectionSourceTest {
 		pooled.setMaxConnectionAgeMillis(delay);
 		String pingStatement = pooled.getDatabaseType().getPingStatement();
 		try {
-			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadWriteConnection(null);
 			conn1.queryForLong(pingStatement);
 			pooled.releaseConnection(conn1);
 			// make it test ok once
 			Thread.sleep(delay * 2);
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			assertNotSame(conn1, conn2);
 			conn2.queryForLong(pingStatement);
 			pooled.releaseConnection(conn2);
@@ -445,16 +445,16 @@ public class JdbcPooledConnectionSourceTest {
 		String pingStatement = pooled.getDatabaseType().getPingStatement();
 		pooled.setTestBeforeGet(true);
 		try {
-			DatabaseConnection conn1 = pooled.getReadWriteConnection();
+			DatabaseConnection conn1 = pooled.getReadWriteConnection(null);
 			conn1.queryForLong(pingStatement);
 			pooled.releaseConnection(conn1);
 			// close it behind the pool's back, bad dog
 			conn1.close();
-			DatabaseConnection conn2 = pooled.getReadWriteConnection();
+			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			assertNotSame(conn1, conn2);
 			conn2.queryForLong(pingStatement);
 			pooled.releaseConnection(conn2);
-			DatabaseConnection conn3 = pooled.getReadWriteConnection();
+			DatabaseConnection conn3 = pooled.getReadWriteConnection(null);
 			assertSame(conn2, conn3);
 			conn3.queryForLong(pingStatement);
 			pooled.releaseConnection(conn3);
@@ -468,13 +468,13 @@ public class JdbcPooledConnectionSourceTest {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
 			pooled.setUrl("jdbc:h2:mem:baz");
-			assertTrue(pooled.isOpen());
-			DatabaseConnection conn = pooled.getReadOnlyConnection();
+			assertTrue(pooled.isOpen(null));
+			DatabaseConnection conn = pooled.getReadOnlyConnection(null);
 			pooled.releaseConnection(conn);
-			assertTrue(pooled.isOpen());
+			assertTrue(pooled.isOpen(null));
 		} finally {
 			pooled.close();
-			assertFalse(pooled.isOpen());
+			assertFalse(pooled.isOpen(null));
 		}
 	}
 
@@ -482,10 +482,10 @@ public class JdbcPooledConnectionSourceTest {
 	public void testSetAutoCommit() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
-			DatabaseConnection conn1 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn1 = pooled.getReadOnlyConnection(null);
 			conn1.setAutoCommit(false);
 			pooled.releaseConnection(conn1);
-			DatabaseConnection conn2 = pooled.getReadOnlyConnection();
+			DatabaseConnection conn2 = pooled.getReadOnlyConnection(null);
 			assertSame(conn1, conn2);
 			assertTrue(conn2.isAutoCommit());
 		} finally {

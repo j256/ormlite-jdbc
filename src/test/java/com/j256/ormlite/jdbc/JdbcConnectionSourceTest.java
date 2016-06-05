@@ -52,7 +52,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		String password = "_secret";
 		String url = "jdbc:h2:mem:ormlite-up;USER=" + username + ";PASSWORD=" + password;
 		JdbcConnectionSource sds = new JdbcConnectionSource(url, username, password);
-		assertNotNull(sds.getReadOnlyConnection());
+		assertNotNull(sds.getReadOnlyConnection(null));
 		sds.close();
 	}
 
@@ -67,7 +67,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		DriverManager.registerDriver(driver);
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
-			assertNotNull(sds.getReadOnlyConnection());
+			assertNotNull(sds.getReadOnlyConnection(null));
 			sds.close();
 			verify(driver);
 		} finally {
@@ -83,7 +83,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		JdbcConnectionSource sds = new JdbcConnectionSource(url);
 		sds.setUsername(username);
 		sds.setPassword(password);
-		assertNotNull(sds.getReadOnlyConnection());
+		assertNotNull(sds.getReadOnlyConnection(null));
 		sds.close();
 	}
 
@@ -98,7 +98,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		DriverManager.registerDriver(driver);
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
-			sds.getReadOnlyConnection();
+			sds.getReadOnlyConnection(null);
 			sds.close();
 		} finally {
 			DriverManager.deregisterDriver(driver);
@@ -118,7 +118,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		DriverManager.registerDriver(driver);
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
-			assertNotNull(sds.getReadOnlyConnection());
+			assertNotNull(sds.getReadOnlyConnection(null));
 			sds.close();
 			verify(driver, conn);
 		} finally {
@@ -146,8 +146,8 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		DriverManager.registerDriver(driver);
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
-			assertNotNull(sds.getReadOnlyConnection());
-			sds.getReadOnlyConnection();
+			assertNotNull(sds.getReadOnlyConnection(null));
+			sds.getReadOnlyConnection(null);
 			sds.close();
 			fail("Should not get here");
 		} finally {
@@ -173,14 +173,14 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	@Test(expected = SQLException.class)
 	public void testGetReadOnlyConnectionBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.getReadOnlyConnection();
+		sds.getReadOnlyConnection(null);
 		sds.close();
 	}
 
 	@Test(expected = SQLException.class)
 	public void testGetReadWriteConnectionBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.getReadWriteConnection();
+		sds.getReadWriteConnection(null);
 		sds.close();
 	}
 
@@ -208,8 +208,8 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	@Test
 	public void testSaveAndClear() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource("jdbc:h2:mem:baz");
-		DatabaseConnection conn1 = sds.getReadOnlyConnection();
-		DatabaseConnection conn2 = sds.getReadOnlyConnection();
+		DatabaseConnection conn1 = sds.getReadOnlyConnection(null);
+		DatabaseConnection conn2 = sds.getReadOnlyConnection(null);
 		assertSame(conn1, conn2);
 		sds.saveSpecialConnection(conn1);
 		sds.clearSpecialConnection(conn1);
@@ -231,10 +231,10 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 	public void testIsOpen() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource("jdbc:h2:mem:baz");
 		// no get connection yet
-		assertFalse(sds.isOpen());
-		sds.releaseConnection(sds.getReadOnlyConnection());
-		assertTrue(sds.isOpen());
+		assertFalse(sds.isOpen(null));
+		sds.releaseConnection(sds.getReadOnlyConnection(null));
+		assertTrue(sds.isOpen(null));
 		sds.close();
-		assertFalse(sds.isOpen());
+		assertFalse(sds.isOpen(null));
 	}
 }

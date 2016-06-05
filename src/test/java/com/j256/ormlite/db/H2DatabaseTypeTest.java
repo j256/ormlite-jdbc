@@ -54,7 +54,7 @@ public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		System.setProperty("h2.socketConnectRetry", "0");
 		String dbUrl = "jdbc:h2:tcp://localhost:" + notTheRightPort + "/" + dbDir.getPath() + "/" + DATABASE_NAME;
 		connectionSource = new JdbcConnectionSource(dbUrl);
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(null);
 		try {
 			DatabaseTypeUtils.createDatabaseType(dbUrl);
 		} finally {
