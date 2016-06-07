@@ -179,6 +179,11 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	}
 
 	@Override
+	public Object getObject(int columnIndex) throws SQLException {
+		return resultSet.getObject(columnIndex + 1);
+	}
+
+	@Override
 	public boolean wasNull(int columnIndex) throws SQLException {
 		return resultSet.wasNull();
 	}
