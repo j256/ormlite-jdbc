@@ -301,7 +301,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		DatabaseResults results = null;
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
-			results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache, false);
+			results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache, true);
 			logger.trace("{} statement is prepared and executed: {}", label, statement);
 			if (!results.first()) {
 				// no results at all
