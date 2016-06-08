@@ -26,7 +26,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 		expect(preparedStatement.getMetaData()).andReturn(metadata);
 		preparedStatement.close();
 		replay(metadata, preparedStatement);
-		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
+		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT, false);
 		assertEquals("TEST_COLUMN1", stmt.getColumnName(0));
 		stmt.close();
 		verify(preparedStatement, metadata);
@@ -38,7 +38,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 		expect(preparedStatement.getMoreResults()).andReturn(Boolean.TRUE);
 		preparedStatement.close();
 		replay(preparedStatement);
-		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
+		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT, false);
 		stmt.getMoreResults();
 		stmt.close();
 		verify(preparedStatement);
@@ -51,7 +51,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 		EasyMock.expectLastCall();
 		preparedStatement.close();
 		replay(preparedStatement);
-		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
+		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT, false);
 		stmt.setObject(0, null, SqlType.STRING);
 		stmt.close();
 		verify(preparedStatement);
@@ -60,7 +60,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testExecuteUpdateWithSelectType() throws Exception {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT);
+		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.SELECT, false);
 		stmt.runUpdate();
 		stmt.close();
 	}
@@ -68,7 +68,7 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testExecuteQueryWithNonSelectType() throws Exception {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
-		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.EXECUTE);
+		JdbcCompiledStatement stmt = new JdbcCompiledStatement(preparedStatement, StatementType.EXECUTE, false);
 		stmt.runQuery(null);
 		stmt.close();
 	}

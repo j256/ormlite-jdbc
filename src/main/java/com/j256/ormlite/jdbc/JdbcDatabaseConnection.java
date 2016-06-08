@@ -134,13 +134,12 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	@Override
 	public CompiledStatement compileStatement(String statement, StatementType type, FieldType[] argFieldTypes,
-			int resultFlags) throws SQLException {
+			int resultFlags, boolean cacheStore) throws SQLException {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
 		}
-		JdbcCompiledStatement compiledStatement =
-				new JdbcCompiledStatement(connection.prepareStatement(statement, resultFlags,
-						ResultSet.CONCUR_READ_ONLY), type);
+		JdbcCompiledStatement compiledStatement = new JdbcCompiledStatement(
+				connection.prepareStatement(statement, resultFlags, ResultSet.CONCUR_READ_ONLY), type, cacheStore);
 		logger.trace("compiled statement: {}", statement);
 		return compiledStatement;
 	}
@@ -302,7 +301,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		DatabaseResults results = null;
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
-			results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache);
+			results = new JdbcDatabaseResults(stmt, stmt.executeQuery(), objectCache, false);
 			logger.trace("{} statement is prepared and executed: {}", label, statement);
 			if (!results.first()) {
 				// no results at all
@@ -327,21 +326,22 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			throws SQLException {
 		int typeVal = metaData.getColumnType(columnIndex);
 		switch (typeVal) {
-			case Types.BIGINT :
-			case Types.DECIMAL :
-			case Types.NUMERIC :
+			case Types.BIGINT:
+			case Types.DECIMAL:
+			case Types.NUMERIC:
 				return (Number) resultSet.getLong(columnIndex);
-			case Types.INTEGER :
+			case Types.INTEGER:
 				return (Number) resultSet.getInt(columnIndex);
-			default :
+			default:
 				String columnName = metaData.getColumnName(columnIndex);
-				throw new SQLException("Unexpected ID column type " + TypeValMapper.getSqlTypeForTypeVal(typeVal)
-						+ " (typeVal " + typeVal + ") in column " + columnName + "(#" + columnIndex
-						+ ") is not a number");
+				throw new SQLException(
+						"Unexpected ID column type " + TypeValMapper.getSqlTypeForTypeVal(typeVal) + " (typeVal "
+								+ typeVal + ") in column " + columnName + "(#" + columnIndex + ") is not a number");
 		}
 	}
 
-	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes) throws SQLException {
+	private void statementSetArgs(PreparedStatement stmt, Object[] args, FieldType[] argFieldTypes)
+			throws SQLException {
 		if (args == null) {
 			return;
 		}

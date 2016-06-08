@@ -21,11 +21,13 @@ public class JdbcCompiledStatement implements CompiledStatement {
 
 	private final PreparedStatement preparedStatement;
 	private final StatementType type;
+	private final boolean cacheStore;
 	private ResultSetMetaData metaData = null;
 
-	public JdbcCompiledStatement(PreparedStatement preparedStatement, StatementType type) {
+	public JdbcCompiledStatement(PreparedStatement preparedStatement, StatementType type, boolean cacheStore) {
 		this.preparedStatement = preparedStatement;
 		this.type = type;
+		this.cacheStore = cacheStore;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class JdbcCompiledStatement implements CompiledStatement {
 		if (!type.isOkForQuery()) {
 			throw new IllegalArgumentException("Cannot call query on a " + type + " statement");
 		}
-		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery(), objectCache);
+		return new JdbcDatabaseResults(preparedStatement, preparedStatement.executeQuery(), objectCache, cacheStore);
 	}
 
 	@Override
