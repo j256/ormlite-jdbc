@@ -15,16 +15,16 @@ import com.j256.ormlite.table.TableUtils;
  * Spring bean that auto-creates any tables that it finds DAOs for if the property name in
  * TableCreator.AUTO_CREATE_TABLES property has been set to true. It will also auto-drop any tables that were
  * auto-created if the property name in TableCreator.AUTO_DROP_TABLES property has been set to true.
- * 
+ *
  * <p>
  * <b> NOTE: </b> If you are using the Spring type wiring in Java, {@link #initialize} should be called after all of the
  * set methods. In Spring XML, init-method="initialize" should be used.
  * </p>
- * 
+ *
  * <p>
  * Here is an example of spring wiring.
  * </p>
- * 
+ *
  * <pre>
  * &lt;!-- our database type factory-bean --&gt;
  * &lt;bean id="tableCreator" class="com.j256.ormlite.spring.TableCreator" init-method="initialize"&gt;
@@ -37,7 +37,7 @@ import com.j256.ormlite.table.TableUtils;
  * 	&lt;/property&gt;
  * &lt;/bean&gt;
  * </pre>
- * 
+ *
  * @author graywatson
  */
 public class TableCreator {
@@ -47,7 +47,7 @@ public class TableCreator {
 
 	private ConnectionSource connectionSource;
 	private List<Dao<?, ?>> configuredDaos;
-	private Set<DatabaseTableConfig<?>> createdClasses = new HashSet<DatabaseTableConfig<?>>();
+	private final Set<DatabaseTableConfig<?>> createdClasses = new HashSet<DatabaseTableConfig<?>>();
 
 	public TableCreator() {
 		// for spring
@@ -60,6 +60,9 @@ public class TableCreator {
 
 	/**
 	 * Possibly create the tables is the {@link #AUTO_CREATE_TABLES} system property is set to "true".
+	 *
+	 * @throws SQLException
+	 *	Throws a SQLException on error.
 	 */
 	public void maybeCreateTables() throws SQLException {
 		initialize();
@@ -67,6 +70,9 @@ public class TableCreator {
 
 	/**
 	 * If you are using the Spring type wiring, this should be called after all of the set methods.
+	 *
+	 * @throws SQLException
+	 *	Throws a SQLException on error.
 	 */
 	public void initialize() throws SQLException {
 		if (!Boolean.parseBoolean(System.getProperty(AUTO_CREATE_TABLES))) {

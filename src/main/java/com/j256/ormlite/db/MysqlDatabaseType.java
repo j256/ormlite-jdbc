@@ -6,14 +6,14 @@ import com.j256.ormlite.field.FieldType;
 
 /**
  * MySQL database type information used to create the tables, etc..
- * 
+ *
  * <p>
  * <b>NOTE:</b> By default the tables are created with the ENGINE=InnoDB suffix (see
  * {@link #DEFAULT_CREATE_TABLE_SUFFIX}. Use {@link #setCreateTableSuffix} to change that to "" to use the default
  * MyISAM storage engine, to choose another engine, or set other settings. For more information about engines, see the
  * 'SHOW ENGINES;' results from the MySQL command line tool.
  * </p>
- * 
+ *
  * @author graywatson
  */
 public class MysqlDatabaseType extends BaseDatabaseType {
@@ -46,6 +46,9 @@ public class MysqlDatabaseType extends BaseDatabaseType {
 
 	/**
 	 * Set the string that is appended to the end of a CREATE TABLE statement.
+	 *
+	 * @param createTableSuffix
+         *             New string to be set.
 	 */
 	public void setCreateTableSuffix(String createTableSuffix) {
 		this.createTableSuffix = createTableSuffix;
