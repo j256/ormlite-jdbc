@@ -193,7 +193,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 		if (!initialized) {
 			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
 		}
-		// noop right now
+		close();
 	}
 
 	@Override
