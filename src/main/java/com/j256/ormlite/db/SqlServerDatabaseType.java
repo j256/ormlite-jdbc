@@ -106,10 +106,21 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	public void appendEscapedEntityName(StringBuilder sb, String name) {
-		sb.append('\"').append(name).append('\"');
+    public void appendEscapedEntityName(final StringBuilder sb,
+            final String name) {
+        String[] names = name.split("\\.");
+        appendEscapedEntityNamePart(sb, names[0]);
+        for (int i = 1; i < names.length; i++) {
+            sb.append('.');
+            appendEscapedEntityNamePart(sb, names[i]);
+        }
+    }
+	
+	private void appendEscapedEntityNamePart(final StringBuilder sb,
+			final String name) {
+		sb.append('[').append(name).append(']');
 	}
-
+	
 	@Override
 	public boolean isLimitAfterSelect() {
 		return true;

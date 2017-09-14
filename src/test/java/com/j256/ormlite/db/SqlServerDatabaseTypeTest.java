@@ -35,9 +35,18 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testEscapedEntityName() {
 		String word = "word";
-		assertEquals("\"" + word + "\"", TestUtils.appendEscapedEntityName(databaseType, word));
+		assertEquals("[" + word + "]", TestUtils.appendEscapedEntityName(databaseType, word));
 	}
 
+	@Test
+	public void testMultipartEscapedEntityName() {
+		String firstPart = "firstPart";
+		String secondPart = "secondPart";
+		String input = firstPart + "." + secondPart;
+		String expected = "[" + firstPart + "].[" + secondPart + "]";
+		assertEquals(expected, TestUtils.appendEscapedEntityName(databaseType, input));
+	}
+	
 	@Override
 	@Test
 	public void testLimitAfterSelect() {
