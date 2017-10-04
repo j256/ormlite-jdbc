@@ -149,6 +149,26 @@ public class ManyToManyMain {
 	/*
 	 * Convenience methods to build and run our prepared queries.
 	 */
+	
+	private List<Post> lookupPostsForUser_simple(User user) throws SQLException {
+		/*
+		 * queryForEq return UserPost objects, which contain only post.id and user.id, not other information.
+		 * Thats why we should to get every Post object by id from postDao.
+		 */
+		
+		List<UserPost> listOfUserPost = userPostDao.queryForEq(UserPost.USER_ID_FIELD_NAME, user);
+			
+		if (listOfUserPost == null || listOfUserPost.isEmpty()) {
+            		return null;
+		}
+		
+		List<Post> listOfPosts = new List<Post>();
+		for(UserPost up: listOfUserPost) {
+			Post p = postDao.queryForId(up.post.id);
+			listOfPosts.add(p);
+		}
+		return listOfPosts;		
+	}
 
 	private PreparedQuery<Post> postsForUserQuery = null;
 	private PreparedQuery<User> usersForPostQuery = null;
