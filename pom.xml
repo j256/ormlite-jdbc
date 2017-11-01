@@ -103,7 +103,7 @@
 				<repository>
 					<id>j256.com-snapshot</id>
 					<url>s3://j256.com/maven/snapshot</url>
-					<snapshots>
+					<snapshots> 
 						<enabled>true</enabled>
 					</snapshots>
 				</repository>
