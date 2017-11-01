@@ -4,6 +4,8 @@ machine:
     version: openjdk7
 
 test:
+  override:
+    - mvn -U surefire:test
   post:
     - mvn jacoco:report
     - bash <(curl -s https://codecov.io/bash)
