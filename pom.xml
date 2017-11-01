@@ -93,6 +93,22 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>testing</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<snapshotRepository>
+					<id>j256.com</id>
+					<url>s3://j256.com/maven/snapshot</url>
+				</snapshotRepository>
+				<repository>
+					<id>j256.com</id>
+					<url>s3://j256.com/maven/release</url>
+				</repository>
+			</repositories>
+		</profile>
 	</profiles>
 	<build>
 		<finalName>ormlite-jdbc</finalName>
