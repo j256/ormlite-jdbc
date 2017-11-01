@@ -101,14 +101,14 @@
 			</activation>
 			<repositories>
 				<repository>
-					<id>j256.com</id>
+					<id>j256.com-snapshot</id>
 					<url>s3://j256.com/maven/snapshot</url>
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
 				</repository>
 				<repository>
-					<id>j256.com</id>
+					<id>j256.com-release</id>
 					<url>s3://j256.com/maven/release</url>
 					<snapshots>
 						<enabled>false</enabled>
