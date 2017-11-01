@@ -5,7 +5,7 @@ machine:
 
 test:
   override:
-    - mvn -U surefire:test
+    - mvn -U test
   post:
     - mvn jacoco:report
     - bash <(curl -s https://codecov.io/bash)
