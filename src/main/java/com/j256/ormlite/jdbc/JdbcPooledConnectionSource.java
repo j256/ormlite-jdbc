@@ -353,7 +353,7 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 			logger.trace("tested connection {}, got {}", connMetaData, result);
 			return true;
 		} catch (Exception e) {
-			logger.debug(e, "testing connection {} threw exception: {}", connMetaData, e);
+			logger.debug(e, "testing connection {} threw exception", connMetaData);
 			return false;
 		}
 	}
