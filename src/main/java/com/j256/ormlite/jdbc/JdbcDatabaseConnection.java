@@ -123,6 +123,11 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	@Override
+	public void releaseSavePoint(Savepoint savePoint) throws SQLException {
+		connection.releaseSavepoint(savePoint);
+	}
+
+	@Override
 	public int executeStatement(String statementStr, int resultFlags) throws SQLException {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
