@@ -46,7 +46,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		String expected = "[" + firstPart + "].[" + secondPart + "]";
 		assertEquals(expected, TestUtils.appendEscapedEntityName(databaseType, input));
 	}
-	
+
 	@Override
 	@Test
 	public void testLimitAfterSelect() {

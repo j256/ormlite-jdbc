@@ -522,7 +522,8 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		assertEquals(foo1, results.get(0));
 		assertEquals(foo2, results.get(1));
 
-		qb = fooDao.queryBuilder();;
+		qb = fooDao.queryBuilder();
+		;
 		qb.orderBy(Foo.VAL_COLUMN_NAME, false);
 		results = fooDao.query(qb.prepare());
 		assertEquals(2, results.size());
@@ -530,7 +531,8 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		assertEquals(foo1, results.get(1));
 
 		// should be the same order
-		qb = fooDao.queryBuilder();;
+		qb = fooDao.queryBuilder();
+		;
 		qb.orderBy(Foo.EQUAL_COLUMN_NAME, false);
 		qb.orderBy(Foo.VAL_COLUMN_NAME, false);
 		results = fooDao.query(qb.prepare());
@@ -760,13 +762,12 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	@Test
 	public void testWherePrepare() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
-		List<Foo> results =
-				fooDao.query(fooDao.queryBuilder()
-						.where()
-						.eq(Foo.ID_COLUMN_NAME, foo1.id)
-						.and()
-						.eq(Foo.VAL_COLUMN_NAME, foo1.val)
-						.prepare());
+		List<Foo> results = fooDao.query(fooDao.queryBuilder()
+				.where()
+				.eq(Foo.ID_COLUMN_NAME, foo1.id)
+				.and()
+				.eq(Foo.VAL_COLUMN_NAME, foo1.val)
+				.prepare());
 		assertEquals(1, results.size());
 		assertEquals(foo1, results.get(0));
 	}
@@ -1138,19 +1139,23 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		public int equal;
 		@DatabaseField(columnName = NULL_COLUMN_NAME)
 		public String nullField;
+
 		public Foo() {
 			// for ormlite
 		}
+
 		@Override
 		public String toString() {
 			return "Foo:" + id;
 		}
+
 		@Override
 		public boolean equals(Object other) {
 			if (other == null || other.getClass() != getClass())
 				return false;
 			return id.equals(((Foo) other).id);
 		}
+
 		@Override
 		public int hashCode() {
 			return id.hashCode();
@@ -1177,6 +1182,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(columnName = VAL_FIELD)
 		int val;
+
 		public Bar() {
 		}
 	}
@@ -1191,6 +1197,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		int val;
 		@DatabaseField(foreign = true, columnName = BAR_FIELD)
 		Bar bar;
+
 		public Baz() {
 		}
 	}
@@ -1202,6 +1209,7 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(foreign = true, columnName = BAZ_FIELD)
 		Baz baz;
+
 		public Bing() {
 		}
 	}

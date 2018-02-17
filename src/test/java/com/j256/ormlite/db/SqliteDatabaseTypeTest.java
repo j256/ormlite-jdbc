@@ -137,6 +137,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		public long id;
 		@DatabaseField
 		String other;
+
 		public GeneratedIdLong() {
 		}
 	}
@@ -144,6 +145,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	protected static class SerialField {
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		SerializedThing other;
+
 		public SerialField() {
 		}
 	}
@@ -152,6 +154,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		private static final long serialVersionUID = -7989929665216767119L;
 		@DatabaseField
 		String other;
+
 		public SerializedThing() {
 		}
 	}

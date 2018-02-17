@@ -15,8 +15,8 @@ public class DerbyClientServerDatabaseTypeTest extends DerbyEmbeddedDatabaseType
 
 	@Test
 	public void testIsDatabaseUrlThisType() {
-		assertTrue(new DerbyClientServerDatabaseType().isDatabaseUrlThisType(
-				"jdbc:derby://localhost:1527/MyDbTest;create=true';", "derby"));
+		assertTrue(new DerbyClientServerDatabaseType()
+				.isDatabaseUrlThisType("jdbc:derby://localhost:1527/MyDbTest;create=true';", "derby"));
 		assertFalse(new DerbyClientServerDatabaseType().isDatabaseUrlThisType("jdbc:derby:database", "derby"));
 	}
 }

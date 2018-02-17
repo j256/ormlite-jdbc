@@ -119,9 +119,8 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequenceAutoName, Integer>(connectionSource, null,
-						GeneratedIdSequenceAutoName.class);
+		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo = new TableInfo<GeneratedIdSequenceAutoName, Integer>(
+				connectionSource, null, GeneratedIdSequenceAutoName.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		StringBuilder sb = new StringBuilder();
@@ -129,10 +128,10 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		databaseType.appendColumnArg(null, sb, idField, additionalArgs, statementsBefore, null, queriesAfter);
-		databaseType.addPrimaryKeySql(new FieldType[] { idField }, additionalArgs, statementsBefore, null, queriesAfter);
-		String seqName =
-				databaseType.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(),
-						idField);
+		databaseType.addPrimaryKeySql(new FieldType[] { idField }, additionalArgs, statementsBefore, null,
+				queriesAfter);
+		String seqName = databaseType
+				.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(), idField);
 		assertTrue(sb.toString().contains(" DEFAULT NEXTVAL('\"" + seqName + "\"')"));
 		assertEquals(1, statementsBefore.size());
 		assertTrue(statementsBefore.get(0).contains(seqName));

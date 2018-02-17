@@ -42,9 +42,8 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 		public WrappedJdbcConnection(DatabaseConnection databaseConnection, Connection connection) {
 			this.databaseConnection = databaseConnection;
 			this.connection = connection;
-			this.connectionProxy =
-					(Connection) Proxy.newProxyInstance(getClass().getClassLoader(),
-							new Class<?>[] { Connection.class }, this);
+			this.connectionProxy = (Connection) Proxy.newProxyInstance(getClass().getClassLoader(),
+					new Class<?>[] { Connection.class }, this);
 		}
 
 		@Override
@@ -97,9 +96,8 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 
 		public WrappedPreparedStatement(PreparedStatement preparedStatment) {
 			this.preparedStatment = preparedStatment;
-			this.statementProxy =
-					Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { PreparedStatement.class },
-							this);
+			this.statementProxy = Proxy.newProxyInstance(getClass().getClassLoader(),
+					new Class<?>[] { PreparedStatement.class }, this);
 		}
 
 		public PreparedStatement getPreparedStatement() {

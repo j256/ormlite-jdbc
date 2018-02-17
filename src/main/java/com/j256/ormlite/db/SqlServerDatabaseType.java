@@ -47,11 +47,11 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 	public FieldConverter getFieldConverter(DataPersister dataType, FieldType fieldType) {
 		// we are only overriding certain types
 		switch (dataType.getSqlType()) {
-			case BOOLEAN :
+			case BOOLEAN:
 				return booleanConverter;
-			case BYTE :
+			case BYTE:
 				return byteConverter;
-			default :
+			default:
 				return super.getFieldConverter(dataType, fieldType);
 		}
 	}
@@ -106,21 +106,19 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-    public void appendEscapedEntityName(final StringBuilder sb,
-            final String name) {
-        String[] names = name.split("\\.");
-        appendEscapedEntityNamePart(sb, names[0]);
-        for (int i = 1; i < names.length; i++) {
-            sb.append('.');
-            appendEscapedEntityNamePart(sb, names[i]);
-        }
-    }
-	
-	private void appendEscapedEntityNamePart(final StringBuilder sb,
-			final String name) {
+	public void appendEscapedEntityName(final StringBuilder sb, final String name) {
+		String[] names = name.split("\\.");
+		appendEscapedEntityNamePart(sb, names[0]);
+		for (int i = 1; i < names.length; i++) {
+			sb.append('.');
+			appendEscapedEntityNamePart(sb, names[i]);
+		}
+	}
+
+	private void appendEscapedEntityNamePart(final StringBuilder sb, final String name) {
 		sb.append('[').append(name).append(']');
 	}
-	
+
 	@Override
 	public boolean isLimitAfterSelect() {
 		return true;
@@ -170,15 +168,18 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 			// store it as a short
 			return SqlType.BYTE;
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) {
 			return Short.parseShort(defaultStr);
 		}
+
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			// starts as a short and then gets converted to a byte on the way out
 			return results.getShort(columnPos);
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlObject, int columnPos) {
 			short shortVal = (Short) sqlObject;
@@ -191,12 +192,14 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 				return (byte) shortVal;
 			}
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			// convert the Byte arg to be a short
 			byte byteVal = (Byte) javaObject;
 			return (short) byteVal;
 		}
+
 		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 			return sqlArgToJava(fieldType, Short.parseShort(stringValue), columnPos);

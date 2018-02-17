@@ -88,7 +88,7 @@ public class OracleDatabaseType extends BaseDatabaseType {
 	@Override
 	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
 		switch (dataPersister.getSqlType()) {
-			case BOOLEAN :
+			case BOOLEAN:
 				/*
 				 * Booleans in Oracle are stored as the character '1' or '0'. You can change the characters by
 				 * specifying a format string. It must be a string with 2 characters. The first character is the value
@@ -102,7 +102,7 @@ public class OracleDatabaseType extends BaseDatabaseType {
 				} else {
 					return DataType.BOOLEAN_CHAR.getDataPersister();
 				}
-			default :
+			default:
 				return super.getFieldConverter(dataPersister, fieldType);
 		}
 	}

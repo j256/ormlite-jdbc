@@ -147,6 +147,7 @@ public class JdbcTransactionManagerTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		Foo() {
 			// for ormlite
 		}

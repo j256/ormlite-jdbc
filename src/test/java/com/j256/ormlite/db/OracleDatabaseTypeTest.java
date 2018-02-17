@@ -96,9 +96,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedIdSequenceAutoName() throws Exception {
-		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequenceAutoName, Integer>(connectionSource, null,
-						GeneratedIdSequenceAutoName.class);
+		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo = new TableInfo<GeneratedIdSequenceAutoName, Integer>(
+				connectionSource, null, GeneratedIdSequenceAutoName.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		StringBuilder sb = new StringBuilder();
@@ -106,9 +105,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		List<String> statementsBefore = new ArrayList<String>();
 		databaseType.appendColumnArg(null, sb, idField, additionalArgs, statementsBefore, null, null);
 		assertEquals(1, statementsBefore.size());
-		String seqName =
-				databaseType.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(),
-						idField);
+		String seqName = databaseType
+				.generateIdSequenceName(GeneratedIdSequenceAutoName.class.getSimpleName().toLowerCase(), idField);
 		assertTrue(statementsBefore.get(0).contains(seqName));
 		assertEquals(0, additionalArgs.size());
 	}

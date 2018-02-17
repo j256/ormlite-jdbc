@@ -385,10 +385,12 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	private static class InsertCallable implements Callable<Void> {
 		private int numItems;
 		private Dao<Foo, Integer> fooDao;
+
 		public InsertCallable(int numItems, Dao<Foo, Integer> fooDao) {
 			this.numItems = numItems;
 			this.fooDao = fooDao;
 		}
+
 		@Override
 		public Void call() throws Exception {
 			for (int i = 0; i < numItems; i++) {
@@ -2644,10 +2646,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		for (EagerOrder order : account2.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
 			}
@@ -2680,16 +2682,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		for (EagerOrder order : account2.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
-				case 3 :
+				case 3:
 					assertEquals(val3, order.val);
 					break;
-				case 4 :
+				case 4:
 					assertEquals(val4, order.val);
 					break;
 			}
@@ -2726,10 +2728,10 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		for (LazyOrder order : account2.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
 			}
@@ -2746,13 +2748,13 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		for (LazyOrder order : account2.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
-				case 3 :
+				case 3:
 					assertEquals(val3, order.val);
 					break;
 			}
@@ -2771,16 +2773,16 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		for (LazyOrder order : account2.orders) {
 			orderC++;
 			switch (orderC) {
-				case 1 :
+				case 1:
 					assertEquals(val1, order.val);
 					break;
-				case 2 :
+				case 2:
 					assertEquals(val2, order.val);
 					break;
-				case 3 :
+				case 3:
 					assertEquals(val3, order.val);
 					break;
-				case 4 :
+				case 4:
 					assertEquals(val4, order.val);
 					break;
 			}
@@ -3676,17 +3678,19 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	private String buildFooQueryAllString(Dao<Foo, Object> fooDao) throws SQLException {
-		String queryString =
-				fooDao.queryBuilder()
-						.selectColumns(Foo.ID_FIELD_NAME, Foo.STUFF_FIELD_NAME, Foo.VAL_FIELD_NAME)
-						.prepareStatementString();
+		String queryString = fooDao.queryBuilder()
+				.selectColumns(Foo.ID_FIELD_NAME, Foo.STUFF_FIELD_NAME, Foo.VAL_FIELD_NAME)
+				.prepareStatementString();
 		return queryString;
 	}
 
 	private interface TestableType<ID> {
 		String getStuff();
+
 		void setStuff(String stuff);
+
 		ID getId();
+
 		void setId(ID id);
 	}
 
@@ -3721,18 +3725,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public String stuff;
 		@DatabaseField(columnName = VAL_FIELD_NAME)
 		public int val;
+
 		public Foo() {
 		}
+
 		@Override
 		public boolean equals(Object other) {
 			if (other == null || other.getClass() != getClass())
 				return false;
 			return id == ((Foo) other).id;
 		}
+
 		@Override
 		public int hashCode() {
 			return id;
 		}
+
 		@Override
 		public String toString() {
 			return "Foo.id=" + id;
@@ -3747,6 +3755,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public String stuff;
 		@DatabaseField(columnName = Foo.VAL_FIELD_NAME)
 		public int val;
+
 		public NotQuiteFoo() {
 		}
 	}
@@ -3792,12 +3801,15 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int getId() {
 			return id;
 		}
+
 		public void setId(int id) {
 			this.id = id;
 		}
+
 		public String getStuff() {
 			return stuff;
 		}
+
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
 		}
@@ -3806,6 +3818,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class NoAnno {
 		public int id;
 		public String stuff;
+
 		public NoAnno() {
 		}
 	}
@@ -3813,6 +3826,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class NoAnnoFor {
 		public int id;
 		public NoAnno foreign;
+
 		public NoAnnoFor() {
 		}
 	}
@@ -3822,6 +3836,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		public GeneratedIdNotNull() {
 		}
 	}
@@ -3835,6 +3850,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	private static class DefaultValue {
 		@DatabaseField(defaultValue = DEFAULT_VALUE_STRING)
 		Integer intField;
+
 		DefaultValue() {
 		}
 	}
@@ -3842,6 +3858,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class NotNull {
 		@DatabaseField(canBeNull = false)
 		String notNull;
+
 		NotNull() {
 		}
 	}
@@ -3851,6 +3868,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField
 		String other;
+
 		public GeneratedId() {
 		}
 	}
@@ -3919,6 +3937,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		BigDecimal bigDecimal;
 		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC)
 		BigDecimal bigDecimalNumeric;
+
 		AllTypes() {
 		}
 	}
@@ -3969,6 +3988,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		OurEnum ourEnum;
 		@DatabaseField(defaultValue = DEFAULT_ENUM_NUMBER_VALUE, dataType = DataType.ENUM_INTEGER)
 		OurEnum ourEnumNumber;
+
 		AllTypesDefault() {
 		}
 	}
@@ -3978,6 +3998,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		boolean booleanField;
 		@DatabaseField(defaultValue = DEFAULT_BOOLEAN_VALUE)
 		Boolean booleanObj;
+
 		BooleanDefault() {
 		}
 	}
@@ -4007,6 +4028,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		SerialData objectField;
 		@DatabaseField
 		OurEnum ourEnum;
+
 		AllObjectTypes() {
 		}
 	}
@@ -4026,6 +4048,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public float floatField;
 		@DatabaseField
 		public double doubleField;
+
 		public NumberTypes() {
 		}
 	}
@@ -4033,6 +4056,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class StringWidth {
 		@DatabaseField(width = ALL_TYPES_STRING_WIDTH)
 		String stringField;
+
 		StringWidth() {
 		}
 	}
@@ -4060,6 +4084,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public String order;
 		@DatabaseField
 		public String values;
+
 		public ReservedField() {
 		}
 	}
@@ -4070,6 +4095,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField
 		String other;
+
 		public GeneratedColumnCapital() {
 		}
 	}
@@ -4081,6 +4107,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public SerialData obj;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public String strObj;
+
 		public ObjectHolder() {
 		}
 	}
@@ -4090,6 +4117,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		public ObjectHolder obj;
+
 		public NotSerializable() {
 		}
 	}
@@ -4097,14 +4125,17 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class SerialData implements Serializable {
 		private static final long serialVersionUID = -3883857119616908868L;
 		public Map<String, String> map;
+
 		public SerialData() {
 		}
+
 		public void addEntry(String key, String value) {
 			if (map == null) {
 				map = new HashMap<String, String>();
 			}
 			map.put(key, value);
 		}
+
 		@Override
 		public int hashCode() {
 			if (map == null) {
@@ -4113,6 +4144,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 				return map.hashCode();
 			}
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null || obj.getClass() != getClass()) {
@@ -4159,11 +4191,15 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 	private enum OurEnum {
 		FIRST,
-		SECOND, ;
+		SECOND,
+		// end
+		;
 	}
 
 	private enum OurEnum2 {
-		FIRST, ;
+		FIRST,
+		// end
+		;
 	}
 
 	@DatabaseTable(tableName = NULL_BOOLEAN_TABLE_NAME)
@@ -4258,18 +4294,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public String getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(String id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4282,18 +4322,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public String getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(String id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4306,18 +4350,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		boolean id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Boolean getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Boolean bool) {
 			this.id = bool;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4330,18 +4378,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Boolean id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Boolean getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Boolean bool) {
 			this.id = bool;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4354,18 +4406,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Date getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Date id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4378,18 +4434,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Date getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Date id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4402,18 +4462,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Date id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Date getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Date id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4426,18 +4490,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		byte id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Byte getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Byte id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4450,18 +4518,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Byte id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Byte getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Byte id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4474,18 +4546,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		short id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Short getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Short id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4498,18 +4574,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Short id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Short getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Short id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4522,18 +4602,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Integer getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Integer id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4546,18 +4630,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Integer id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Integer getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Integer id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4570,18 +4658,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		long id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Long getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Long id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4594,18 +4686,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Long id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Long getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Long id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4618,18 +4714,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		float id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Float getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Float id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4642,18 +4742,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Float id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Float getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Float id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4666,18 +4770,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		double id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Double getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Double id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4690,18 +4798,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		Double id;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public Double getId() {
 			return id;
 		}
+
 		@Override
 		public void setId(Double id) {
 			this.id = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4714,18 +4826,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		OurEnum ourEnum;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public OurEnum getId() {
 			return ourEnum;
 		}
+
 		@Override
 		public void setId(OurEnum id) {
 			this.ourEnum = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4738,18 +4854,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		OurEnum ourEnum;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public OurEnum getId() {
 			return ourEnum;
 		}
+
 		@Override
 		public void setId(OurEnum id) {
 			this.ourEnum = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4762,18 +4882,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		OurEnum ourEnum;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public OurEnum getId() {
 			return ourEnum;
 		}
+
 		@Override
 		public void setId(OurEnum id) {
 			this.ourEnum = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4786,18 +4910,22 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		SerialData serial;
 		@DatabaseField
 		String stuff;
+
 		@Override
 		public SerialData getId() {
 			return serial;
 		}
+
 		@Override
 		public void setId(SerialData id) {
 			this.serial = id;
 		}
+
 		@Override
 		public String getStuff() {
 			return stuff;
 		}
+
 		@Override
 		public void setStuff(String stuff) {
 			this.stuff = stuff;
@@ -4810,6 +4938,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(foreign = true)
 		Recursive foreign;
+
 		public Recursive() {
 		}
 	}
@@ -4820,6 +4949,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE)
 		byte[] bytes;
+
 		public SerializedBytes() {
 		}
 	}
@@ -4830,6 +4960,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(dataType = DataType.BYTE_ARRAY)
 		byte[] bytes;
+
 		public ByteArray() {
 		}
 	}
@@ -4840,6 +4971,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(index = true)
 		String stuff;
+
 		public Index() {
 		}
 	}
@@ -4851,6 +4983,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(index = true, columnName = STUFF_COLUMN_NAME)
 		String stuff;
+
 		public IndexColumnName() {
 		}
 	}
@@ -4861,6 +4994,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(uniqueIndex = true)
 		String stuff;
+
 		public UniqueIndex() {
 		}
 	}
@@ -4873,6 +5007,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String stuff;
 		@DatabaseField(indexName = "stuffjunk")
 		long junk;
+
 		public ComboIndex() {
 		}
 	}
@@ -4885,6 +5020,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String stuff;
 		@DatabaseField(uniqueIndexName = "stuffjunk")
 		long junk;
+
 		public ComboUniqueIndex() {
 		}
 	}
@@ -4895,6 +5031,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(dataType = DataType.LONG_STRING)
 		String stuff;
+
 		public LongVarChar() {
 		}
 	}
@@ -4902,6 +5039,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class Base {
 		@DatabaseField(id = true)
 		int id;
+
 		public Base() {
 			// for ormlite
 		}
@@ -4910,6 +5048,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class Sub extends Base {
 		@DatabaseField
 		String stuff;
+
 		public Sub() {
 			// for ormlite
 		}
@@ -4920,6 +5059,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public UUID id;
 		@DatabaseField
 		public String stuff;
+
 		public UuidGeneratedId() {
 		}
 	}
@@ -4929,6 +5069,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField
 		public String stuff;
+
 		public One() {
 		}
 	}
@@ -4938,6 +5079,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField(foreign = true)
 		public One one;
+
 		public ForeignDaoEnabled() {
 		}
 	}
@@ -4949,6 +5091,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String name;
 		@ForeignCollectionField(eager = true)
 		Collection<EagerOrder> orders;
+
 		protected EagerAccount() {
 		}
 	}
@@ -4960,6 +5103,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int val;
 		@DatabaseField(foreign = true)
 		EagerAccount account;
+
 		protected EagerOrder() {
 		}
 	}
@@ -4971,6 +5115,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		String name;
 		@ForeignCollectionField
 		Collection<LazyOrder> orders;
+
 		protected LazyAccount() {
 		}
 	}
@@ -4982,6 +5127,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int val;
 		@DatabaseField(foreign = true)
 		LazyAccount account;
+
 		protected LazyOrder() {
 		}
 	}
@@ -5015,6 +5161,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public Integer id;
 		@DatabaseField
 		public String stuff;
+
 		public CreateOrUpdateObjectId() {
 		}
 	}
@@ -5027,6 +5174,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int val;
 		@DatabaseField(foreign = true, columnName = ONE_FIELD_NAME)
 		One one;
+
 		protected Order() {
 		}
 	}
@@ -5051,6 +5199,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField(foreign = true, columnName = FOREIGN_COLUMN_NAME)
 		public Foo foo;
+
 		public Foreign() {
 		}
 	}
@@ -5060,6 +5209,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField(foreign = true, canBeNull = false)
 		public Foo foo;
+
 		public ForeignNotNull() {
 		}
 	}
@@ -5070,6 +5220,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC)
 		BigDecimal bigDecimalNumeric;
+
 		BigDecimalNumeric() {
 		}
 	}
@@ -5079,6 +5230,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(foreign = true, foreignColumnName = ForeignColumnNameForeign.FIELD_NAME)
 		ForeignColumnNameForeign foreign;
+
 		public ForeignColumnName() {
 		}
 	}
@@ -5089,6 +5241,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField
 		String name;
+
 		public ForeignColumnNameForeign() {
 		}
 	}
@@ -5098,6 +5251,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		int id;
 		@DatabaseField(version = true)
 		int version;
+
 		public VersionField() {
 		}
 	}
@@ -5105,6 +5259,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	protected static class FewFields {
 		@DatabaseField(generatedId = true)
 		int id;
+
 		public FewFields() {
 		}
 	}

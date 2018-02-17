@@ -59,8 +59,8 @@ public class DatabaseTypeUtils {
 		}
 		String[] urlParts = databaseUrl.split(":");
 		if (urlParts.length < 2) {
-			throw new IllegalArgumentException("Database URL was expected to be in the form: jdbc:db-type:... but was "
-					+ databaseUrl);
+			throw new IllegalArgumentException(
+					"Database URL was expected to be in the form: jdbc:db-type:... but was " + databaseUrl);
 		}
 		return urlParts[1];
 	}

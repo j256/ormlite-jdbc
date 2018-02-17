@@ -522,6 +522,7 @@ public class JdbcPooledConnectionSourceTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		public Foo() {
 		}
 	}

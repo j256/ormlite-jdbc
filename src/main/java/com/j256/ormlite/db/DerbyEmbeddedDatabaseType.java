@@ -58,22 +58,22 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	public FieldConverter getFieldConverter(DataPersister dataType, FieldType fieldType) {
 		// we are only overriding certain types
 		switch (dataType.getSqlType()) {
-			case BOOLEAN :
+			case BOOLEAN:
 				if (booleanConverter == null) {
 					booleanConverter = new BooleanNumberFieldConverter();
 				}
 				return booleanConverter;
-			case CHAR :
+			case CHAR:
 				if (charConverter == null) {
 					charConverter = new CharFieldConverter();
 				}
 				return charConverter;
-			case SERIALIZABLE :
+			case SERIALIZABLE:
 				if (serializableConverter == null) {
 					serializableConverter = new SerializableFieldConverter();
 				}
 				return serializableConverter;
-			default :
+			default:
 				return super.getFieldConverter(dataType, fieldType);
 		}
 	}
@@ -160,14 +160,17 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			throw new SQLException("Default values for serializable types are not supported");
 		}
+
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getBlobStream(columnPos);
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) throws SQLException {
 			InputStream stream = (InputStream) sqlArg;
@@ -180,6 +183,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 				IOUtils.closeQuietly(stream);
 			}
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -191,10 +195,12 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 			}
 			return new SerialBlob(outStream.toByteArray());
 		}
+
 		@Override
 		public boolean isStreamType() {
 			return true;
 		}
+
 		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) throws SQLException {
 			throw new SQLException("Parsing string value for serializable types is not supported");
@@ -209,28 +215,33 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 		public SqlType getSqlType() {
 			return SqlType.INTEGER;
 		}
+
 		@Override
 		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
 			char character = (char) (Character) javaObject;
 			return (int) character;
 		}
+
 		@Override
 		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
 			if (defaultStr.length() != 1) {
-				throw new SQLException("Problems with field " + fieldType + ", default string to long: '" + defaultStr
-						+ "'");
+				throw new SQLException(
+						"Problems with field " + fieldType + ", default string to long: '" + defaultStr + "'");
 			}
 			return (int) defaultStr.charAt(0);
 		}
+
 		@Override
 		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
 			return results.getInt(columnPos);
 		}
+
 		@Override
 		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
 			int intVal = (Integer) sqlArg;
 			return (char) intVal;
 		}
+
 		@Override
 		public Object resultStringToJava(FieldType fieldType, String stringValue, int columnPos) {
 			return sqlArgToJava(fieldType, Integer.parseInt(stringValue), columnPos);

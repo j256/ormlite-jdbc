@@ -182,6 +182,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		public int id;
 		@DatabaseField
 		String other;
+
 		public GeneratedId() {
 		}
 	}
@@ -191,6 +192,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		public int genId;
 		@DatabaseField
 		public String stuff;
+
 		protected GeneratedIdSequence() {
 		}
 	}
@@ -221,6 +223,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		float floatField;
 		@DatabaseField
 		double doubleField;
+
 		AllTypes() {
 		}
 	}

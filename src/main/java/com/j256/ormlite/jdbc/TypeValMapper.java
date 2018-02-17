@@ -20,62 +20,62 @@ public class TypeValMapper {
 		for (SqlType sqlType : SqlType.values()) {
 			int[] values;
 			switch (sqlType) {
-				case STRING :
+				case STRING:
 					values = new int[] { Types.VARCHAR };
 					break;
-				case LONG_STRING :
+				case LONG_STRING:
 					values = new int[] { Types.LONGVARCHAR };
 					break;
-				case DATE :
+				case DATE:
 					values = new int[] { Types.TIMESTAMP };
 					break;
-				case BOOLEAN :
+				case BOOLEAN:
 					values = new int[] { Types.BOOLEAN };
 					break;
-				case CHAR :
+				case CHAR:
 					values = new int[] { Types.CHAR };
 					break;
-				case BYTE :
+				case BYTE:
 					values = new int[] { Types.TINYINT };
 					break;
-				case BYTE_ARRAY :
+				case BYTE_ARRAY:
 					values = new int[] { Types.VARBINARY };
 					break;
-				case SHORT :
+				case SHORT:
 					values = new int[] { Types.SMALLINT };
 					break;
-				case INTEGER :
+				case INTEGER:
 					values = new int[] { Types.INTEGER };
 					break;
-				case LONG :
+				case LONG:
 					values = new int[] { Types.BIGINT };
 					break;
-				case FLOAT :
+				case FLOAT:
 					values = new int[] { Types.FLOAT };
 					break;
-				case DOUBLE :
+				case DOUBLE:
 					values = new int[] { Types.DOUBLE };
 					break;
-				case SERIALIZABLE :
+				case SERIALIZABLE:
 					values = new int[] { Types.VARBINARY };
 					break;
-				case BLOB :
+				case BLOB:
 					// the following do not need to be handled except in specific situations
 					values = new int[] { Types.BLOB };
 					break;
-				case BIG_DECIMAL :
+				case BIG_DECIMAL:
 					values = new int[] { Types.DECIMAL, Types.NUMERIC };
 					break;
-				case UUID :
+				case UUID:
 					values = new int[] { Types.OTHER };
 					break;
-				case OTHER :
+				case OTHER:
 					values = new int[] { Types.OTHER };
 					break;
-				case UNKNOWN :
+				case UNKNOWN:
 					values = new int[] {};
 					break;
-				default :
+				default:
 					throw new IllegalArgumentException("No JDBC mapping for unknown SqlType " + sqlType);
 			}
 			typeToValMap.put(sqlType, values);

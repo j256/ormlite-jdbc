@@ -27,17 +27,16 @@ public class JdbcRawResultsImplTest extends BaseJdbcTest {
 		final String idName = "SOME_ID";
 		final String valName = "SOME_VAL";
 		final AtomicBoolean gotResult = new AtomicBoolean(false);
-		GenericRawResults<Object> results =
-				dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo",
-						new RawRowMapper<Object>() {
-							@Override
-							public Object mapRow(String[] columnNames, String[] resultColumns) {
-								assertEquals(idName, columnNames[0]);
-								assertEquals(valName, columnNames[1]);
-								gotResult.set(true);
-								return new Object();
-							}
-						});
+		GenericRawResults<Object> results = dao.queryRaw("select id as " + idName + ", val as " + valName + " from foo",
+				new RawRowMapper<Object>() {
+					@Override
+					public Object mapRow(String[] columnNames, String[] resultColumns) {
+						assertEquals(idName, columnNames[0]);
+						assertEquals(valName, columnNames[1]);
+						gotResult.set(true);
+						return new Object();
+					}
+				});
 		List<Object> list = results.getResults();
 		assertNotNull(list);
 		assertEquals(1, list.size());
