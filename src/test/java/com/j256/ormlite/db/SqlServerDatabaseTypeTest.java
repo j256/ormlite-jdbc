@@ -62,7 +62,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		Dao<StringId, String> dao;
 		try {
 			connectionSource.setDatabaseType(databaseType);
-			dao = createDao(StringId.class, true);
+			dao = createDao(StringId.class, false);
 		} finally {
 			connectionSource.setDatabaseType(new H2DatabaseType());
 		}
