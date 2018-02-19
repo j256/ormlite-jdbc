@@ -8,6 +8,7 @@ import java.util.Date;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
@@ -58,10 +59,11 @@ public class FieldConfigMain {
 	 */
 	private void setupDatabase(ConnectionSource connectionSource) throws Exception {
 
-		DatabaseTableConfig<Account> accountTableConfig = buildAccountTableConfig();
+		DatabaseType databaseType = connectionSource.getDatabaseType();
+		DatabaseTableConfig<Account> accountTableConfig = buildAccountTableConfig(databaseType);
 		accountDao = DaoManager.createDao(connectionSource, accountTableConfig);
 
-		DatabaseTableConfig<Delivery> deliveryTableConfig = buildDeliveryTableConfig(accountTableConfig);
+		DatabaseTableConfig<Delivery> deliveryTableConfig = buildDeliveryTableConfig(databaseType, accountTableConfig);
 		deliveryDao = DaoManager.createDao(connectionSource, deliveryTableConfig);
 
 		// if you need to create the table
@@ -69,7 +71,7 @@ public class FieldConfigMain {
 		TableUtils.createTable(connectionSource, deliveryTableConfig);
 	}
 
-	private DatabaseTableConfig<Account> buildAccountTableConfig() {
+	private DatabaseTableConfig<Account> buildAccountTableConfig(DatabaseType databaseType) {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		DatabaseFieldConfig fieldConfig = new DatabaseFieldConfig("id");
 		fieldConfig.setGeneratedId(true);
@@ -78,11 +80,13 @@ public class FieldConfigMain {
 		fieldConfig = new DatabaseFieldConfig("password");
 		fieldConfig.setCanBeNull(true);
 		fieldConfigs.add(fieldConfig);
-		DatabaseTableConfig<Account> tableConfig = new DatabaseTableConfig<Account>(Account.class, fieldConfigs);
+		DatabaseTableConfig<Account> tableConfig =
+				new DatabaseTableConfig<Account>(databaseType, Account.class, fieldConfigs);
 		return tableConfig;
 	}
 
-	private DatabaseTableConfig<Delivery> buildDeliveryTableConfig(DatabaseTableConfig<Account> accountTableConfig) {
+	private DatabaseTableConfig<Delivery> buildDeliveryTableConfig(DatabaseType databaseType,
+			DatabaseTableConfig<Account> accountTableConfig) {
 		ArrayList<DatabaseFieldConfig> fieldConfigs = new ArrayList<DatabaseFieldConfig>();
 		DatabaseFieldConfig fieldConfig = new DatabaseFieldConfig("id");
 		fieldConfig.setGeneratedId(true);
@@ -93,7 +97,8 @@ public class FieldConfigMain {
 		fieldConfig.setForeign(true);
 		fieldConfig.setForeignTableConfig(accountTableConfig);
 		fieldConfigs.add(fieldConfig);
-		DatabaseTableConfig<Delivery> tableConfig = new DatabaseTableConfig<Delivery>(Delivery.class, fieldConfigs);
+		DatabaseTableConfig<Delivery> tableConfig =
+				new DatabaseTableConfig<Delivery>(databaseType, Delivery.class, fieldConfigs);
 		return tableConfig;
 	}
 

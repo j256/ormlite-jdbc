@@ -844,7 +844,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		field2.setColumnName("stuffy");
 		noAnnotationsFieldConfigs.add(field2);
 		DatabaseTableConfig<NoAnno> noAnnotationsTableConfig =
-				new DatabaseTableConfig<NoAnno>(NoAnno.class, noAnnotationsFieldConfigs);
+				new DatabaseTableConfig<NoAnno>(databaseType, NoAnno.class, noAnnotationsFieldConfigs);
 		Dao<NoAnno, Integer> noAnnotationDao = createDao(noAnnotationsTableConfig, true);
 		NoAnno noa = new NoAnno();
 		String stuff = "qpoqwpjoqwp12";
@@ -863,7 +863,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		field4.setForeignTableConfig(noAnnotationsTableConfig);
 		noAnnotationsForiegnFieldConfigs.add(field4);
 		DatabaseTableConfig<NoAnnoFor> noAnnotationsForiegnTableConfig =
-				new DatabaseTableConfig<NoAnnoFor>(NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
+				new DatabaseTableConfig<NoAnnoFor>(databaseType, NoAnnoFor.class, noAnnotationsForiegnFieldConfigs);
 
 		Dao<NoAnnoFor, Integer> noAnnotaionForeignDao = createDao(noAnnotationsForiegnTableConfig, true);
 		NoAnnoFor noaf = new NoAnnoFor();
