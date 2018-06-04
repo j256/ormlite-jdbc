@@ -19,7 +19,7 @@ import com.j256.ormlite.field.FieldType;
 public class MysqlDatabaseType extends BaseDatabaseType {
 
 	private final static String DATABASE_URL_PORTION = "mysql";
-	private final static String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
+	private final static String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
 	private final static String DATABASE_NAME = "MySQL";
 
 	/**
