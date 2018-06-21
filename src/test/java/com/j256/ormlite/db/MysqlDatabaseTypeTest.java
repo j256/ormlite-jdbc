@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,18 +83,28 @@ public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testObject() {
+	public void testObject() throws Exception {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendByteArrayType(sb, null, 0);
+		final Method m = MysqlDatabaseType
+				.class
+				.getSuperclass()
+				.getDeclaredMethod("appendByteArrayType", StringBuilder.class, FieldType.class, int.class);
+		m.setAccessible(true);
+		m.invoke(dbType, sb, null, 0);
 		assertEquals("BLOB", sb.toString());
 	}
 
 	@Test
-	public void testLongStringSchema() {
+	public void testLongStringSchema() throws Exception {
 		MysqlDatabaseType dbType = new MysqlDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendLongStringType(sb, null, 0);
+		final Method m = MysqlDatabaseType
+				.class
+				.getSuperclass()
+				.getDeclaredMethod("appendLongStringType", StringBuilder.class, FieldType.class, int.class);
+		m.setAccessible(true);
+		m.invoke(dbType, sb, null, 0);
 		assertEquals("TEXT", sb.toString());
 	}
 }

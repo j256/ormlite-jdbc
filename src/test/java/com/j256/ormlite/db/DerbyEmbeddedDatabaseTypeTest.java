@@ -9,6 +9,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,10 +157,15 @@ public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testAppendObjectType() {
+	public void testAppendObjectType() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		DerbyEmbeddedDatabaseType type = new DerbyEmbeddedDatabaseType();
-		type.appendSerializableType(sb, null, 0);
+		final Method m = DerbyEmbeddedDatabaseType
+				.class
+				.getSuperclass()
+				.getDeclaredMethod("appendSerializableType", StringBuilder.class, FieldType.class, int.class);
+		m.setAccessible(true);
+		m.invoke(type, sb, null, 0);
 		assertEquals("BLOB", sb.toString());
 	}
 

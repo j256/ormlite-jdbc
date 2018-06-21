@@ -3,6 +3,7 @@ package com.j256.ormlite.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,18 +83,30 @@ public class MariaDbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	}
 
 	@Test
-	public void testObject() {
+	public void testObject() throws Exception {
 		MariaDbDatabaseType dbType = new MariaDbDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendByteArrayType(sb, null, 0);
+		final Method m = MariaDbDatabaseType
+				.class
+				.getSuperclass()
+				.getSuperclass()
+				.getDeclaredMethod("appendByteArrayType", StringBuilder.class, FieldType.class, int.class);
+		m.setAccessible(true);
+		m.invoke(dbType, sb, null, 0);
 		assertEquals("BLOB", sb.toString());
 	}
 
 	@Test
-	public void testLongStringSchema() {
+	public void testLongStringSchema() throws Exception {
 		MariaDbDatabaseType dbType = new MariaDbDatabaseType();
 		StringBuilder sb = new StringBuilder();
-		dbType.appendLongStringType(sb, null, 0);
+		final Method m = MariaDbDatabaseType
+				.class
+				.getSuperclass()
+				.getSuperclass()
+				.getDeclaredMethod("appendLongStringType", StringBuilder.class, FieldType.class, int.class);
+		m.setAccessible(true);
+		m.invoke(dbType, sb, null, 0);
 		assertEquals("TEXT", sb.toString());
 	}
 }
