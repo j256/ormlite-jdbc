@@ -1623,7 +1623,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		String queryString = buildFooQueryAllString(fooDao);
 		Mapper mapper = new Mapper();
-		GenericRawResults<Foo> rawResults = fooDao.queryRaw(queryString, mapper, null);
+		GenericRawResults<Foo> rawResults = fooDao.queryRaw(queryString, mapper, new String[]{});
 		assertEquals(0, rawResults.getResults().size());
 		assertEquals(1, fooDao.create(foo));
 		rawResults = fooDao.queryRaw(queryString, mapper);
