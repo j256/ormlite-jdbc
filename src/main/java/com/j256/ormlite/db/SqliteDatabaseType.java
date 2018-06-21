@@ -1,5 +1,7 @@
 package com.j256.ormlite.db;
 
+import com.j256.ormlite.core.db.BaseSqliteDatabaseType;
+
 /**
  * Sqlite database type information used to create the tables, etc..
  * 

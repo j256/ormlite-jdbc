@@ -3,9 +3,9 @@ package com.j256.ormlite.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.core.db.DatabaseType;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.support.DatabaseConnection;
 
 /**
  * A connection sounds that uses an existing open database connection. This is not thread-safe nor synchronized. For

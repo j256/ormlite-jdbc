@@ -29,25 +29,31 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import com.j256.ormlite.core.dao.BaseDaoImpl;
+import com.j256.ormlite.core.dao.CloseableIterator;
+import com.j256.ormlite.core.dao.DaoManager;
+import com.j256.ormlite.core.dao.GenericRawResults;
+import com.j256.ormlite.core.dao.RawRowMapper;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.DatabaseFieldConfig;
-import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.misc.BaseDaoEnabled;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.j256.ormlite.stmt.Where;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.DatabaseTableConfig;
-import com.j256.ormlite.table.TableUtils;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.Dao.CreateOrUpdateStatus;
+import com.j256.ormlite.core.field.DataType;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.DatabaseFieldConfig;
+import com.j256.ormlite.core.field.ForeignCollectionField;
+import com.j256.ormlite.core.misc.BaseDaoEnabled;
+import com.j256.ormlite.core.stmt.DeleteBuilder;
+import com.j256.ormlite.core.stmt.PreparedQuery;
+import com.j256.ormlite.core.stmt.QueryBuilder;
+import com.j256.ormlite.core.stmt.SelectArg;
+import com.j256.ormlite.core.stmt.UpdateBuilder;
+import com.j256.ormlite.core.stmt.Where;
+import com.j256.ormlite.core.support.DatabaseConnection;
+import com.j256.ormlite.core.table.DatabaseTable;
+import com.j256.ormlite.core.table.DatabaseTableConfig;
+import com.j256.ormlite.core.table.TableUtils;
 
 public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
@@ -1617,7 +1623,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 
 		String queryString = buildFooQueryAllString(fooDao);
 		Mapper mapper = new Mapper();
-		GenericRawResults<Foo> rawResults = fooDao.queryRaw(queryString, mapper);
+		GenericRawResults<Foo> rawResults = fooDao.queryRaw(queryString, mapper, null);
 		assertEquals(0, rawResults.getResults().size());
 		assertEquals(1, fooDao.create(foo));
 		rawResults = fooDao.queryRaw(queryString, mapper);

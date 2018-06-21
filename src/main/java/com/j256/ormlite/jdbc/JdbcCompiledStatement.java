@@ -5,12 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.ObjectCache;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.stmt.StatementBuilder.StatementType;
-import com.j256.ormlite.support.CompiledStatement;
-import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.core.dao.ObjectCache;
+import com.j256.ormlite.core.field.SqlType;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.core.support.CompiledStatement;
+import com.j256.ormlite.core.support.DatabaseResults;
 
 /**
  * Wrapper around a {@link PreparedStatement} object which we delegate to.

@@ -4,11 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.j256.ormlite.core.dao.Dao;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.core.field.DatabaseField;
 
 public class BulkJdbcDaoTest extends BaseJdbcTest {
 

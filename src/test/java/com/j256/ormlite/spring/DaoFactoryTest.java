@@ -5,9 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.core.BaseCoreTest;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.table.DatabaseTableConfig;
 
 public class DaoFactoryTest extends BaseCoreTest {
 

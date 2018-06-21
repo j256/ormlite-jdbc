@@ -10,9 +10,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import com.j256.ormlite.dao.ObjectCache;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.core.dao.ObjectCache;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.support.DatabaseResults;
 
 /**
  * Wrapper around a {@link ResultSet} object which we delegate to.

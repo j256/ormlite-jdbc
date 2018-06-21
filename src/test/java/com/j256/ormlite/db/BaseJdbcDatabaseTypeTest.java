@@ -13,13 +13,13 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.core.TestUtils;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.core.stmt.QueryBuilder;
+import com.j256.ormlite.core.support.DatabaseConnection;
+import com.j256.ormlite.core.table.TableInfo;
 
 /**
  * Base test for other database tests which perform specific functionality tests on all databases.

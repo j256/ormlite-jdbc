@@ -16,13 +16,13 @@ import java.sql.Types;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.stmt.GenericRowMapper;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.GeneratedKeyHolder;
-import com.j256.ormlite.table.DatabaseTable;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.stmt.GenericRowMapper;
+import com.j256.ormlite.core.support.DatabaseConnection;
+import com.j256.ormlite.core.support.GeneratedKeyHolder;
+import com.j256.ormlite.core.table.DatabaseTable;
 
 public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 

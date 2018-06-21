@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.DatabaseTableConfig;
-import com.j256.ormlite.table.TableUtils;
+import com.j256.ormlite.core.dao.BaseDaoImpl;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.table.DatabaseTableConfig;
+import com.j256.ormlite.core.table.TableUtils;
 
 /**
  * Spring bean that auto-creates any tables that it finds DAOs for if the property name in

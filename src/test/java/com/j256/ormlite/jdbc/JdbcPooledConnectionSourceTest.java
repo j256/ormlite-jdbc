@@ -14,14 +14,14 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.DaoManager;
+import com.j256.ormlite.core.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.table.TableUtils;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.support.DatabaseConnection;
+import com.j256.ormlite.core.table.TableUtils;
 
 public class JdbcPooledConnectionSourceTest {
 

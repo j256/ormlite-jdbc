@@ -2,18 +2,18 @@ package com.j256.ormlite.examples.datapersister;
 
 import org.joda.time.DateTime;
 
-import com.j256.ormlite.field.DataPersisterManager;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.field.types.DateTimeType;
+import com.j256.ormlite.core.field.DataPersisterManager;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.field.SqlType;
+import com.j256.ormlite.core.field.types.DateTimeType;
 
 /**
  * A custom persister that is able to store the Joda {@link DateTime} class in the database as epoch-millis long
  * integer. This overrides the {@link DateTimeType} which uses reflection instead. This should run faster.
  * 
  * This can be specified using {@link DatabaseField#persisterClass()} or registered with
- * {@link DataPersisterManager#registerDataPersisters(com.j256.ormlite.field.DataPersister...)}.
+ * {@link DataPersisterManager#registerDataPersisters(com.j256.ormlite.core.field.DataPersister...)}.
  * 
  * @author graywatson
  */

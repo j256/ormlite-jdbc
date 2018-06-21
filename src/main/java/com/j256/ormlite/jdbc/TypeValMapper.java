@@ -5,7 +5,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.core.field.SqlType;
 
 /**
  * Map from {@link SqlType} to the constants in the {@link Types} class.

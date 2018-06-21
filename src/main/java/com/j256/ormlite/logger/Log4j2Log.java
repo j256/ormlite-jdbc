@@ -1,7 +1,9 @@
 package com.j256.ormlite.logger;
 
+import com.j256.ormlite.core.logger.Log;
+
 /**
- * Class which implements our {@link com.j256.ormlite.logger.Log} interface by delegating to Apache Log4j2.
+ * Class which implements our {@link com.j256.ormlite.core.logger.Log} interface by delegating to Apache Log4j2.
  * 
  * @author graywatson
  */

@@ -11,18 +11,18 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Types;
 
-import com.j256.ormlite.dao.ObjectCache;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.logger.Logger;
-import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.misc.VersionUtils;
-import com.j256.ormlite.stmt.GenericRowMapper;
-import com.j256.ormlite.stmt.StatementBuilder.StatementType;
-import com.j256.ormlite.support.CompiledStatement;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.DatabaseResults;
-import com.j256.ormlite.support.GeneratedKeyHolder;
+import com.j256.ormlite.core.dao.ObjectCache;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.logger.Logger;
+import com.j256.ormlite.core.logger.LoggerFactory;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.misc.VersionUtils;
+import com.j256.ormlite.core.stmt.GenericRowMapper;
+import com.j256.ormlite.core.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.core.support.CompiledStatement;
+import com.j256.ormlite.core.support.DatabaseConnection;
+import com.j256.ormlite.core.support.DatabaseResults;
+import com.j256.ormlite.core.support.GeneratedKeyHolder;
 
 /**
  * Wrapper around a JDBC {@link Connection} object which we delegate to.
@@ -31,7 +31,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
  */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
-	private static final String JDBC_VERSION = "VERSION__5.1-SNAPSHOT__";
+	private static final String JDBC_VERSION = "VERSION__5.2-SNAPSHOT__";
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcDatabaseConnection.class);
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";

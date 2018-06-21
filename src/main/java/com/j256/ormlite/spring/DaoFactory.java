@@ -2,10 +2,10 @@ package com.j256.ormlite.spring;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.DatabaseTableConfig;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.DaoManager;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.table.DatabaseTableConfig;
 
 /**
  * <p>

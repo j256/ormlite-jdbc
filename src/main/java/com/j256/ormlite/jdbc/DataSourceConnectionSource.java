@@ -7,14 +7,14 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.core.db.DatabaseType;
 import com.j256.ormlite.db.DatabaseTypeUtils;
-import com.j256.ormlite.logger.Logger;
-import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.support.BaseConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.core.logger.Logger;
+import com.j256.ormlite.core.logger.LoggerFactory;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.support.BaseConnectionSource;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.support.DatabaseConnection;
 
 /**
  * Wrapper around a {@link DataSource} that supports our ConnectionSource interface. This allows you to wrap other

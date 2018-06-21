@@ -19,7 +19,7 @@ import java.sql.Timestamp;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.core.BaseCoreTest;
 
 public class JdbcDatabaseResultsTest extends BaseCoreTest {
 

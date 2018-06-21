@@ -22,9 +22,9 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
+import com.j256.ormlite.core.BaseCoreTest;
 import com.j256.ormlite.db.H2DatabaseType;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.core.support.DatabaseConnection;
 
 public class JdbcConnectionSourceTest extends BaseCoreTest {
 

@@ -12,13 +12,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.GenericRawResults;
+import com.j256.ormlite.core.field.DataType;
+import com.j256.ormlite.core.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.core.stmt.QueryBuilder;
+import com.j256.ormlite.core.table.TableInfo;
 
 public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 

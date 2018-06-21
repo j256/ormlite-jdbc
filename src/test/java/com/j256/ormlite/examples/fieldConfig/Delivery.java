@@ -2,8 +2,8 @@ package com.j256.ormlite.examples.fieldConfig;
 
 import java.util.Date;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.DatabaseFieldConfig;
 
 /**
  * Example delivery object that does not use any {@link DatabaseField} annotations but uses direct wiring of the field

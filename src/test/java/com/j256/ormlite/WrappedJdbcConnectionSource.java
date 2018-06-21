@@ -9,9 +9,11 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.core.WrappedConnection;
+import com.j256.ormlite.core.WrappedConnectionSource;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.jdbc.JdbcDatabaseConnection;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.core.support.DatabaseConnection;
 
 /**
  * Wrapped connection source for JDBC testing purposes.

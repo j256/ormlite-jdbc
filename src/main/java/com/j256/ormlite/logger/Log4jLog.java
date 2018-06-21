@@ -1,8 +1,10 @@
 package com.j256.ormlite.logger;
 
+import com.j256.ormlite.core.logger.Log;
+
 /**
- * Class which implements our {@link com.j256.ormlite.logger.Log} interface by delegating to Apache Log4j.
- * 
+ * Class which implements our {@link com.j256.ormlite.core.logger.Log} interface by delegating to Apache Log4j.
+ *
  * @author graywatson
  */
 public class Log4jLog implements Log {
@@ -28,7 +30,7 @@ public class Log4jLog implements Log {
 		logger.log(levelToLog4jLevel(level), msg, t);
 	}
 
-	private org.apache.log4j.Level levelToLog4jLevel(com.j256.ormlite.logger.Log.Level level) {
+	private org.apache.log4j.Level levelToLog4jLevel(com.j256.ormlite.core.logger.Log.Level level) {
 		switch (level) {
 			case TRACE:
 				return org.apache.log4j.Level.TRACE;

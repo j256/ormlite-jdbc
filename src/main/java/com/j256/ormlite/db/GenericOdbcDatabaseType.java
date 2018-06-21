@@ -1,5 +1,7 @@
 package com.j256.ormlite.db;
 
+import com.j256.ormlite.core.db.BaseDatabaseType;
+
 /**
  * Generic JdbcOdbcBridge database type information used to create the tables, etc..
  * 

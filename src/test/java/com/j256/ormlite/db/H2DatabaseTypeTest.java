@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.j256.ormlite.TestUtils;
+import com.j256.ormlite.core.TestUtils;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.core.support.DatabaseConnection;
+import com.j256.ormlite.core.table.TableInfo;
 
 public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 

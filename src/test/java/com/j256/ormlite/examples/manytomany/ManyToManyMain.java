@@ -5,14 +5,14 @@ import static org.junit.Assert.assertEquals;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
+import com.j256.ormlite.core.stmt.PreparedQuery;
+import com.j256.ormlite.core.stmt.QueryBuilder;
+import com.j256.ormlite.core.stmt.SelectArg;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.table.TableUtils;
 
 /**
  * Main sample routine to show how to do many-to-many type relationships. It also demonstrates how we user inner queries

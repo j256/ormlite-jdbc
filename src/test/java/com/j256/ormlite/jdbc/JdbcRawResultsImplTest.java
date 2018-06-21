@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.dao.RawRowMapper;
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.GenericRawResults;
+import com.j256.ormlite.core.dao.RawRowMapper;
+import com.j256.ormlite.core.field.DatabaseField;
 
 public class JdbcRawResultsImplTest extends BaseJdbcTest {
 

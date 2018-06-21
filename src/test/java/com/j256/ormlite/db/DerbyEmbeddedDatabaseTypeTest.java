@@ -17,14 +17,14 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import org.junit.Test;
 
-import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.FieldConverter;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.core.TestUtils;
+import com.j256.ormlite.core.field.DataType;
+import com.j256.ormlite.core.field.FieldConverter;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.field.SqlType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.DatabaseResults;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.core.support.DatabaseResults;
+import com.j256.ormlite.core.table.TableInfo;
 
 public class DerbyEmbeddedDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 

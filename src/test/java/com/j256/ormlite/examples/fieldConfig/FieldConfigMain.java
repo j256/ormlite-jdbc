@@ -6,14 +6,14 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.field.DatabaseFieldConfig;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.DaoManager;
+import com.j256.ormlite.core.db.DatabaseType;
+import com.j256.ormlite.core.field.DatabaseFieldConfig;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.DatabaseTableConfig;
-import com.j256.ormlite.table.TableUtils;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.table.DatabaseTableConfig;
+import com.j256.ormlite.core.table.TableUtils;
 
 /**
  * Main sample routine to show how to do basic operations with the package.

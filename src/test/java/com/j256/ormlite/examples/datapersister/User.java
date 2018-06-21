@@ -4,9 +4,9 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
-import com.j256.ormlite.field.DataPersisterManager;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import com.j256.ormlite.core.field.DataPersisterManager;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.table.DatabaseTable;
 
 /**
  * Example user object that is persisted to disk by the DAO and other example classes.
@@ -32,7 +32,7 @@ public class User {
 	/**
 	 * NOTE: this is _not_ a default type that is stored by ORMLite so we are going to define a custom persister for
 	 * {@link DateTime} and register it using
-	 * {@link DataPersisterManager#registerDataPersisters(com.j256.ormlite.field.DataPersister...)}.
+	 * {@link DataPersisterManager#registerDataPersisters(com.j256.ormlite.core.field.DataPersister...)}.
 	 */
 	@DatabaseField
 	private DateTime createDateTime;

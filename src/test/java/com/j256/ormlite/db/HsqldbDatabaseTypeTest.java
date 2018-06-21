@@ -14,16 +14,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.core.db.DatabaseType;
 import org.junit.Test;
 
-import com.j256.ormlite.TestUtils;
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.field.DataPersister;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.core.TestUtils;
+import com.j256.ormlite.core.dao.BaseDaoImpl;
+import com.j256.ormlite.core.field.DataPersister;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.core.stmt.QueryBuilder;
+import com.j256.ormlite.core.table.TableInfo;
 
 public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 

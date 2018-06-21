@@ -1,5 +1,7 @@
 package com.j256.ormlite.db;
 
+import com.j256.ormlite.core.db.DatabaseType;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.j256.ormlite.examples.manytomany;
 
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.core.field.DatabaseField;
 
 /**
  * A user object with a name.

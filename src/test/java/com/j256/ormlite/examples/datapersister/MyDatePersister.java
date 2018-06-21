@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.field.types.DateType;
-import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.field.SqlType;
+import com.j256.ormlite.core.field.types.DateType;
+import com.j256.ormlite.core.support.DatabaseResults;
 
 /**
  * A custom persister that tweaks how the Date is stored in the database. If the date is before 1970 then this just

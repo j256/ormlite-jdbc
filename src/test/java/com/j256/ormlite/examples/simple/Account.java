@@ -1,7 +1,7 @@
 package com.j256.ormlite.examples.simple;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import com.j256.ormlite.core.field.DatabaseField;
+import com.j256.ormlite.core.table.DatabaseTable;
 
 /**
  * Example account object that is persisted to disk by the DAO and other example classes.

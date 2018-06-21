@@ -12,9 +12,9 @@ import java.sql.ResultSetMetaData;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseCoreTest;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.stmt.StatementBuilder.StatementType;
+import com.j256.ormlite.core.BaseCoreTest;
+import com.j256.ormlite.core.field.SqlType;
+import com.j256.ormlite.core.stmt.StatementBuilder.StatementType;
 
 public class JdbcCompiledStatementTest extends BaseCoreTest {
 

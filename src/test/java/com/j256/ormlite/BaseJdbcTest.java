@@ -22,13 +22,13 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.core.dao.BaseDaoImpl;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.dao.DaoManager;
+import com.j256.ormlite.core.db.DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.table.DatabaseTableConfig;
-import com.j256.ormlite.table.TableUtils;
+import com.j256.ormlite.core.table.DatabaseTableConfig;
+import com.j256.ormlite.core.table.TableUtils;
 
 public abstract class BaseJdbcTest {
 

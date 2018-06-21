@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.logger.Log.Level;
-import com.j256.ormlite.logger.Logger;
-import com.j256.ormlite.logger.LoggerFactory;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.core.db.DatabaseType;
+import com.j256.ormlite.core.logger.Log.Level;
+import com.j256.ormlite.core.logger.Logger;
+import com.j256.ormlite.core.logger.LoggerFactory;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.support.ConnectionSource;
+import com.j256.ormlite.core.support.DatabaseConnection;
 
 /**
  * Implementation of the ConnectionSource interface that supports basic pooled connections. New connections are created

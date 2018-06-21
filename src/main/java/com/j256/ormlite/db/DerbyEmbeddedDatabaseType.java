@@ -9,14 +9,16 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
-import com.j256.ormlite.field.BaseFieldConverter;
-import com.j256.ormlite.field.DataPersister;
-import com.j256.ormlite.field.FieldConverter;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.misc.SqlExceptionUtil;
-import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.core.db.BaseDatabaseType;
+import com.j256.ormlite.core.db.BooleanNumberFieldConverter;
+import com.j256.ormlite.core.field.BaseFieldConverter;
+import com.j256.ormlite.core.field.DataPersister;
+import com.j256.ormlite.core.field.FieldConverter;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.field.SqlType;
+import com.j256.ormlite.core.misc.IOUtils;
+import com.j256.ormlite.core.misc.SqlExceptionUtil;
+import com.j256.ormlite.core.support.DatabaseResults;
 
 /**
  * Derby database type information used to create the tables, etc.. This is for an embedded Derby database. For client

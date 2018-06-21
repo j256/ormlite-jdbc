@@ -8,12 +8,13 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
+import com.j256.ormlite.core.misc.TransactionManager;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.core.dao.Dao;
+import com.j256.ormlite.core.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 
 /**

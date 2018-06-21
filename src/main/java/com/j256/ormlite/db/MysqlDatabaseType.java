@@ -2,7 +2,8 @@ package com.j256.ormlite.db;
 
 import java.util.List;
 
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.core.db.BaseDatabaseType;
+import com.j256.ormlite.core.field.FieldType;
 
 /**
  * MySQL database type information used to create the tables, etc..

@@ -3,12 +3,14 @@ package com.j256.ormlite.db;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.field.BaseFieldConverter;
-import com.j256.ormlite.field.DataPersister;
-import com.j256.ormlite.field.FieldConverter;
-import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.field.SqlType;
-import com.j256.ormlite.support.DatabaseResults;
+import com.j256.ormlite.core.db.BaseDatabaseType;
+import com.j256.ormlite.core.db.BooleanNumberFieldConverter;
+import com.j256.ormlite.core.field.BaseFieldConverter;
+import com.j256.ormlite.core.field.DataPersister;
+import com.j256.ormlite.core.field.FieldConverter;
+import com.j256.ormlite.core.field.FieldType;
+import com.j256.ormlite.core.field.SqlType;
+import com.j256.ormlite.core.support.DatabaseResults;
 
 /**
  * Microsoft SQL server database type information used to create the tables, etc..

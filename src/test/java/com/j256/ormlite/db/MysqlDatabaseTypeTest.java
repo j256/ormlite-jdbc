@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.core.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.table.TableInfo;
+import com.j256.ormlite.core.table.TableInfo;
 
 public class MysqlDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
