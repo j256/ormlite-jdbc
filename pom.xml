@@ -40,7 +40,7 @@
 		<joda-time-version>1.5</joda-time-version>
 		<ormlite-version>${project.version}</ormlite-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
-		<log4j-version>1.2.12</log4j-version>
+		<log4j-version>1.2.15</log4j-version>
 		<log4j2-version>2.0-beta4</log4j2-version>
 	</properties>
 	<developers>
@@ -89,6 +89,14 @@
 						</executions>
 						<configuration>
 							<keyname>D3412AC1</keyname>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.22.1</version>
+						<configuration>
+							<useSystemClassLoader>false</useSystemClassLoader>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -254,7 +262,7 @@
 					<outputFile>src/main/java/com/j256/ormlite/jdbc/JdbcDatabaseConnection.java</outputFile>
 					<regex>true</regex>
 					<token>(VERSION__).*(__)</token>
-					<value>$1${version}$2</value>
+					<value>$1${project.version}$2</value>
 				</configuration>
 			</plugin>
 			<plugin>
