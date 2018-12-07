@@ -53,6 +53,11 @@ public class H2DatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
+	public void appendOffsetTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIMESTAMP WITH TIME ZONE");
+	}
+
+	@Override
 	public boolean isOffsetLimitArgument() {
 		return true;
 	}

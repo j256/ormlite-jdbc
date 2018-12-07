@@ -27,7 +27,20 @@ public class TypeValMapper {
 					values = new int[] { Types.LONGVARCHAR };
 					break;
 				case DATE:
+				case LOCAL_DATE_TIME:
 					values = new int[] { Types.TIMESTAMP };
+					break;
+				case LOCAL_DATE:
+					values = new int[] { Types.DATE };
+					break;
+				case LOCAL_TIME:
+					values = new int[] { Types.TIME };
+					break;
+				case OFFSET_TIME:
+                    values = new int[] { Types.TIME_WITH_TIMEZONE };
+                    break;
+				case OFFSET_DATE_TIME:
+					values = new int[] { Types.TIMESTAMP_WITH_TIMEZONE };
 					break;
 				case BOOLEAN:
 					values = new int[] { Types.BOOLEAN };
