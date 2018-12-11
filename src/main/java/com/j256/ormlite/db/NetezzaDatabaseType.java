@@ -2,6 +2,9 @@ package com.j256.ormlite.db;
 
 import java.util.List;
 
+import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 
 /**
@@ -79,5 +82,23 @@ public class NetezzaDatabaseType extends BaseDatabaseType {
 		sb.append("SELECT NEXT VALUE FOR ");
 		// this is word and not entity unfortunately
 		appendEscapedWord(sb, sequenceName);
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(DataPersister dataType, FieldType fieldType) {
+		// we are only overriding certain types
+		switch (dataType.getSqlType()) {
+			case LOCAL_DATE: // netezza doesn't seem to support JDBC 4.2
+				return DataType.LOCAL_DATE_SQL.getDataPersister();
+			case LOCAL_TIME:
+				return DataType.LOCAL_TIME_SQL.getDataPersister();
+			case LOCAL_DATE_TIME:
+				return DataType.LOCAL_DATE_TIME_SQL.getDataPersister();
+			case OFFSET_TIME:
+			case OFFSET_DATE_TIME:
+				return null;
+			default:
+				return super.getFieldConverter(dataType, fieldType);
+		}
 	}
 }

@@ -1,5 +1,10 @@
 package com.j256.ormlite.db;
 
+import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.FieldConverter;
+import com.j256.ormlite.field.FieldType;
+
 /**
  * Sqlite database type information used to create the tables, etc..
  * 
@@ -51,5 +56,23 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType {
 	@Override
 	public void appendOffsetValue(StringBuilder sb, long offset) {
 		throw new IllegalStateException("Offset is part of the LIMIT in database type " + getClass());
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(DataPersister dataType, FieldType fieldType) {
+		// we are only overriding certain types
+		switch (dataType.getSqlType()) {
+			case LOCAL_DATE: // sqlite doesn't support JDBC 4.2
+				return DataType.LOCAL_DATE_SQL.getDataPersister();
+			case LOCAL_TIME:
+				return DataType.LOCAL_TIME_SQL.getDataPersister();
+			case LOCAL_DATE_TIME:
+				return DataType.LOCAL_DATE_TIME_SQL.getDataPersister();
+			case OFFSET_TIME: // sqlite doesn't seem to support TIME/STAMP WITH TIME ZONE
+			case OFFSET_DATE_TIME:
+				return null;
+			default:
+				return super.getFieldConverter(dataType, fieldType);
+		}
 	}
 }

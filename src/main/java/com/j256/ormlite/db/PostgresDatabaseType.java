@@ -2,7 +2,7 @@ package com.j256.ormlite.db;
 
 import java.util.List;
 
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.*;
 
 /**
  * Postgres database type information used to create the tables, etc..
@@ -126,5 +126,19 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 		} else {
 			return super.isCreateIfNotExistsSupported();
 		}
+	}
+
+	@Override
+	public void appendOffsetTimeType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
+		sb.append("TIMESTAMP WITH TIME ZONE");
+	}
+
+	@Override
+	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
+		// H2 doesn't support TIME WITH TIME ZONE
+		if (dataPersister.getSqlType() == SqlType.OFFSET_TIME)
+			return DataType.OFFSET_TIME_SQL.getDataPersister();
+		// default is to use the dataPersister itself
+		return dataPersister;
 	}
 }
