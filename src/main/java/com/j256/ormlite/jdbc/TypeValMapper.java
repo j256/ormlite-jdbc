@@ -37,8 +37,8 @@ public class TypeValMapper {
 					values = new int[] { Types.TIME };
 					break;
 				case OFFSET_TIME:
-                    values = new int[] { Types.TIME_WITH_TIMEZONE };
-                    break;
+					values = new int[] { Types.TIME_WITH_TIMEZONE };
+					break;
 				case OFFSET_DATE_TIME:
 					values = new int[] { Types.TIMESTAMP_WITH_TIMEZONE };
 					break;

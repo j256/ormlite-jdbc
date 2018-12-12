@@ -9,7 +9,12 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
-import com.j256.ormlite.field.*;
+import com.j256.ormlite.field.BaseFieldConverter;
+import com.j256.ormlite.field.DataPersister;
+import com.j256.ormlite.field.FieldConverter;
+import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;

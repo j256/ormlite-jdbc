@@ -9,7 +9,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.*;
+import java.sql.Time;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.OffsetTime;
+import java.time.OffsetDateTime;
 
 import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.misc.IOUtils;
@@ -174,6 +180,16 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	@Override
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
 		return resultSet.getTimestamp(columnIndex + 1);
+	}
+
+	@Override
+	public Date getDate(int columnIndex) throws SQLException {
+		return resultSet.getDate(columnIndex + 1);
+	}
+
+	@Override
+	public Time getTime(int columnIndex) throws SQLException {
+		return resultSet.getTime(columnIndex + 1);
 	}
 
 	@Override
