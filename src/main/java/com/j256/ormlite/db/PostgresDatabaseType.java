@@ -139,7 +139,7 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 
 	@Override
 	public FieldConverter getFieldConverter(DataPersister dataPersister, FieldType fieldType) {
-		// H2 doesn't support TIME WITH TIME ZONE
+		// Postgres doesn't support TIME WITH TIME ZONE
 		if (dataPersister.getSqlType() == SqlType.OFFSET_TIME)
 			return DataType.OFFSET_TIME_SQL.getDataPersister();
 		// default is to use the dataPersister itself
