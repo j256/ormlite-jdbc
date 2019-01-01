@@ -1,7 +1,10 @@
 package com.j256.ormlite.jdbc;
 
+import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.or;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -28,6 +31,8 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 	private static final String FOO_TABLE_NAME = "foo";
 	private static final String FOOINT_TABLE_NAME = "fooint";
+	private static final String FOOSTRING_TABLE_NAME = "foostring";
+	private static final String FOONOTGENERATEDID_TABLE_NAME = "foonotgeneratedid";
 
 	@Test
 	public void testQueryForLong() throws Exception {
@@ -38,7 +43,12 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 			long id = 21321321L;
 			foo.id = id;
 			assertEquals(1, dao.create(foo));
-			assertEquals(id, databaseConnection.queryForLong("select id from foo"));
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("select ");
+			databaseType.appendEscapedEntityName(sb, "id");
+			sb.append(" from foo");
+			assertEquals(id, databaseConnection.queryForLong(sb.toString()));
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
 		}
@@ -49,7 +59,12 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
 			createDao(Foo.class, true);
-			databaseConnection.queryForLong("select id from foo");
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("select ");
+			databaseType.appendEscapedEntityName(sb, "id");
+			sb.append(" from foo");
+			databaseConnection.queryForLong(sb.toString());
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
 		}
@@ -66,7 +81,12 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 			// insert twice
 			assertEquals(1, dao.create(foo));
 			assertEquals(1, dao.create(foo));
-			databaseConnection.queryForLong("select id from foo");
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("select ");
+			databaseType.appendEscapedEntityName(sb, "id");
+			sb.append(" from foo");
+			databaseConnection.queryForLong(sb.toString());
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
 		}
@@ -99,7 +119,8 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 		JdbcDatabaseConnection jdc = new JdbcDatabaseConnection(connection);
 		String statement = "statement";
-		expect(connection.prepareStatement(statement, 1)).andReturn(prepStmt);
+		expect(keyHolder.getColumnName()).andReturn("id");
+		expect(connection.prepareStatement(eq(statement), aryEq(new String[]{"id"}))).andReturn(prepStmt);
 		expect(prepStmt.executeUpdate()).andReturn(1);
 		expect(prepStmt.getGeneratedKeys()).andReturn(resultSet);
 		expect(resultSet.getMetaData()).andReturn(metaData);
@@ -152,9 +173,14 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		try {
 			createDao(Foo.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-			keyHolder.addKey(0L);
+			expect(keyHolder.getColumnName()).andReturn("id");
+			keyHolder.addKey(or(eq(0), eq(0L))); // Depends on driver
 			replay(keyHolder);
-			databaseConnection.insert("insert into foo (id) values (2)", new Object[0], new FieldType[0], keyHolder);
+			StringBuilder sb = new StringBuilder();
+			sb.append("insert into foo (");
+			databaseType.appendEscapedEntityName(sb, "id");
+			sb.append(") values (2)");
+			databaseConnection.insert(sb.toString(), new Object[0], new FieldType[0], keyHolder);
 			verify(keyHolder);
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
@@ -168,10 +194,14 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		try {
 			createDao(FooInt.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-			keyHolder.addKey(1L);
+			expect(keyHolder.getColumnName()).andReturn("id");
+			keyHolder.addKey(or(eq(2), eq(2L))); // Depends on driver
 			replay(keyHolder);
-			databaseConnection.insert("insert into fooint (stuff) values (2)", new Object[0], new FieldType[0],
-					keyHolder);
+			StringBuilder sb = new StringBuilder();
+			sb.append("insert into fooint (");
+			databaseType.appendEscapedEntityName(sb, "id");
+			sb.append(") values (2)");
+			databaseConnection.insert(sb.toString(), new Object[0], new FieldType[0], keyHolder);
 			verify(keyHolder);
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
@@ -185,10 +215,14 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		try {
 			createDao(FooInt.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-			keyHolder.addKey(1L);
+			expect(keyHolder.getColumnName()).andReturn("id");
+			keyHolder.addKey(or(eq(1), eq(1L))); // Depends on driver
 			replay(keyHolder);
-			databaseConnection.insert("insert into fooint (stuff) values ('zipper')", new Object[0], new FieldType[0],
-					keyHolder);
+			StringBuilder sb = new StringBuilder();
+			sb.append("insert into fooint (");
+			databaseType.appendEscapedEntityName(sb, "stuff");
+			sb.append(") values ('zipper')");
+			databaseConnection.insert(sb.toString(), new Object[0], new FieldType[0], keyHolder);
 			verify(keyHolder);
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
@@ -198,14 +232,20 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	@Test
 	public void testIdColumnChangedFromStringToNumber() throws Exception {
 		// NOTE: trying to get the database to return a string as a result but could not figure it out
-		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOOINT_TABLE_NAME);
+		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOOSTRING_TABLE_NAME);
 		try {
 			createDao(FooString.class, true);
 			GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
-			keyHolder.addKey(0L);
+			expect(keyHolder.getColumnName()).andReturn("id");
+			keyHolder.addKey(or(eq(0), eq(0L))); // Depends on driver
 			replay(keyHolder);
-			databaseConnection.insert("insert into fooint (id, stuff) values ('12', 'zipper')", new Object[0],
-					new FieldType[0], keyHolder);
+			StringBuilder sb = new StringBuilder();
+			sb.append("insert into foostring (");
+			databaseType.appendEscapedEntityName(sb, "id");
+			sb.append(", ");
+			databaseType.appendEscapedEntityName(sb, "stuff");
+			sb.append(") values ('12', 'zipper')");
+			databaseConnection.insert(sb.toString(), new Object[0], new FieldType[0], keyHolder);
 			verify(keyHolder);
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
@@ -243,7 +283,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		}
 	}
 
-	@DatabaseTable(tableName = FOOINT_TABLE_NAME)
+	@DatabaseTable(tableName = FOOSTRING_TABLE_NAME)
 	protected static class FooString {
 		@DatabaseField(id = true)
 		public String id;
@@ -254,7 +294,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		}
 	}
 
-	@DatabaseTable(tableName = FOOINT_TABLE_NAME)
+	@DatabaseTable(tableName = FOONOTGENERATEDID_TABLE_NAME)
 	protected static class FooNotGeneratedId {
 		@DatabaseField
 		public int id;

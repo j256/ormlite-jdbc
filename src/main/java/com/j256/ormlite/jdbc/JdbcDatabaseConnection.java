@@ -181,7 +181,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		if (keyHolder == null) {
 			stmt = connection.prepareStatement(statement);
 		} else {
-			stmt = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			stmt = connection.prepareStatement(statement, new String[] { keyHolder.getColumnName() });
 		}
 		try {
 			statementSetArgs(stmt, args, argFieldTypes);
