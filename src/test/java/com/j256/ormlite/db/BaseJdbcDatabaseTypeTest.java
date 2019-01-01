@@ -122,12 +122,10 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		assertTrue(databaseType.isOffsetSqlSupported());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testLoadDriver() throws Exception {
+	@Test
+	public void testLoadDriver() {
 		if (isDriverClassExpected()) {
-			throw new SQLException("We have the class so simulate a failure");
-		} else {
-			databaseType.loadDriver();
+			assertTrue(databaseType.loadDriver());
 		}
 	}
 
