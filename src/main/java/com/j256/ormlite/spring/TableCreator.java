@@ -86,7 +86,7 @@ public class TableCreator {
 					tableConfig = ((BaseDaoImpl<?, ?>) dao).getTableConfig();
 				}
 				if (tableConfig == null) {
-					tableConfig = DatabaseTableConfig.fromClass(connectionSource, clazz);
+					tableConfig = DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), clazz);
 				}
 				TableUtils.createTable(connectionSource, tableConfig);
 				createdClasses.add(tableConfig);

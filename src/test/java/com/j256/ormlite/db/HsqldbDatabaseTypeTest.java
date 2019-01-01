@@ -61,7 +61,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		replay(databaseType);
 		connectionSource.setDatabaseType(databaseType);
 		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
+			FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field, GeneratedId.class);
 			verify(databaseType);
 			StringBuilder sb = new StringBuilder();
 			List<String> statementsBefore = new ArrayList<String>();
@@ -74,7 +74,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testDropSequence() throws Exception {
 		Field field = GeneratedId.class.getField("id");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field, GeneratedId.class);
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		databaseType.dropColumnArg(fieldType, statementsBefore, statementsAfter);
@@ -87,7 +87,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testGeneratedIdSequence() throws Exception {
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
@@ -106,8 +106,8 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedIdSequenceAutoName() throws Exception {
-		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo = new TableInfo<GeneratedIdSequenceAutoName, Integer>(
-				connectionSource, null, GeneratedIdSequenceAutoName.class);
+		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequenceAutoName, Integer>(databaseType, GeneratedIdSequenceAutoName.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		StringBuilder sb = new StringBuilder();
@@ -154,8 +154,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testBoolean() throws Exception {
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
 		assertEquals("booleanField", booleanField.getColumnName());
@@ -176,7 +175,7 @@ public class HsqldbDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testGneratedIdLong() throws Exception {
 		TableInfo<GeneratedIdLong, Long> tableInfo =
-				new TableInfo<GeneratedIdLong, Long>(connectionSource, null, GeneratedIdLong.class);
+				new TableInfo<GeneratedIdLong, Long>(databaseType, GeneratedIdLong.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		assertEquals("genId", idField.getColumnName());
