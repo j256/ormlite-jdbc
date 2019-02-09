@@ -1,6 +1,6 @@
 package com.j256.ormlite.db;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -10,7 +10,8 @@ public class DerbyClientServerDatabaseTypeTest extends DerbyEmbeddedDatabaseType
 
 	@Test
 	public void testGetClientServerDriverClassName() {
-		assertEquals("org.apache.derby.jdbc.ClientDriver", new DerbyClientServerDatabaseType().getDriverClassName());
+		assertArrayEquals(new String[] { "org.apache.derby.jdbc.ClientDriver" },
+				new DerbyClientServerDatabaseType().getDriverClassNames());
 	}
 
 	@Test

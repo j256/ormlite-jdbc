@@ -56,7 +56,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> moreStmts = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(connectionSource, null, StringId.class);
+		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(databaseType, StringId.class);
 		FieldType fieldType = tableInfo.getIdField();
 		StringBuilder sb = new StringBuilder();
 		databaseType.appendColumnArg(null, sb, fieldType, additionalArgs, null, moreStmts, queriesAfter);
@@ -109,7 +109,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		if (!databaseType.isLimitSqlSupported()) {
 			return;
 		}
-		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(connectionSource, null, StringId.class);
+		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(databaseType, StringId.class);
 		QueryBuilder<StringId, String> qb = new QueryBuilder<StringId, String>(databaseType, tableInfo, null);
 		long limit = 1232;
 		qb.limit(limit);
@@ -122,12 +122,10 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		assertTrue(databaseType.isOffsetSqlSupported());
 	}
 
-	@Test(expected = SQLException.class)
-	public void testLoadDriver() throws Exception {
+	@Test
+	public void testLoadDriver() {
 		if (isDriverClassExpected()) {
-			throw new SQLException("We have the class so simulate a failure");
-		} else {
-			databaseType.loadDriver();
+			assertTrue(databaseType.loadDriver());
 		}
 	}
 
@@ -137,7 +135,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 			throw new SQLException("Simulate a failure");
 		}
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();

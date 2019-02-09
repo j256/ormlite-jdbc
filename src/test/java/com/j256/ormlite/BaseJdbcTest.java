@@ -203,7 +203,7 @@ public abstract class BaseJdbcTest {
 		if (createTable) {
 			DatabaseTableConfig<T> tableConfig = dao.getTableConfig();
 			if (tableConfig == null) {
-				tableConfig = DatabaseTableConfig.fromClass(connectionSource, dao.getDataClass());
+				tableConfig = DatabaseTableConfig.fromClass(databaseType, dao.getDataClass());
 			}
 			createTable(tableConfig, true);
 		}

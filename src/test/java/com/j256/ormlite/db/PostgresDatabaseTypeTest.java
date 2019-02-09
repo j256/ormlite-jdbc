@@ -52,9 +52,6 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testBadGeneratedId() throws Exception {
-		if (connectionSource == null) {
-			throw new IllegalStateException("Simulate a failure");
-		}
 		Field field = GeneratedId.class.getField("id");
 		DatabaseType mockDb = createMock(DatabaseType.class);
 		expect(mockDb.isIdSequenceNeeded()).andReturn(false);
@@ -63,16 +60,11 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		expect(mockDb.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(dataPersister);
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(mockDb);
-		connectionSource.setDatabaseType(mockDb);
-		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
-			verify(mockDb);
-			StringBuilder sb = new StringBuilder();
-			List<String> statementsBefore = new ArrayList<String>();
-			databaseType.appendColumnArg(null, sb, fieldType, null, statementsBefore, null, null);
-		} finally {
-			connectionSource.setDatabaseType(databaseType);
-		}
+		FieldType fieldType = FieldType.createFieldType(mockDb, "foo", field, GeneratedId.class);
+		verify(mockDb);
+		StringBuilder sb = new StringBuilder();
+		List<String> statementsBefore = new ArrayList<String>();
+		databaseType.appendColumnArg(null, sb, fieldType, null, statementsBefore, null, null);
 	}
 
 	@Test
@@ -81,7 +73,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			return;
 		}
 		Field field = GeneratedId.class.getField("id");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field, GeneratedId.class);
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		databaseType.dropColumnArg(fieldType, statementsBefore, statementsAfter);
@@ -97,7 +89,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			return;
 		}
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
@@ -119,8 +111,8 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo = new TableInfo<GeneratedIdSequenceAutoName, Integer>(
-				connectionSource, null, GeneratedIdSequenceAutoName.class);
+		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequenceAutoName, Integer>(databaseType, GeneratedIdSequenceAutoName.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		StringBuilder sb = new StringBuilder();
@@ -145,8 +137,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
 		assertEquals("booleanField", booleanField.getColumnName());
@@ -162,8 +153,7 @@ public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
 		assertEquals("byteField", byteField.getColumnName());

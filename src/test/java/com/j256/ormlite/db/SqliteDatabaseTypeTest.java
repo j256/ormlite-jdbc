@@ -37,7 +37,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();
@@ -49,7 +49,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test
 	public void testGeneratedId() throws Exception {
 		TableInfo<GeneratedId, Integer> tableInfo =
-				new TableInfo<GeneratedId, Integer>(connectionSource, null, GeneratedId.class);
+				new TableInfo<GeneratedId, Integer>(databaseType, GeneratedId.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -74,8 +74,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testSerialField() throws Exception {
-		TableInfo<SerialField, Void> tableInfo =
-				new TableInfo<SerialField, Void>(connectionSource, null, SerialField.class);
+		TableInfo<SerialField, Void> tableInfo = new TableInfo<SerialField, Void>(databaseType, SerialField.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
@@ -105,7 +104,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(connectionSource, null, StringId.class);
+		TableInfo<StringId, String> tableInfo = new TableInfo<StringId, String>(databaseType, StringId.class);
 		QueryBuilder<StringId, String> qb = new QueryBuilder<StringId, String>(databaseType, tableInfo, null);
 		long limit = 1232;
 		qb.limit(limit);

@@ -84,8 +84,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
 		assertEquals("booleanField", booleanField.getColumnName());
@@ -101,8 +100,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
 		assertEquals("byteField", byteField.getColumnName());
@@ -118,8 +116,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		if (connectionSource == null) {
 			return;
 		}
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[2];
 		assertEquals("dateField", byteField.getColumnName());
@@ -136,7 +133,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 			return;
 		}
 		TableInfo<GeneratedId, Integer> tableInfo =
-				new TableInfo<GeneratedId, Integer>(connectionSource, null, GeneratedId.class);
+				new TableInfo<GeneratedId, Integer>(databaseType, GeneratedId.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();

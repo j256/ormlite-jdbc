@@ -53,22 +53,17 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		expect(mockDb.getFieldConverter(isA(DataPersister.class), isA(FieldType.class))).andReturn(dataPersister);
 		expect(mockDb.isEntityNamesMustBeUpCase()).andReturn(false);
 		replay(mockDb);
-		connectionSource.setDatabaseType(mockDb);
-		try {
-			FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
-			verify(mockDb);
-			StringBuilder sb = new StringBuilder();
-			List<String> statementsBefore = new ArrayList<String>();
-			databaseType.appendColumnArg(null, sb, fieldType, null, statementsBefore, null, null);
-		} finally {
-			connectionSource.setDatabaseType(databaseType);
-		}
+		FieldType fieldType = FieldType.createFieldType(mockDb, "foo", field, GeneratedId.class);
+		verify(mockDb);
+		StringBuilder sb = new StringBuilder();
+		List<String> statementsBefore = new ArrayList<String>();
+		databaseType.appendColumnArg(null, sb, fieldType, null, statementsBefore, null, null);
 	}
 
 	@Test
 	public void testDropSequence() throws Exception {
 		Field field = GeneratedId.class.getField("id");
-		FieldType fieldType = FieldType.createFieldType(connectionSource, "foo", field, GeneratedId.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, "foo", field, GeneratedId.class);
 		List<String> statementsBefore = new ArrayList<String>();
 		List<String> statementsAfter = new ArrayList<String>();
 		databaseType.dropColumnArg(fieldType, statementsBefore, statementsAfter);
@@ -81,7 +76,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Override
 	public void testGeneratedIdSequence() throws Exception {
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
@@ -96,8 +91,8 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedIdSequenceAutoName() throws Exception {
-		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo = new TableInfo<GeneratedIdSequenceAutoName, Integer>(
-				connectionSource, null, GeneratedIdSequenceAutoName.class);
+		TableInfo<GeneratedIdSequenceAutoName, Integer> tableInfo =
+				new TableInfo<GeneratedIdSequenceAutoName, Integer>(databaseType, GeneratedIdSequenceAutoName.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		FieldType idField = tableInfo.getFieldTypes()[0];
 		StringBuilder sb = new StringBuilder();
@@ -113,8 +108,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testByte() throws Exception {
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
 		assertEquals("byteField", byteField.getColumnName());
@@ -127,8 +121,7 @@ public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testLong() throws Exception {
-		TableInfo<AllTypes, Integer> tableInfo =
-				new TableInfo<AllTypes, Integer>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Integer> tableInfo = new TableInfo<AllTypes, Integer>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[6];
 		assertEquals("longField", booleanField.getColumnName());

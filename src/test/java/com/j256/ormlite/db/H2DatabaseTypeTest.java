@@ -27,7 +27,7 @@ public class H2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 	@Test(expected = SQLException.class)
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
-				new TableInfo<GeneratedIdSequence, Integer>(connectionSource, null, GeneratedIdSequence.class);
+				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();

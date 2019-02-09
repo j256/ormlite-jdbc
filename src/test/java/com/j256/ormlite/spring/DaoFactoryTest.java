@@ -26,7 +26,7 @@ public class DaoFactoryTest extends BaseCoreTest {
 	public void testCreateDaoConnectionSourceDatabaseTableConfigOfT() throws Exception {
 		createTable(Foo.class, true);
 		Dao<Foo, Object> fooDao =
-				DaoFactory.createDao(connectionSource, DatabaseTableConfig.fromClass(connectionSource, Foo.class));
+				DaoFactory.createDao(connectionSource, DatabaseTableConfig.fromClass(databaseType, Foo.class));
 		Foo foo = new Foo();
 		assertEquals(1, fooDao.create(foo));
 		Foo result = fooDao.queryForId(foo.id);

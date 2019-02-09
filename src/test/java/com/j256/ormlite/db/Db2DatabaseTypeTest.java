@@ -38,7 +38,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testBoolean() throws Exception {
-		TableInfo<AllTypes, Void> tableInfo = new TableInfo<AllTypes, Void>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Void> tableInfo = new TableInfo<AllTypes, Void>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType booleanField = tableInfo.getFieldTypes()[1];
 		assertEquals("booleanField", booleanField.getColumnName());
@@ -51,7 +51,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testByte() throws Exception {
-		TableInfo<AllTypes, Void> tableInfo = new TableInfo<AllTypes, Void>(connectionSource, null, AllTypes.class);
+		TableInfo<AllTypes, Void> tableInfo = new TableInfo<AllTypes, Void>(databaseType, AllTypes.class);
 		assertEquals(9, tableInfo.getFieldTypes().length);
 		FieldType byteField = tableInfo.getFieldTypes()[3];
 		assertEquals("byteField", byteField.getColumnName());
@@ -64,8 +64,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 
 	@Test
 	public void testGeneratedId() throws Exception {
-		TableInfo<GeneratedId, Void> tableInfo =
-				new TableInfo<GeneratedId, Void>(connectionSource, null, GeneratedId.class);
+		TableInfo<GeneratedId, Void> tableInfo = new TableInfo<GeneratedId, Void>(databaseType, GeneratedId.class);
 		StringBuilder sb = new StringBuilder();
 		List<String> additionalArgs = new ArrayList<String>();
 		List<String> statementsBefore = new ArrayList<String>();
