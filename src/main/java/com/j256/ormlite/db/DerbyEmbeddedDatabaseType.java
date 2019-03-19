@@ -14,6 +14,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
@@ -73,6 +74,15 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 					serializableConverter = new SerializableFieldConverter();
 				}
 				return serializableConverter;
+			case LOCAL_DATE: // derby doesn't support JDBC 4.2
+				return DataType.LOCAL_DATE_SQL.getDataPersister();
+			case LOCAL_TIME:
+				return DataType.LOCAL_TIME_SQL.getDataPersister();
+			case LOCAL_DATE_TIME:
+				return DataType.LOCAL_DATE_TIME_SQL.getDataPersister();
+			case OFFSET_TIME: // derby doesn't seem to support TIME/STAMP WITH TIME ZONE
+			case OFFSET_DATE_TIME:
+				return null;
 			default:
 				return super.getFieldConverter(dataType, fieldType);
 		}
