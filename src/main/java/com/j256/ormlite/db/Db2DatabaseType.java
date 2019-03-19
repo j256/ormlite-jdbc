@@ -1,11 +1,16 @@
 package com.j256.ormlite.db;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
-import com.j256.ormlite.field.DataPersister;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.FieldConverter;
-import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.*;
+import com.j256.ormlite.field.types.OffsetDateTimeType;
+import com.j256.ormlite.support.DatabaseResults;
 
 /**
  * IBM DB2 database type information used to create the tables, etc..
@@ -88,11 +93,46 @@ public class Db2DatabaseType extends BaseDatabaseType {
 				return DataType.LOCAL_TIME_SQL.getDataPersister();
 			case LOCAL_DATE_TIME:
 				return DataType.LOCAL_DATE_TIME_SQL.getDataPersister();
-			case OFFSET_TIME: // db2 doesn't seem to support TIME/STAMP WITH TIME ZONE
-			case OFFSET_DATE_TIME:
+			// db2 doesn't seem to support TIME/STAMP WITH TIME ZONE
+			case OFFSET_TIME:
 				return null;
+			case OFFSET_DATE_TIME:
+				return OffsetToLocalDateTimeSqlType.getSingleton();
 			default:
 				return super.getFieldConverter(dataType, fieldType);
+		}
+	}
+
+	private static class OffsetToLocalDateTimeSqlType extends OffsetDateTimeType {
+		private static final OffsetToLocalDateTimeSqlType singleton = isJavaTimeSupported() ?
+				new OffsetToLocalDateTimeSqlType() : null;
+		public static OffsetToLocalDateTimeSqlType getSingleton() { return singleton; }
+		private OffsetToLocalDateTimeSqlType() { super(SqlType.OFFSET_DATE_TIME, new Class<?>[] { OffsetDateTime.class }); }
+		protected OffsetToLocalDateTimeSqlType(SqlType sqlType, Class<?>[] classes) { super(sqlType, classes); }
+
+		@Override
+		public Object parseDefaultString(FieldType fieldType, String defaultStr) throws SQLException {
+			OffsetDateTime offsetDateTime = (OffsetDateTime) super.parseDefaultString(fieldType, defaultStr);
+			// convert to local timezone
+			LocalDateTime localDateTime = offsetDateTime.atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+			return Timestamp.valueOf(localDateTime);
+		}
+
+		@Override
+		public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
+			return results.getTimestamp(columnPos);
+		}
+
+		@Override
+		public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
+			Timestamp value = (Timestamp) sqlArg;
+			return OffsetDateTime.of(value.toLocalDateTime(), ZoneOffset.of("Z"));
+		}
+
+		@Override
+		public Object javaToSqlArg(FieldType fieldType, Object javaObject) {
+			OffsetDateTime offsetDateTime = (OffsetDateTime) javaObject;
+			return Timestamp.valueOf(offsetDateTime.atZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
 		}
 	}
 }
