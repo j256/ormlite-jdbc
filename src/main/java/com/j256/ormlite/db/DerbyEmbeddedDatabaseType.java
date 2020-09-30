@@ -14,6 +14,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
+import com.j256.ormlite.field.converter.BooleanNumberFieldConverter;
 import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
