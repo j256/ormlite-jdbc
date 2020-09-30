@@ -8,7 +8,7 @@
 	<version>5.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ORMLite JDBC</name>
-	<url>http://ormlite.sourceforge.net/</url>
+	<url>https://ormlite.com/</url>
 	<description>Lightweight Object Relational Model (ORM) JDBC classes</description>
 	<licenses>
 		<license>
@@ -62,12 +62,12 @@
 				<repository>
 					<id>sonatype-nexus-staging</id>
 					<name>Nexus Release Repository</name>
-					<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 				</repository>
 				<snapshotRepository>
 					<id>sonatype-nexus-snapshots</id>
 					<name>Sonatype Nexus Snapshots</name>
-					<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 				</snapshotRepository>
 			</distributionManagement>
 			<build>
@@ -195,7 +195,7 @@
 					<bottom>
 						This documentation is licensed by Gray Watson under the
 						&lt;a
-						href="http://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
+						href="https://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
 						&lt;/a&gt; </bottom>
 					<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 					<excludePackageNames>com.j256.ormlite.stmt.query,com.j256.ormlite.stmt.mapped
