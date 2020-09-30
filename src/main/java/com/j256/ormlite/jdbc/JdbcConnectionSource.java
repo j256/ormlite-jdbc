@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.db.DatabaseTypeUtils;
+import com.j256.ormlite.jdbc.db.DatabaseTypeUtils;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.IOUtils;

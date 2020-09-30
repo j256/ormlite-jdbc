@@ -14,8 +14,7 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseJdbcTest;
-import com.j256.ormlite.db.H2DatabaseType;
+import com.j256.ormlite.jdbc.db.H2DatabaseType;
 import com.j256.ormlite.support.DatabaseConnection;
 
 public class DataSourceConnectionSourceTest extends BaseJdbcTest {
