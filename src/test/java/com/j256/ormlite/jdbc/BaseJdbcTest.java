@@ -17,16 +17,15 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 
