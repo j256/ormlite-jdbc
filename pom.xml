@@ -40,6 +40,7 @@
 		<joda-time-version>1.5</joda-time-version>
 		<ormlite-version>${project.version}</ormlite-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
+		<!-- yes we know this is an issue but it is here for backwards compatibility -->
 		<log4j-version>1.2.17</log4j-version>
 		<log4j2-version>2.0-beta4</log4j2-version>
 	</properties>
