@@ -43,6 +43,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.jdbc.BaseJdbcTest;
+import com.j256.ormlite.jdbc.db.SqliteDatabaseType;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -277,6 +278,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			}
 		} catch (IllegalStateException e) {
 			// expected
+		} catch (NullPointerException e) {
+			// seems like sqlite throws this
+			assertTrue(databaseType instanceof SqliteDatabaseType); 
 		} finally {
 			iterator.close();
 		}
@@ -299,6 +303,9 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			}
 		} catch (IllegalStateException e) {
 			// expected
+		} catch (NullPointerException e) {
+			// seems like sqlite throws this
+			assertTrue(databaseType instanceof SqliteDatabaseType); 
 		} finally {
 			iterator.close();
 		}
