@@ -3,6 +3,7 @@ package com.j256.ormlite.jdbc;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
@@ -174,6 +175,26 @@ public abstract class BaseJdbcTest {
 	protected <T> void dropTable(DatabaseTableConfig<T> tableConfig, boolean ignoreErrors) throws Exception {
 		// drop the table and ignore any errors along the way
 		TableUtils.dropTable(connectionSource, tableConfig, ignoreErrors);
+	}
+
+	protected static void removeDirectory(String path) {
+		File file = new File(path);
+		if (file.isDirectory()) {
+			removeDirectory(file);
+		} else {
+			file.delete();
+		}
+	}
+
+	protected static void removeDirectory(File dir) {
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory()) {
+				removeDirectory(file);
+			} else {
+				file.delete();
+			}
+		}
+		dir.delete();
 	}
 
 	private void doOpenConnectionSource() throws Exception {
