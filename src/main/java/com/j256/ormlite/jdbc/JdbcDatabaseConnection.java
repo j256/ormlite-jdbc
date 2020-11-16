@@ -93,16 +93,16 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			logger.trace("connection committed");
 		} else {
 			// release might clear the name so we record it beforehand
-			Object obj = savepoint.getSavepointName();
-			if (obj == null) {
-				obj = savepoint;
+			Object nameOrSavepoint = savepoint.getSavepointName();
+			if (nameOrSavepoint == null) {
+				nameOrSavepoint = savepoint;
 			}
 			/*
 			 * Initially I was doing a connection.releaseSavepoint(savepoint) which was only dropping the savepoint --
 			 * not committing it like I thought. I'm still surprised there is not a commit(savepoint).
 			 */
 			connection.commit();
-			logger.trace("connection is committed for save-point {}", obj);
+			logger.trace("connection is committed for save-point {}", nameOrSavepoint);
 		}
 	}
 
@@ -124,7 +124,11 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	@Override
 	public void releaseSavePoint(Savepoint savePoint) throws SQLException {
-		connection.releaseSavepoint(savePoint);
+		if (savePoint == null) {
+			logger.trace("release of null savepoint ignored");
+		} else {
+			connection.releaseSavepoint(savePoint);
+		}
 	}
 
 	@Override
