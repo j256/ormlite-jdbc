@@ -155,4 +155,10 @@ public class HsqldbDatabaseType extends BaseDatabaseType {
 	public String getPingStatement() {
 		return "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_TABLES";
 	}
+
+	@Override
+	public boolean isCreateIfNotExistsSupported() {
+		// support for EXISTS subquery was added in 2.3.x, thanks to @lukewhitt
+		return (driver != null && driver.getMajorVersion() >= 2 && driver.getMinorVersion() >= 3);
+	}
 }
