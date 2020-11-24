@@ -342,21 +342,19 @@
 			<version>${ormlite-version}</version>
 		</dependency>
 
-		<!-- provided dependencies for optional features -->
+		<!-- test dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j-version}</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 			<version>${log4j2-version}</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
-
-		<!-- test dependencies -->
 		<dependency>
 			<groupId>com.j256.ormlite</groupId>
 			<artifactId>ormlite-core</artifactId>
