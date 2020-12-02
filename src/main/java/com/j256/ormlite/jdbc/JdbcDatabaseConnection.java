@@ -277,10 +277,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		}
 	}
 
-	/**
-	 * Return the internal database connection. Most likely for testing purposes.
-	 */
-	public Connection getInternalConnection() {
+	@Override
+	public Connection getUnderlyingConnection() {
 		return connection;
 	}
 
