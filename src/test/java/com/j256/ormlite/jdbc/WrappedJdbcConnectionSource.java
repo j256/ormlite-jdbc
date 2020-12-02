@@ -29,7 +29,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 	@Override
 	protected WrappedConnection wrapConnection(DatabaseConnection connection) {
 		JdbcDatabaseConnection conn = (JdbcDatabaseConnection) connection;
-		WrappedJdbcConnection wrapped = new WrappedJdbcConnection(connection, conn.getInternalConnection());
+		WrappedJdbcConnection wrapped = new WrappedJdbcConnection(connection, conn.getUnderlyingConnection());
 		conn.setInternalConnection(wrapped.getConnectionProxy());
 		return wrapped;
 	}
