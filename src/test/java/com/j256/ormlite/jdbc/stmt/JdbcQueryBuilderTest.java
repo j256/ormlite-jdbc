@@ -35,7 +35,6 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	private Foo foo2;
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testAnd() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
@@ -64,7 +63,6 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testOr() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();
@@ -242,7 +240,6 @@ public class JdbcQueryBuilderTest extends BaseJdbcTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testNotNotComparison() throws Exception {
 		Dao<Foo, String> fooDao = createTestData();
 		QueryBuilder<Foo, String> qb = fooDao.queryBuilder();

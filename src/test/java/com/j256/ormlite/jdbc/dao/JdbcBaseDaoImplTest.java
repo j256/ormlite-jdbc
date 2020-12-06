@@ -2835,7 +2835,6 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testUseOfAndInt() throws Exception {
 		Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		assertEquals(0, dao.countOf());
