@@ -148,7 +148,8 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
 		}
 		JdbcCompiledStatement compiledStatement = new JdbcCompiledStatement(
-				connection.prepareStatement(statement, resultFlags, ResultSet.CONCUR_READ_ONLY), type, cacheStore);
+				connection.prepareStatement(statement, resultFlags, ResultSet.CONCUR_READ_ONLY), statement, type,
+				cacheStore);
 		logger.trace("compiled statement: {}", statement);
 		return compiledStatement;
 	}
