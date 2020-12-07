@@ -8,6 +8,8 @@ import com.j256.ormlite.field.FieldType;
 /**
  * H2 database type information used to create the tables, etc..
  * 
+ * NOTE: if this is updated, the ormlite-core/src/test one should be as well.
+ * 
  * @author graywatson
  */
 public class H2DatabaseType extends BaseDatabaseType {
@@ -29,11 +31,6 @@ public class H2DatabaseType extends BaseDatabaseType {
 	@Override
 	public String getDatabaseName() {
 		return DATABASE_NAME;
-	}
-
-	@Override
-	protected void appendBooleanType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
-		sb.append("TINYINT(1)");
 	}
 
 	@Override
