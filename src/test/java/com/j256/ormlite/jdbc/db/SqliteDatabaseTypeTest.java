@@ -112,7 +112,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		long offset = 171;
 		qb.offset(offset);
 		String query = qb.prepareStatementString();
-		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + offset + "," + limit + " "));
+		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + offset + "," + limit));
 	}
 
 	@Test
