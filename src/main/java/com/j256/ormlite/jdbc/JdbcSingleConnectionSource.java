@@ -4,11 +4,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.j256.ormlite.db.DatabaseType;
+import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
- * A connection sounds that uses an existing open database connection. This is not thread-safe nor synchronized. For
+ * A connection source that uses an existing open database connection. This is not thread-safe nor synchronized. For
  * other dataSources, see the {@link DataSourceConnectionSource} class.
  * 
  * <p>
@@ -18,7 +19,7 @@ import com.j256.ormlite.support.DatabaseConnection;
  * 
  * @author graywatson
  */
-public class JdbcSingleConnectionSource extends JdbcConnectionSource implements ConnectionSource {
+public class JdbcSingleConnectionSource extends BaseJdbcConnectionSource implements ConnectionSource {
 
 	private Connection sqlConnection;
 
@@ -60,15 +61,9 @@ public class JdbcSingleConnectionSource extends JdbcConnectionSource implements 
 	 */
 	public JdbcSingleConnectionSource(String url, DatabaseType databaseType, Connection sqlConnection)
 			throws SQLException {
-		super(url, null, null, databaseType, false /* don't initialize yet */);
+		super(url, databaseType, false);
 		this.sqlConnection = sqlConnection;
 		initialize();
-	}
-
-	@Override
-	public void initialize() throws SQLException {
-		super.initialize();
-		this.connection = new JdbcDatabaseConnection(sqlConnection);
 	}
 
 	@Override
@@ -77,12 +72,17 @@ public class JdbcSingleConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public void releaseConnection(DatabaseConnection connection) {
+	public void closeQuietly() {
 		// no-op because we don't want to close the connection
 	}
 
 	// required
 	public void setSqlConnection(Connection sqlConnection) {
 		this.sqlConnection = sqlConnection;
+	}
+
+	@Override
+	protected DatabaseConnection makeConnection(Logger logger) {
+		return new JdbcDatabaseConnection(sqlConnection);
 	}
 }

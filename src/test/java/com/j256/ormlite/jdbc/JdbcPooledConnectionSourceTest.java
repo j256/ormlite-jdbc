@@ -499,6 +499,7 @@ public class JdbcPooledConnectionSourceTest {
 		Dao<Foo, Integer> dao = null;
 		DatabaseConnection conn = null;
 		try {
+			TableUtils.dropTable(pooled, Foo.class, true);
 			TableUtils.createTable(pooled, Foo.class);
 			dao = DaoManager.createDao(pooled, Foo.class);
 			conn = dao.startThreadConnection();
