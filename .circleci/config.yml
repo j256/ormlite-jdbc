@@ -1,4 +1,4 @@
-># config file for circleci
+# config file for circleci
 version: 2 
 jobs:
   build:
