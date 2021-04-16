@@ -60,8 +60,9 @@ public class JdbcSingleConnectionSource extends JdbcConnectionSource implements 
 	 */
 	public JdbcSingleConnectionSource(String url, DatabaseType databaseType, Connection sqlConnection)
 			throws SQLException {
-		super(url, null, null, databaseType);
+		super(url, null, null, databaseType, false /* don't initialize yet */);
 		this.sqlConnection = sqlConnection;
+		initialize();
 	}
 
 	@Override

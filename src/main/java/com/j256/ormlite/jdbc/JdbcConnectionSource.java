@@ -56,7 +56,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	 *             If the driver associated with the database driver is not found in the classpath.
 	 */
 	public JdbcConnectionSource(String url) throws SQLException {
-		this(url, null, null, null);
+		this(url, null, null, null, true);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	 *             If the driver associated with the database driver is not found in the classpath.
 	 */
 	public JdbcConnectionSource(String url, DatabaseType databaseType) throws SQLException {
-		this(url, null, null, databaseType);
+		this(url, null, null, databaseType, true);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	 *             If the driver associated with the database driver is not found in the classpath.
 	 */
 	public JdbcConnectionSource(String url, String username, String password) throws SQLException {
-		this(url, username, password, null);
+		this(url, username, password, null, true);
 	}
 
 	/**
@@ -110,11 +110,21 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	 */
 	public JdbcConnectionSource(String url, String username, String password, DatabaseType databaseType)
 			throws SQLException {
+		this(url, username, password, databaseType, true);
+	}
+
+	/**
+	 * Set initialize to false if you don't want to initialize. This is used by subclasses.
+	 */
+	protected JdbcConnectionSource(String url, String username, String password, DatabaseType databaseType,
+			boolean initialize) throws SQLException {
 		this.url = url;
 		this.username = username;
 		this.password = password;
 		this.databaseType = databaseType;
-		initialize();
+		if (initialize) {
+			initialize();
+		}
 	}
 
 	/**
@@ -254,7 +264,6 @@ public class JdbcConnectionSource extends BaseConnectionSource implements Connec
 	 * @param logger
 	 *            This is here so we can use the right logger associated with the sub-class.
 	 */
-	@SuppressWarnings("resource")
 	protected DatabaseConnection makeConnection(Logger logger) throws SQLException {
 		Properties properties = new Properties();
 		if (username != null) {
