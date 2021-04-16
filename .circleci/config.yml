@@ -1,4 +1,4 @@
-# config file for circleci
+># config file for circleci
 version: 2 
 jobs:
   build:
@@ -28,3 +28,7 @@ jobs:
       - run:
           name: Upload coverage report to CodeCov
           command: bash <(curl -s https://codecov.io/bash)
+      - run:
+          name: Test checks publishing to github
+          command: mvn -X test-check-publisher:publish
+          when: always
