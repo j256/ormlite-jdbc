@@ -43,7 +43,7 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 	 *             If the driver associated with the database driver is not found in the classpath.
 	 */
 	public JdbcConnectionSource(String url) throws SQLException {
-		this(url, null, null, null, true);
+		this(url, null, null, null);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 	 *             If the driver associated with the database driver is not found in the classpath.
 	 */
 	public JdbcConnectionSource(String url, DatabaseType databaseType) throws SQLException {
-		this(url, null, null, databaseType, true);
+		this(url, null, null, databaseType);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 	 *             If the driver associated with the database driver is not found in the classpath.
 	 */
 	public JdbcConnectionSource(String url, String username, String password) throws SQLException {
-		this(url, username, password, null, true);
+		this(url, username, password, null);
 	}
 
 	/**
@@ -97,20 +97,10 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 	 */
 	public JdbcConnectionSource(String url, String username, String password, DatabaseType databaseType)
 			throws SQLException {
-		this(url, username, password, databaseType, true);
-	}
-
-	/**
-	 * Set initialize to false if you don't want to initialize. This is used by subclasses.
-	 */
-	protected JdbcConnectionSource(String url, String username, String password, DatabaseType databaseType,
-			boolean initialize) throws SQLException {
-		super(url, databaseType);
+		super(url, databaseType, false);
 		this.username = username;
 		this.password = password;
-		if (initialize) {
-			initialize();
-		}
+		initialize();
 	}
 
 	// not required
