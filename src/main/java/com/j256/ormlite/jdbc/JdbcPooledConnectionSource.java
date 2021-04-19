@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.j256.ormlite.db.DatabaseType;
-import com.j256.ormlite.logger.Log.Level;
+import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.misc.IOUtils;
