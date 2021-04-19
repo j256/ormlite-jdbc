@@ -41,7 +41,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	private static GenericRowMapper<Long> longWrapper = new OneLongWrapper();
 
 	private Connection connection;
-	private Boolean supportsSavePoints = null;
+	private Boolean supportsSavePoints;
 
 	static {
 		VersionUtils.checkCoreVersusJdbcVersions(JDBC_VERSION);
@@ -284,9 +284,17 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	/**
+	 * @deprecated Please use {@link #setInternalConnection(Connection)}
+	 */
+	@Deprecated
+	public void setInternalConnection(Connection connection) {
+		this.connection = connection;
+	}
+
+	/**
 	 * Set the internal database connection. Most likely for testing purposes.
 	 */
-	public void setInternalConnection(Connection connection) {
+	public void setUnderlyingConnection(Connection connection) {
 		this.connection = connection;
 	}
 

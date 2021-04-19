@@ -11,8 +11,6 @@ import java.util.List;
 
 import com.j256.ormlite.WrappedConnection;
 import com.j256.ormlite.WrappedConnectionSource;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.jdbc.JdbcDatabaseConnection;
 import com.j256.ormlite.support.DatabaseConnection;
 
 /**
@@ -30,7 +28,7 @@ public class WrappedJdbcConnectionSource extends WrappedConnectionSource {
 	protected WrappedConnection wrapConnection(DatabaseConnection connection) {
 		JdbcDatabaseConnection conn = (JdbcDatabaseConnection) connection;
 		WrappedJdbcConnection wrapped = new WrappedJdbcConnection(connection, conn.getUnderlyingConnection());
-		conn.setInternalConnection(wrapped.getConnectionProxy());
+		conn.setUnderlyingConnection(wrapped.getConnectionProxy());
 		return wrapped;
 	}
 
