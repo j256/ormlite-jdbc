@@ -7,6 +7,8 @@ import java.lang.reflect.Constructor;
 import org.junit.Test;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.jdbc.db.DatabaseTypeUtils;
+import com.j256.ormlite.jdbc.db.H2DatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 
 public class DatabaseTypeUtilsTest {

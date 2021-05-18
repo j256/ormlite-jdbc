@@ -119,11 +119,6 @@ public class HsqldbDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
-	public boolean isLimitAfterUpdateSupported() {
-		return true;
-	}
-
-	@Override
 	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		// the 0 is the offset, could also use TOP X
 		sb.append("LIMIT ");

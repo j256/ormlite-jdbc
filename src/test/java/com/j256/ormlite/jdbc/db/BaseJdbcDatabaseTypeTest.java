@@ -17,6 +17,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.BaseJdbcTest;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.jdbc.db.DatabaseTypeUtils;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;

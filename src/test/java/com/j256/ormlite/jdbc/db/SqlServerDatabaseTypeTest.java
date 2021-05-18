@@ -14,6 +14,8 @@ import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.jdbc.db.H2DatabaseType;
+import com.j256.ormlite.jdbc.db.SqlServerDatabaseType;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableInfo;
 
