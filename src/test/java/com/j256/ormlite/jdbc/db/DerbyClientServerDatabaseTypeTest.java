@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.j256.ormlite.jdbc.db.DerbyClientServerDatabaseType;
-
 public class DerbyClientServerDatabaseTypeTest extends DerbyEmbeddedDatabaseTypeTest {
 
 	@Test

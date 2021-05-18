@@ -20,7 +20,6 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.jdbc.db.PostgresDatabaseType;
 import com.j256.ormlite.table.TableInfo;
 
 public class PostgresDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {

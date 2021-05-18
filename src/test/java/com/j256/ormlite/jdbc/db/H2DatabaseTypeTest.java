@@ -10,9 +10,6 @@ import org.junit.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.jdbc.db.DatabaseTypeUtils;
-import com.j256.ormlite.jdbc.db.DerbyEmbeddedDatabaseType;
-import com.j256.ormlite.jdbc.db.H2DatabaseType;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableInfo;
 
