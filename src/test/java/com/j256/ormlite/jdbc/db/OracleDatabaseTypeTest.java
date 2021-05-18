@@ -21,7 +21,6 @@ import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.jdbc.db.OracleDatabaseType;
 import com.j256.ormlite.table.TableInfo;
 
 public class OracleDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {

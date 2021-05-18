@@ -69,4 +69,9 @@ public class H2DatabaseType extends BaseDatabaseType {
 	public boolean isCreateIfNotExistsSupported() {
 		return true;
 	}
+
+	@Override
+	public boolean isLimitAfterUpdateSupported() {
+		return true;
+	}
 }

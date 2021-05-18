@@ -284,14 +284,6 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	/**
-	 * @deprecated Please use {@link #setInternalConnection(Connection)}
-	 */
-	@Deprecated
-	public void setInternalConnection(Connection connection) {
-		this.connection = connection;
-	}
-
-	/**
 	 * Set the internal database connection. Most likely for testing purposes.
 	 */
 	public void setUnderlyingConnection(Connection connection) {

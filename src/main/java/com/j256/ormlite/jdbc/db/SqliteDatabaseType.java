@@ -46,6 +46,11 @@ public class SqliteDatabaseType extends BaseSqliteDatabaseType {
 	}
 
 	@Override
+	public boolean isLimitAfterUpdateSupported() {
+		return true;
+	}
+
+	@Override
 	public boolean isNestedSavePointsSupported() {
 		return false;
 	}

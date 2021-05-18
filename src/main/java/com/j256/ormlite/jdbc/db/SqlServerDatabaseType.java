@@ -127,8 +127,18 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
+	public boolean isLimitAfterUpdateSupported() {
+		return true;
+	}
+
+	@Override
 	public void appendLimitValue(StringBuilder sb, long limit, Long offset) {
 		sb.append("TOP ").append(limit).append(' ');
+	}
+
+	@Override
+	public void appendUpdateLimitValue(StringBuilder sb, long limit) {
+		sb.append("TOP (").append(limit).append(") ");
 	}
 
 	@Override
