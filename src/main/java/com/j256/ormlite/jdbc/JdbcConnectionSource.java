@@ -25,6 +25,7 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 
 	private String username;
 	private String password;
+	private Integer loginTimeoutSecs;
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
@@ -113,6 +114,16 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 		this.password = password;
 	}
 
+	/**
+	 * Set the connection timeout number of seconds.
+	 * 
+	 * NOTE: this is very database dependent and certain database drivers may not obey it. I recommend using a real
+	 * database connection pool if you need strict controls over this.
+	 */
+	public void setLoginTimeoutSecs(Integer loginTimeoutSecs) {
+		this.loginTimeoutSecs = loginTimeoutSecs;
+	}
+
 	@Override
 	protected DatabaseConnection makeConnection(Logger logger) throws SQLException {
 		Properties properties = new Properties();
@@ -121,6 +132,9 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 		}
 		if (password != null) {
 			properties.setProperty("password", password);
+		}
+		if (loginTimeoutSecs != null) {
+			DriverManager.setLoginTimeout(loginTimeoutSecs);
 		}
 		DatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
 		// by default auto-commit is set to true
