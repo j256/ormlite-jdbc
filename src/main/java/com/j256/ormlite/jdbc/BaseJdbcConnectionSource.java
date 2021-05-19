@@ -51,8 +51,8 @@ public abstract class BaseJdbcConnectionSource extends BaseConnectionSource impl
 
 	/**
 	 * Create a data source for a particular database URL. The databaseType is usually determined from the databaseUrl
-	 * so most users should call {@link #JdbcConnectionSource(String)} instead. If, however, you need to force the class
-	 * to use a specific DatabaseType then this constructor should be used.
+	 * so most users should call {@link #BaseJdbcConnectionSource(String)} instead. If, however, you need to force the
+	 * class to use a specific DatabaseType then this constructor should be used.
 	 * 
 	 * @param url
 	 *            The database URL which should start jdbc:...
