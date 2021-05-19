@@ -12,7 +12,6 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.BaseJdbcTest;
-import com.j256.ormlite.jdbc.spring.TableCreator;
 import com.j256.ormlite.table.TableUtils;
 
 public class TableCreatorTest extends BaseJdbcTest {
