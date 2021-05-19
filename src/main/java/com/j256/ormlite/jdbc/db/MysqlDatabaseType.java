@@ -97,6 +97,16 @@ public class MysqlDatabaseType extends BaseDatabaseType {
 	}
 
 	@Override
+	public boolean isLimitUpdateAtEndSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isLimitDeleteAtEndSupported() {
+		return super.isLimitDeleteAtEndSupported();
+	}
+
+	@Override
 	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		super.appendByteArrayType(sb, fieldType, fieldWidth);
 	}
