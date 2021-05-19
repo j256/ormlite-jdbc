@@ -128,4 +128,9 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 			return super.isCreateIfNotExistsSupported();
 		}
 	}
+
+	@Override
+	public boolean isSequenceNamesMustBeLowerCase() {
+		return true;
+	}
 }
