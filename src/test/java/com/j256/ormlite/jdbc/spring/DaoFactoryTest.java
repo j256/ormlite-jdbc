@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.jdbc.spring.DaoFactory;
 import com.j256.ormlite.table.DatabaseTableConfig;
 
 public class DaoFactoryTest extends BaseCoreTest {
