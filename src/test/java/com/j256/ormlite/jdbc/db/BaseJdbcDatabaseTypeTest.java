@@ -27,7 +27,7 @@ import com.j256.ormlite.table.TableInfo;
 public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 
 	private final static String DATABASE_NAME = "ormlite";
-	private final String DB_DIRECTORY = "target/" + getClass().getSimpleName();
+	private final String DB_DIRECTORY = new File("target", getClass().getSimpleName()).getAbsolutePath();
 
 	protected final static String GENERATED_ID_SEQ = "genId_seq";
 
