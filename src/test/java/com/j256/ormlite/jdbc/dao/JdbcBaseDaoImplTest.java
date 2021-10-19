@@ -34,10 +34,10 @@ import org.junit.Test;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
-import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
@@ -280,7 +280,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			// expected
 		} catch (NullPointerException e) {
 			// seems like sqlite throws this
-			assertTrue(databaseType instanceof SqliteDatabaseType); 
+			assertTrue(databaseType instanceof SqliteDatabaseType);
 		} finally {
 			iterator.close();
 		}
@@ -305,7 +305,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 			// expected
 		} catch (NullPointerException e) {
 			// seems like sqlite throws this
-			assertTrue(databaseType instanceof SqliteDatabaseType); 
+			assertTrue(databaseType instanceof SqliteDatabaseType);
 		} finally {
 			iterator.close();
 		}
