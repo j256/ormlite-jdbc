@@ -31,7 +31,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
  */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
-	private static final String JDBC_VERSION = "VERSION__5.6__";
+	private static final String JDBC_VERSION = "VERSION__5.7-SNAPSHOT__";
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcDatabaseConnection.class);
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
