@@ -1,6 +1,5 @@
 package com.j256.ormlite.jdbc;
 
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -107,9 +106,9 @@ public abstract class BaseJdbcConnectionSource extends BaseConnectionSource impl
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (!initialized) {
-			throw new IOException(getClass().getSimpleName() + " was not initialized properly");
+			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
 		}
 		if (connection != null) {
 			connection.close();
