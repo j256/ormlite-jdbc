@@ -1,6 +1,5 @@
 package com.j256.ormlite.jdbc;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -190,9 +189,9 @@ public class DataSourceConnectionSource extends BaseConnectionSource implements 
 	 * (grrrr), this close method does _nothing_. You must close the underlying data-source yourself.
 	 */
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (!initialized) {
-			throw new IOException(getClass().getSimpleName() + ".initialize() was not called");
+			throw new SQLException(getClass().getSimpleName() + ".initialize() was not called");
 		}
 		// unfortunately, you will need to close the DataSource directly since there is no close on the interface
 	}

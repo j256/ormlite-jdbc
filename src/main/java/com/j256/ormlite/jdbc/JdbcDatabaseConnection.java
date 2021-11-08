@@ -1,6 +1,5 @@
 package com.j256.ormlite.jdbc;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -31,7 +30,7 @@ import com.j256.ormlite.support.GeneratedKeyHolder;
  */
 public class JdbcDatabaseConnection implements DatabaseConnection {
 
-	private static final String JDBC_VERSION = "VERSION__5.7-SNAPSHOT__";
+	private static final String JDBC_VERSION = "VERSION__6.0-SNAPSHOT__";
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcDatabaseConnection.class);
 	private static final String JDBC_META_TABLE_NAME_COLUMN = "TABLE_NAME";
@@ -155,11 +154,11 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		try {
 			connection.close();
 		} catch (SQLException e) {
-			throw new IOException("could not close SQL connection", e);
+			throw new SQLException("could not close SQL connection", e);
 		}
 		logger.trace("connection closed: {}", connection);
 	}
