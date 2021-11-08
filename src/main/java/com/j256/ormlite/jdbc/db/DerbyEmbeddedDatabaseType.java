@@ -17,7 +17,6 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.converter.BooleanNumberFieldConverter;
 import com.j256.ormlite.misc.IOUtils;
-import com.j256.ormlite.misc.SqlExceptionUtil;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -185,7 +184,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 				ObjectInputStream objInStream = new ObjectInputStream(stream);
 				return objInStream.readObject();
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not read serialized object from result blob", e);
+				throw new SQLException("Could not read serialized object from result blob", e);
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
@@ -198,7 +197,7 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 				ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
 				objOutStream.writeObject(javaObject);
 			} catch (Exception e) {
-				throw SqlExceptionUtil.create("Could not write serialized object to output stream", e);
+				throw new SQLException("Could not write serialized object to output stream", e);
 			}
 			return new SerialBlob(outStream.toByteArray());
 		}
