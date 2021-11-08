@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -185,7 +184,7 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = SQLException.class)
 	public void testCloseNoInit() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		pooled.close();

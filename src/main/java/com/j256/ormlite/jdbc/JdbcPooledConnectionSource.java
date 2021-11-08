@@ -1,6 +1,5 @@
 package com.j256.ormlite.jdbc;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,9 +90,9 @@ public class JdbcPooledConnectionSource extends JdbcConnectionSource implements 
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		if (!initialized) {
-			throw new IOException(getClass().getSimpleName() + " was not initialized properly");
+			throw new SQLException(getClass().getSimpleName() + " was not initialized properly");
 		}
 		logger.debug("closing");
 		synchronized (lock) {

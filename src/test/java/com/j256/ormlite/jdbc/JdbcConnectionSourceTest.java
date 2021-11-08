@@ -13,7 +13,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -164,7 +163,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.close();
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = SQLException.class)
 	public void testCloseBeforeInitialize() throws Exception {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
 		sds.close();

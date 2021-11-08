@@ -6,7 +6,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -176,7 +175,7 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		dcs.close();
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = SQLException.class)
 	public void testDscsCloseNoInit() throws Exception {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.close();

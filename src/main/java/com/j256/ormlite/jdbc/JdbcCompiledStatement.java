@@ -1,6 +1,5 @@
 package com.j256.ormlite.jdbc;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -76,11 +75,11 @@ public class JdbcCompiledStatement implements CompiledStatement {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws SQLException {
 		try {
 			preparedStatement.close();
 		} catch (SQLException e) {
-			throw new IOException("could not close prepared statement", e);
+			throw new SQLException("could not close prepared statement", e);
 		}
 	}
 
