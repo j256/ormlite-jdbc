@@ -1,6 +1,5 @@
 package com.j256.ormlite.jdbc;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -205,11 +204,11 @@ public class JdbcDatabaseResults implements DatabaseResults {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		try {
 			resultSet.close();
 		} catch (SQLException e) {
-			throw new IOException("could not close result set", e);
+			throw new SQLException("could not close result set", e);
 		}
 	}
 
