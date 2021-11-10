@@ -7,7 +7,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
-import com.j256.ormlite.jdbc.CharacterCompatFieldConverter;
+import com.j256.ormlite.field.converter.CharacterCompatFieldConverter;
 
 /**
  * Oracle database type information used to create the tables, etc..
