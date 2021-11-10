@@ -33,7 +33,6 @@ public class MariaDbDatabaseType extends MysqlDatabaseType {
 	}
 
 	@Override
-
 	protected void appendByteArrayType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		super.appendByteArrayType(sb, fieldType, fieldWidth);
 	}
