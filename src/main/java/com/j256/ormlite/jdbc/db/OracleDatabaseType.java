@@ -7,6 +7,7 @@ import com.j256.ormlite.field.DataPersister;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.field.converter.CharacterCompatFieldConverter;
 
 /**
  * Oracle database type information used to create the tables, etc..
@@ -101,8 +102,10 @@ public class OracleDatabaseType extends BaseDatabaseType {
 				if (BOOLEAN_INTEGER_FORMAT.equalsIgnoreCase(fieldType.getFormat())) {
 					return DataType.BOOLEAN_INTEGER.getDataPersister();
 				} else {
-					return DataType.BOOLEAN_CHAR.getDataPersister();
+					return new CharacterCompatFieldConverter(DataType.BOOLEAN_CHAR.getDataPersister());
 				}
+			case CHAR:
+				return new CharacterCompatFieldConverter(dataPersister);
 			default:
 				return super.getFieldConverter(dataPersister, fieldType);
 		}
