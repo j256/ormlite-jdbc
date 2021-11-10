@@ -10,6 +10,7 @@ import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.converter.BooleanNumberFieldConverter;
+import com.j256.ormlite.jdbc.CharacterCompatFieldConverter;
 import com.j256.ormlite.support.DatabaseResults;
 
 /**
@@ -53,6 +54,8 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
 				return booleanConverter;
 			case BYTE:
 				return byteConverter;
+			case CHAR:
+				return new CharacterCompatFieldConverter(dataType);
 			default:
 				return super.getFieldConverter(dataType, fieldType);
 		}
