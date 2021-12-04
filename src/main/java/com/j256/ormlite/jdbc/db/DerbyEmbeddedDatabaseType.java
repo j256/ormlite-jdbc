@@ -16,6 +16,7 @@ import com.j256.ormlite.field.FieldConverter;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.converter.BooleanNumberFieldConverter;
+import com.j256.ormlite.field.types.BooleanCharType;
 import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.support.DatabaseResults;
 
@@ -30,10 +31,6 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	protected final static String DATABASE_URL_PORTION = "derby";
 	private final static String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
 	private final static String DATABASE_NAME = "Derby";
-
-	private static FieldConverter serializableConverter;
-	private static FieldConverter booleanConverter;
-	private static FieldConverter charConverter;
 
 	@Override
 	public boolean isDatabaseUrlThisType(String url, String dbTypePart) {
@@ -60,20 +57,15 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 		// we are only overriding certain types
 		switch (dataType.getSqlType()) {
 			case BOOLEAN:
-				if (booleanConverter == null) {
-					booleanConverter = new BooleanNumberFieldConverter();
-				}
-				return booleanConverter;
+				return BooleanNumberFieldConverter.getSingleton();
 			case CHAR:
-				if (charConverter == null) {
-					charConverter = new CharFieldConverter();
+				if (dataType instanceof BooleanCharType) {
+					return BooleanNumberFieldConverter.getSingleton();
+				} else {
+					return CharFieldConverter.getSingleton();
 				}
-				return charConverter;
 			case SERIALIZABLE:
-				if (serializableConverter == null) {
-					serializableConverter = new SerializableFieldConverter();
-				}
-				return serializableConverter;
+				return SerializableFieldConverter.getSingleton();
 			default:
 				return super.getFieldConverter(dataType, fieldType);
 		}
@@ -162,6 +154,13 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	 * Conversion from the Object Java field to the BLOB Jdbc type because the varbinary needs a size otherwise.
 	 */
 	private static class SerializableFieldConverter extends BaseFieldConverter {
+
+		private static final SerializableFieldConverter singleTon = new SerializableFieldConverter();
+
+		public static SerializableFieldConverter getSingleton() {
+			return singleTon;
+		}
+
 		@Override
 		public SqlType getSqlType() {
 			return SqlType.BLOB;
@@ -217,6 +216,13 @@ public class DerbyEmbeddedDatabaseType extends BaseDatabaseType {
 	 * Conversion from the char Java field because Derby can't convert Character to type char. Jesus.
 	 */
 	private static class CharFieldConverter extends BaseFieldConverter {
+
+		private static final CharFieldConverter singleTon = new CharFieldConverter();
+
+		public static CharFieldConverter getSingleton() {
+			return singleTon;
+		}
+
 		@Override
 		public SqlType getSqlType() {
 			return SqlType.INTEGER;
