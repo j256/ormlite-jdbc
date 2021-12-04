@@ -50,4 +50,9 @@ public class MariaDbDatabaseType extends MysqlDatabaseType {
 			return super.getFieldConverter(dataPersister, fieldType);
 		}
 	}
+
+	@Override
+	public boolean isCreateIndexIfNotExistsSupported() {
+		return true;
+	}
 }
