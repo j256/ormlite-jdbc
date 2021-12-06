@@ -13,3 +13,8 @@ Here are the [Javadocs for the code](http://ormlite.com/javadoc/ormlite-jdbc/).
 * Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.ormlite/ormlite-jdbc/) [![javadoc](https://javadoc.io/badge2/com.j256.ormlite/ormlite-jdbc/javadoc.svg)](https://javadoc.io/doc/com.j256.ormlite/ormlite-jdbc)
 
 Enjoy, Gray Watson
+
+# ChangeLog Release Notes
+
+The ChangeLog file comes from the ormlite-core repository.  See the
+[ChangeLog.txt file](https://github.com/j256/ormlite-core/blob/master/src/main/javadoc/doc-files/changelog.txt).
