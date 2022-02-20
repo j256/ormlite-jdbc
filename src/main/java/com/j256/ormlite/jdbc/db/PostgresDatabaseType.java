@@ -58,6 +58,10 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 		// needs to match dropColumnArg()
 		StringBuilder seqSb = new StringBuilder(64);
 		seqSb.append("CREATE SEQUENCE ");
+		// fix error when ORMLite tries to create an existing sequence
+		if (isCreateIfNotExistsSupported()) {
+			sb.append("IF NOT EXISTS ");
+		}
 		// when it is created, it needs to be escaped specially
 		appendEscapedEntityName(seqSb, sequenceName);
 		statementsBefore.add(seqSb.toString());
