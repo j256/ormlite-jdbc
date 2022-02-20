@@ -60,7 +60,7 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 		seqSb.append("CREATE SEQUENCE ");
 		// fix error when ORMLite tries to create an existing sequence
 		if (isCreateIfNotExistsSupported()) {
-			sb.append("IF NOT EXISTS ");
+			seqSb.append("IF NOT EXISTS ");
 		}
 		// when it is created, it needs to be escaped specially
 		appendEscapedEntityName(seqSb, sequenceName);
