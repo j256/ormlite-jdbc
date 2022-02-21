@@ -59,7 +59,7 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 		StringBuilder seqSb = new StringBuilder(64);
 		seqSb.append("CREATE SEQUENCE ");
 		// fix error when ORMLite tries to create an existing sequence
-		if (isCreateIfNotExistsSupported()) {
+		if (isCreateSequenceIfNotExistsSupported()) {
 			seqSb.append("IF NOT EXISTS ");
 		}
 		// when it is created, it needs to be escaped specially
@@ -136,5 +136,11 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 	@Override
 	public boolean isSequenceNamesMustBeLowerCase() {
 		return true;
+	}
+
+	public boolean isCreateSequenceIfNotExistsSupported() {
+		int major = driver.getMajorVersion();
+		int minor = driver.getMinorVersion();
+		return major > 9 || (major == 9 && minor >= 5);
 	}
 }
