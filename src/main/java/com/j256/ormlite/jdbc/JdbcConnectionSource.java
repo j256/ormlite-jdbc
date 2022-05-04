@@ -26,6 +26,7 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 	private String username;
 	private String password;
 	private Integer loginTimeoutSecs;
+	private Properties additionalProperties;
 
 	/**
 	 * Constructor for Spring type wiring if you are using the set methods. If you are using Spring then your should
@@ -115,6 +116,14 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 	}
 
 	/**
+	 * Set additional properties to pass to DriverManager#getConnection method.
+	 * @param props - Additional Properties.
+	 */
+	public void setAdditionalProperties(Properties props){
+		this.additionalProperties = props;
+	}
+
+	/**
 	 * Set the connection timeout number of seconds.
 	 * 
 	 * NOTE: this is very database dependent and certain database drivers may not obey it. I recommend using a real
@@ -135,6 +144,9 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 		}
 		if (loginTimeoutSecs != null) {
 			DriverManager.setLoginTimeout(loginTimeoutSecs);
+		}
+		if(additionalProperties != null){
+			properties.putAll(additionalProperties);
 		}
 		DatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
 		// by default auto-commit is set to true
