@@ -117,9 +117,8 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 
 	/**
 	 * Set additional properties to pass to DriverManager#getConnection method.
-	 * @param props - Additional Properties.
 	 */
-	public void setAdditionalProperties(Properties props){
+	public void setAdditionalProperties(Properties props) {
 		this.additionalProperties = props;
 	}
 
@@ -145,7 +144,7 @@ public class JdbcConnectionSource extends BaseJdbcConnectionSource implements Co
 		if (loginTimeoutSecs != null) {
 			DriverManager.setLoginTimeout(loginTimeoutSecs);
 		}
-		if(additionalProperties != null){
+		if (additionalProperties != null) {
 			properties.putAll(additionalProperties);
 		}
 		DatabaseConnection connection = new JdbcDatabaseConnection(DriverManager.getConnection(url, properties));
