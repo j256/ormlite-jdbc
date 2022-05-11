@@ -58,6 +58,10 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 		// needs to match dropColumnArg()
 		StringBuilder seqSb = new StringBuilder(64);
 		seqSb.append("CREATE SEQUENCE ");
+		// fix error when ORMLite tries to create an existing sequence
+		if (isCreateSequenceIfNotExistsSupported()) {
+			seqSb.append("IF NOT EXISTS ");
+		}
 		// when it is created, it needs to be escaped specially
 		appendEscapedEntityName(seqSb, sequenceName);
 		statementsBefore.add(seqSb.toString());
@@ -132,5 +136,11 @@ public class PostgresDatabaseType extends BaseDatabaseType {
 	@Override
 	public boolean isSequenceNamesMustBeLowerCase() {
 		return true;
+	}
+
+	public boolean isCreateSequenceIfNotExistsSupported() {
+		int major = driver.getMajorVersion();
+		int minor = driver.getMinorVersion();
+		return major > 9 || (major == 9 && minor >= 5);
 	}
 }
