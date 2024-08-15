@@ -38,6 +38,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 
 	private Connection connection;
 	private Boolean supportsSavePoints;
+	private Boolean supportsGetGeneratedKeys;
 
 	public JdbcDatabaseConnection(Connection connection) {
 		this.connection = connection;
@@ -184,7 +185,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 			statementSetArgs(stmt, args, argFieldTypes);
 			int rowN = stmt.executeUpdate();
 			logger.trace("insert statement is prepared and executed: {}", statement);
-			if (keyHolder != null) {
+			if (keyHolder != null && isSupportsGetGeneratedKeys()) {
 				ResultSet resultSet = stmt.getGeneratedKeys();
 				ResultSetMetaData metaData = resultSet.getMetaData();
 				int colN = metaData.getColumnCount();
@@ -281,6 +282,15 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 	@Deprecated
 	public void setInternalConnection(Connection connection) {
 		this.connection = connection;
+	}
+
+	@Override
+	public boolean isSupportsGetGeneratedKeys() throws SQLException {
+		if (supportsGetGeneratedKeys == null) {
+			DatabaseMetaData metadata = connection.getMetaData();
+			supportsGetGeneratedKeys = metadata.supportsGetGeneratedKeys();
+		}
+		return supportsGetGeneratedKeys;
 	}
 
 	/**
