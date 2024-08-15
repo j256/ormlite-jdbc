@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.sql.DatabaseMetaData;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -112,6 +113,8 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	@Test
 	public void testInsertReleaseConnection() throws Exception {
 		Connection connection = createMock(Connection.class);
+		DatabaseMetaData databaseMetaData = createMock(DatabaseMetaData.class);
+		expect(connection.getMetaData()).andReturn(databaseMetaData);
 		PreparedStatement prepStmt = createMock(PreparedStatement.class);
 		GeneratedKeyHolder keyHolder = createMock(GeneratedKeyHolder.class);
 		ResultSet resultSet = createMock(ResultSet.class);
@@ -119,6 +122,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 
 		JdbcDatabaseConnection jdc = new JdbcDatabaseConnection(connection);
 		String statement = "statement";
+		expect(databaseMetaData.supportsGetGeneratedKeys()).andReturn(true);
 		expect(keyHolder.getColumnName()).andReturn("id");
 		expect(connection.prepareStatement(eq(statement), aryEq(new String[] { "id" }))).andReturn(prepStmt);
 		expect(prepStmt.executeUpdate()).andReturn(1);
@@ -134,10 +138,10 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		// should close the statement
 		prepStmt.close();
 		connection.close();
-		replay(connection, prepStmt, keyHolder, resultSet, metaData);
+		replay(connection, prepStmt, keyHolder, resultSet, metaData, databaseMetaData);
 		jdc.insert(statement, new Object[0], new FieldType[0], keyHolder);
 		jdc.close();
-		verify(connection, prepStmt, keyHolder, resultSet, metaData);
+		verify(connection, prepStmt, keyHolder, resultSet, metaData, databaseMetaData);
 	}
 
 	@Test
