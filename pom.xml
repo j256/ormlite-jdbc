@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.ormlite</groupId>
 	<artifactId>ormlite-jdbc</artifactId>
-	<version>6.2-SNAPSHOT</version>
+	<version>7.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ORMLite JDBC</name>
 	<url>https://ormlite.com/</url>
@@ -40,6 +40,8 @@
 		<h2-version>1.4.200</h2-version>
 		<junit-version>4.13.1</junit-version>
 		<joda-time-version>1.5</joda-time-version>
+		<log4j2-version>2.17.1</log4j2-version>
+		<slf4j-version>1.7.2</slf4j-version>
 	</properties>
 	<developers>
 		<developer>
@@ -149,8 +151,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -254,26 +256,6 @@
 				<artifactId>test-check-publisher-maven-plugin</artifactId>
 				<version>1.5</version>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.4</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<artifactSet>
-								<includes>
-									<include>com.j256.ormlite:ormlite-core</include>
-								</includes>
-							</artifactSet>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -370,6 +352,24 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j2-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j2-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
