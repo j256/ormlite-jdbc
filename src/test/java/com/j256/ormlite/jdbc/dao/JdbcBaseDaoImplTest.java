@@ -3585,6 +3585,23 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		assertNotNull(result);
 	}
 
+	@Test
+	public void testLimitZero() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+
+		Foo foo1 = new Foo();
+		fooDao.create(foo1);
+		Foo foo2 = new Foo();
+		fooDao.create(foo2);
+
+		assertEquals(foo1, fooDao.queryForId(foo1.id));
+
+		List<Foo> results = fooDao.queryBuilder().limit(1L).query();
+		assertEquals(1, results.size());
+		results = fooDao.queryBuilder().limit(0L).query();
+		assertEquals(0, results.size());
+	}
+
 	/* ==================================================================================== */
 
 	private <T extends TestableType<ID>, ID> void checkTypeAsId(Class<T> clazz, ID id1, ID id2) throws Exception {
