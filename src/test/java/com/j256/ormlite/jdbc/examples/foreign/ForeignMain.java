@@ -1,8 +1,8 @@
 package com.j256.ormlite.jdbc.examples.foreign;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -97,7 +97,7 @@ public class ForeignMain {
 		List<Order> orders = orderDao.query(statementBuilder.prepare());
 
 		// sanity checks
-		assertEquals("Should have found both of the orders for the account", 2, orders.size());
+		assertEquals(2, orders.size(), "Should have found both of the orders for the account");
 		assertTrue(orderDao.objectsEqual(order1, orders.get(0)));
 		assertTrue(orderDao.objectsEqual(order2, orders.get(1)));
 

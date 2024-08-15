@@ -4,14 +4,15 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.jdbc.db.H2DatabaseType;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -76,11 +77,13 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		verify(dataSource);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testDscsNoSetters() throws Exception {
+	@Test
+	public void testDscsNoSetters() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.initialize();
-		dcs.close();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dcs.initialize();
+			dcs.close();
+		});
 	}
 
 	@Test
@@ -97,41 +100,51 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		verify(dataSource);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testDscsNoUrlOrType() throws Exception {
+	@Test
+	public void testDscsNoUrlOrType() {
 		DataSource dataSource = createMock(DataSource.class);
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
 		dcs.setDataSource(dataSource);
-		dcs.initialize();
-		dcs.close();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dcs.initialize();
+			dcs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDscsGetReadOnlyNoInit() throws Exception {
+	@Test
+	public void testDscsGetReadOnlyNoInit() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadOnlyConnection(TABLE_NAME);
-		dcs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			dcs.getReadOnlyConnection(TABLE_NAME);
+			dcs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDscsGetReadOnlyNoInitUP() throws Exception {
+	@Test
+	public void testDscsGetReadOnlyNoInitUP() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadOnlyConnection(TABLE_NAME, "username", "password");
-		dcs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			dcs.getReadOnlyConnection(TABLE_NAME, "username", "password");
+			dcs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDscsGetReadWriteNoInit() throws Exception {
+	@Test
+	public void testDscsGetReadWriteNoInit() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadWriteConnection(TABLE_NAME);
-		dcs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			dcs.getReadWriteConnection(TABLE_NAME);
+			dcs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDscsGetReadWriteNoInitUP() throws Exception {
+	@Test
+	public void testDscsGetReadWriteNoInitUP() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getReadWriteConnection(TABLE_NAME, "username", "password");
-		dcs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			dcs.getReadWriteConnection(TABLE_NAME, "username", "password");
+			dcs.close();
+		});
 	}
 
 	@Test
@@ -168,24 +181,30 @@ public class DataSourceConnectionSourceTest extends BaseJdbcTest {
 		verify(dataSource, conn);
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDscsReleaseNoInit() throws Exception {
+	@Test
+	public void testDscsReleaseNoInit() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.releaseConnection(createMock(DatabaseConnection.class));
-		dcs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			dcs.releaseConnection(createMock(DatabaseConnection.class));
+			dcs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testDscsCloseNoInit() throws Exception {
+	@Test
+	public void testDscsCloseNoInit() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			dcs.close();
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testDscsGetDatabaseTypeNoInit() throws Exception {
+	@Test
+	public void testDscsGetDatabaseTypeNoInit() {
 		DataSourceConnectionSource dcs = new DataSourceConnectionSource();
-		dcs.getDatabaseType();
-		dcs.close();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			dcs.getDatabaseType();
+			dcs.close();
+		});
 	}
 
 	@Test

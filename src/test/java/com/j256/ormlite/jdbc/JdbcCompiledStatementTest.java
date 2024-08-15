@@ -4,13 +4,14 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.field.SqlType;
@@ -63,21 +64,25 @@ public class JdbcCompiledStatementTest extends BaseCoreTest {
 		verify(preparedStatement);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testExecuteUpdateWithSelectType() throws Exception {
+	@Test
+	public void testExecuteUpdateWithSelectType() {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		JdbcCompiledStatement stmt =
 				new JdbcCompiledStatement(preparedStatement, "statement", StatementType.SELECT, false);
-		stmt.runUpdate();
-		stmt.close();
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			stmt.runUpdate();
+			stmt.close();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testExecuteQueryWithNonSelectType() throws Exception {
+	@Test
+	public void testExecuteQueryWithNonSelectType() {
 		PreparedStatement preparedStatement = createMock(PreparedStatement.class);
 		JdbcCompiledStatement stmt =
 				new JdbcCompiledStatement(preparedStatement, "statement", StatementType.EXECUTE, false);
-		stmt.runQuery(null);
-		stmt.close();
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			stmt.runQuery(null);
+			stmt.close();
+		});
 	}
 }

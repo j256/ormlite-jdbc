@@ -1,8 +1,9 @@
 package com.j256.ormlite.jdbc.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
@@ -34,7 +35,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		return false;
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testGeneratedIdSequenceNotSupported() throws Exception {
 		TableInfo<GeneratedIdSequence, Integer> tableInfo =
 				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
@@ -42,8 +43,10 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> additionalArgs = new ArrayList<String>();
 		ArrayList<String> statementsBefore = new ArrayList<String>();
-		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
-				null);
+		assertThrowsExactly(SQLException.class, () -> {
+			databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
+					null);
+		});
 	}
 
 	@Test
@@ -56,7 +59,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
 				null);
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
-		assertTrue(sb + "should contain the stuff", sb.toString().contains(" INTEGER PRIMARY KEY AUTOINCREMENT"));
+		assertTrue(sb.toString().contains(" INTEGER PRIMARY KEY AUTOINCREMENT"), sb + "should contain the stuff");
 		assertEquals(0, statementsBefore.size());
 		assertEquals(0, additionalArgs.size());
 	}
@@ -111,7 +114,7 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		long offset = 171;
 		qb.offset(offset);
 		String query = qb.prepareStatementString();
-		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + offset + "," + limit));
+		assertTrue(query.contains(" LIMIT " + offset + "," + limit), query + " should contain LIMIT");
 	}
 
 	@Test
@@ -124,9 +127,11 @@ public class SqliteDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		assertFalse(databaseType.isNestedSavePointsSupported());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testfIsNestedSavePointsSupported() {
-		databaseType.appendOffsetValue(null, 0);
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			databaseType.appendOffsetValue(null, 0);
+		});
 	}
 
 	/* ==================================================================== */

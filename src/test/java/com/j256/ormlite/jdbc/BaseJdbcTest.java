@@ -1,27 +1,15 @@
 package com.j256.ormlite.jdbc;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.MultipleFailureException;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
@@ -33,8 +21,6 @@ import com.j256.ormlite.table.TableUtils;
 public abstract class BaseJdbcTest {
 
 	private static final String DATASOURCE_ERROR = "Property 'dataSource' is required";
-	@Rule
-	public PossibleExceptionRule possibleException = new PossibleExceptionRule();
 
 	protected static final String DEFAULT_DATABASE_URL = "jdbc:h2:mem:ormlite";
 
@@ -50,7 +36,7 @@ public abstract class BaseJdbcTest {
 	private Set<Class<?>> dropClassSet = new HashSet<Class<?>>();
 	private Set<DatabaseTableConfig<?>> dropTableConfigSet = new HashSet<DatabaseTableConfig<?>>();
 
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		DaoManager.clearCache();
 		if (connectionSource != null) {
@@ -78,7 +64,7 @@ public abstract class BaseJdbcTest {
 		// noop here -- designed to be overridden
 	}
 
-	@After
+	@AfterEach
 	public void after() throws Exception {
 		if (connectionSource != null) {
 			for (Class<?> clazz : dropClassSet) {
@@ -229,86 +215,5 @@ public abstract class BaseJdbcTest {
 		}
 		dao.initialize();
 		return dao;
-	}
-
-	/**
-	 * Our own junit rule which adds in an optional exception matcher if the db host is not available.
-	 */
-	public class PossibleExceptionRule implements MethodRule {
-
-		private Class<? extends Throwable> tClass = null;
-
-		@Override
-		public Statement apply(Statement statement, FrameworkMethod method, Object junitClassObject) {
-			for (Annotation annotation : method.getAnnotations()) {
-				if (annotation.annotationType() == ExpectedBehavior.class) {
-					ExpectedBehavior test = (ExpectedBehavior) annotation;
-					tClass = test.expected();
-					break;
-				}
-			}
-			return new StatementWrapper(statement);
-		}
-
-		/**
-		 * Specify the expected throwable class or you can use the {@link ExpectedBehavior} annotation.
-		 */
-		public void expect(Class<? extends Throwable> tClass) {
-			this.tClass = tClass;
-		}
-
-		private class StatementWrapper extends Statement {
-			private final Statement statement;
-
-			public StatementWrapper(Statement statement) {
-				this.statement = statement;
-			}
-
-			@Override
-			public void evaluate() throws Throwable {
-				try {
-					statement.evaluate();
-				} catch (Throwable t) {
-					if (t instanceof MultipleFailureException) {
-						t = ((MultipleFailureException) t).getFailures().get(0);
-					}
-					if (t instanceof InvocationTargetException) {
-						t = ((InvocationTargetException) t).getTargetException();
-					}
-					String assertMsg;
-					if (t instanceof AssertionError) {
-						throw t;
-					} else if ((!isConnectionExpected) && t.getMessage() != null
-							&& t.getMessage().contains(DATASOURCE_ERROR)) {
-						// if we throw because of missing data-source and the db server isn't available, ignore it
-						return;
-					} else if (tClass == null) {
-						assertMsg = "Test threw unexpected exception: " + t;
-					} else if (tClass == t.getClass()) {
-						// we matched our expected exception
-						return;
-					} else {
-						assertMsg = "Expected test to throw " + tClass + " but it threw: " + t;
-					}
-					Error error = new AssertionError(assertMsg);
-					error.initCause(t);
-					throw error;
-				}
-				// can't be in the throw block
-				if (tClass != null) {
-					throw new AssertionError("Expected test to throw " + tClass);
-				}
-			}
-		}
-	}
-
-	/**
-	 * We can't use the @Test(expected) with the {@link PossibleExceptionRule} rule because it masks the exception and
-	 * doesn't pass it up to our statement wrapper.
-	 */
-	@Target(METHOD)
-	@Retention(RUNTIME)
-	public @interface ExpectedBehavior {
-		Class<? extends Throwable> expected();
 	}
 }

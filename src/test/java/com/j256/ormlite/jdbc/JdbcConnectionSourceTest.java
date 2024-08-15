@@ -6,12 +6,12 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -19,7 +19,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.BaseCoreTest;
 import com.j256.ormlite.jdbc.db.H2DatabaseType;
@@ -86,7 +86,7 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.close();
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testGetConnectionNull() throws Exception {
 		Driver driver = createMock(Driver.class);
 		Properties props = new Properties();
@@ -97,8 +97,10 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		DriverManager.registerDriver(driver);
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
-			sds.getReadOnlyConnection(null);
-			sds.close();
+			assertThrowsExactly(SQLException.class, () -> {
+				sds.getReadOnlyConnection(null);
+				sds.close();
+			});
 		} finally {
 			DriverManager.deregisterDriver(driver);
 		}
@@ -125,14 +127,16 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testInitNoUrl() throws Exception {
+	@Test
+	public void testInitNoUrl() {
 		JdbcConnectionSource cs = new JdbcConnectionSource();
-		cs.initialize();
-		cs.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			cs.initialize();
+			cs.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testConnectionClosed() throws Exception {
 		Connection conn = createMock(Connection.class);
 		conn.setAutoCommit(true);
@@ -146,9 +150,10 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		try {
 			JdbcConnectionSource sds = new JdbcConnectionSource(url, databaseType);
 			assertNotNull(sds.getReadOnlyConnection(null));
-			sds.getReadOnlyConnection(null);
-			sds.close();
-			fail("Should not get here");
+			assertThrowsExactly(SQLException.class, () -> {
+				sds.getReadOnlyConnection(null);
+				sds.close();
+			});
 		} finally {
 			DriverManager.deregisterDriver(driver);
 		}
@@ -163,38 +168,48 @@ public class JdbcConnectionSourceTest extends BaseCoreTest {
 		sds.close();
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCloseBeforeInitialize() throws Exception {
+	@Test
+	public void testCloseBeforeInitialize() {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			sds.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testGetReadOnlyConnectionBeforeInitialize() throws Exception {
+	@Test
+	public void testGetReadOnlyConnectionBeforeInitialize() {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.getReadOnlyConnection(null);
-		sds.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			sds.getReadOnlyConnection(null);
+			sds.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testGetReadWriteConnectionBeforeInitialize() throws Exception {
+	@Test
+	public void testGetReadWriteConnectionBeforeInitialize() {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.getReadWriteConnection(null);
-		sds.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			sds.getReadWriteConnection(null);
+			sds.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testReleaseConnectionBeforeInitialize() throws Exception {
+	@Test
+	public void testReleaseConnectionBeforeInitialize() {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.releaseConnection(null);
-		sds.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			sds.releaseConnection(null);
+			sds.close();
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testGetDatabaseTypeBeforeInitialize() throws Exception {
+	@Test
+	public void testGetDatabaseTypeBeforeInitialize() {
 		JdbcConnectionSource sds = new JdbcConnectionSource();
-		sds.getDatabaseType();
-		sds.close();
+		assertThrowsExactly(IllegalStateException.class, () -> {
+			sds.getDatabaseType();
+			sds.close();
+		});
 	}
 
 	@Test

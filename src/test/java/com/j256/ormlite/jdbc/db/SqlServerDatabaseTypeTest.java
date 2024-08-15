@@ -1,14 +1,14 @@
 package com.j256.ormlite.jdbc.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.dao.Dao;
@@ -70,7 +70,7 @@ public class SqlServerDatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
-		assertTrue(query + " should start with stuff", query.startsWith("SELECT TOP " + limit + " "));
+		assertTrue(query.startsWith("SELECT TOP " + limit + " "), query + " should start with stuff");
 	}
 
 	@Override

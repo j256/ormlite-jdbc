@@ -1,15 +1,15 @@
 package com.j256.ormlite.jdbc.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -23,7 +23,7 @@ import com.j256.ormlite.misc.TransactionManager;
 public class JdbcTransactionManagerTest extends BaseJdbcTest {
 
 	@Override
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		if (connectionSource != null) {
 			return;

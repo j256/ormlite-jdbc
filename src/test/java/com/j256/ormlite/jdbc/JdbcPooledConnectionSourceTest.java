@@ -1,17 +1,19 @@
 package com.j256.ormlite.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -165,7 +167,7 @@ public class JdbcPooledConnectionSourceTest {
 			assertEquals(0, pooled.getCurrentConnectionsFree());
 
 			Thread.sleep(200);
-			assertTrue("loop counter is " + pooled.getTestLoopCount(), pooled.getTestLoopCount() < 100);
+			assertTrue(pooled.getTestLoopCount() < 100, "loop counter is " + pooled.getTestLoopCount());
 
 		} finally {
 			pooled.close();
@@ -184,49 +186,57 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testCloseNoInit() throws Exception {
+	@Test
+	public void testCloseNoInit() {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
-		pooled.close();
+		assertThrowsExactly(SQLException.class, () -> {
+			pooled.close();
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testGetReadWriteNoInit() throws Exception {
+	@Test
+	public void testGetReadWriteNoInit() {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		try {
-			pooled.getReadWriteConnection(null);
+			assertThrowsExactly(SQLException.class, () -> {
+				pooled.getReadWriteConnection(null);
+			});
 		} finally {
 			IOUtils.closeQuietly(pooled);
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testReleaseNoInit() throws Exception {
+	@Test
+	public void testReleaseNoInit() {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
 		try {
-			pooled.releaseConnection(null);
+			assertThrowsExactly(SQLException.class, () -> {
+				pooled.releaseConnection(null);
+			});
 		} finally {
 			IOUtils.closeQuietly(pooled);
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testSaveTransaction() throws Exception {
+	@Test
+	public void testSaveTransactionNoInit() {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
-		pooled.initialize();
 		try {
-			pooled.saveSpecialConnection(null);
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				pooled.saveSpecialConnection(null);
+			});
 		} finally {
 			IOUtils.closeQuietly(pooled);
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testClearTransaction() throws SQLException {
+	@Test
+	public void testClearTransactionNoInit() {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource();
-		pooled.initialize();
 		try {
-			pooled.clearSpecialConnection(null);
+			assertThrowsExactly(IllegalStateException.class, () -> {
+				pooled.clearSpecialConnection(null);
+			});
 		} finally {
 			IOUtils.closeQuietly(pooled);
 		}
@@ -338,7 +348,7 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testSaveOtherConnection() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		try {
@@ -347,7 +357,9 @@ public class JdbcPooledConnectionSourceTest {
 			JdbcDatabaseConnection conn2 =
 					new JdbcDatabaseConnection(DriverManager.getConnection(DEFAULT_DATABASE_URL));
 			pooled.saveSpecialConnection(conn1);
-			pooled.saveSpecialConnection(conn2);
+			assertThrowsExactly(SQLException.class, () -> {
+				pooled.saveSpecialConnection(conn2);
+			});
 		} finally {
 			pooled.close();
 		}
@@ -368,7 +380,7 @@ public class JdbcPooledConnectionSourceTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testTestConnectionThatWasClosed() throws Exception {
 		JdbcPooledConnectionSource pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 		String pingStatement = pooled.getDatabaseType().getPingStatement();
@@ -380,7 +392,9 @@ public class JdbcPooledConnectionSourceTest {
 			conn1.close();
 			DatabaseConnection conn2 = pooled.getReadWriteConnection(null);
 			assertSame(conn1, conn2);
-			conn2.queryForLong(pingStatement);
+			assertThrows(SQLException.class, () -> {
+				conn2.queryForLong(pingStatement);
+			});
 		} finally {
 			pooled.close();
 		}

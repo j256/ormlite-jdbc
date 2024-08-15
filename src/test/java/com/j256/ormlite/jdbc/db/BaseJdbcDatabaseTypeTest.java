@@ -1,8 +1,9 @@
 package com.j256.ormlite.jdbc.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.DatabaseField;
@@ -114,7 +115,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		long limit = 1232;
 		qb.limit(limit);
 		String query = qb.prepareStatementString();
-		assertTrue(query + " should contain LIMIT", query.contains(" LIMIT " + limit));
+		assertTrue(query.contains(" LIMIT " + limit), query + " should contain LIMIT");
 	}
 
 	@Test
@@ -129,7 +130,7 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testGeneratedIdSequence() throws Exception {
 		if (connectionSource == null) {
 			throw new SQLException("Simulate a failure");
@@ -138,12 +139,14 @@ public abstract class BaseJdbcDatabaseTypeTest extends BaseJdbcTest {
 				new TableInfo<GeneratedIdSequence, Integer>(databaseType, GeneratedIdSequence.class);
 		assertEquals(2, tableInfo.getFieldTypes().length);
 		StringBuilder sb = new StringBuilder();
-		ArrayList<String> additionalArgs = new ArrayList<String>();
-		ArrayList<String> statementsBefore = new ArrayList<String>();
-		ArrayList<String> statementsAfter = new ArrayList<String>();
+		List<String> additionalArgs = new ArrayList<String>();
+		List<String> statementsBefore = new ArrayList<String>();
+		List<String> statementsAfter = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
-		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore,
-				statementsAfter, queriesAfter);
+		assertThrowsExactly(SQLException.class, () -> {
+			databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore,
+					statementsAfter, queriesAfter);
+		});
 	}
 
 	/**

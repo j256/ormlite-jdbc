@@ -1,13 +1,14 @@
 package com.j256.ormlite.jdbc.spring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -62,15 +63,16 @@ public class TableCreatorTest extends BaseJdbcTest {
 		tableCreator.initialize();
 	}
 
-	@Test(expected = SQLException.class)
-	public void testNoConfiguredDaos() throws Exception {
+	@Test
+	public void testNoConfiguredDaos() {
 		TableCreator tableCreator = new TableCreator();
 		tableCreator.setConnectionSource(connectionSource);
 
 		try {
 			System.setProperty(TableCreator.AUTO_CREATE_TABLES, Boolean.TRUE.toString());
-			tableCreator.initialize();
-			fail("should not get here");
+			assertThrowsExactly(SQLException.class, () -> {
+				tableCreator.initialize();
+			});
 		} finally {
 			System.clearProperty(TableCreator.AUTO_CREATE_TABLES);
 		}

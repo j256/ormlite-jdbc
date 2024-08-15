@@ -1,14 +1,14 @@
 package com.j256.ormlite.jdbc.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.TestUtils;
 import com.j256.ormlite.field.FieldType;
@@ -71,7 +71,7 @@ public class Db2DatabaseTypeTest extends BaseJdbcDatabaseTypeTest {
 		databaseType.appendColumnArg(null, sb, tableInfo.getFieldTypes()[0], additionalArgs, statementsBefore, null,
 				null);
 		databaseType.addPrimaryKeySql(tableInfo.getFieldTypes(), additionalArgs, statementsBefore, null, null);
-		assertTrue(sb + "should contain the stuff", sb.toString().contains(" GENERATED ALWAYS AS IDENTITY"));
+		assertTrue(sb.toString().contains(" GENERATED ALWAYS AS IDENTITY"), sb + "should contain the stuff");
 		assertEquals(0, statementsBefore.size());
 		assertEquals(1, additionalArgs.size());
 		assertTrue(additionalArgs.get(0).contains("PRIMARY KEY"));

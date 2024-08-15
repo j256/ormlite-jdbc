@@ -1,11 +1,11 @@
 package com.j256.ormlite.jdbc.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -17,7 +17,7 @@ public class BulkJdbcDaoTest extends BaseJdbcTest {
 
 	private Dao<Foo, Integer> fooDao;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void before() throws Exception {
 		super.before();

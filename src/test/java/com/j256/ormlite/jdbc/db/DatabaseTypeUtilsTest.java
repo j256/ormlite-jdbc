@@ -1,10 +1,11 @@
 package com.j256.ormlite.jdbc.db;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.lang.reflect.Constructor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
@@ -25,19 +26,25 @@ public class DatabaseTypeUtilsTest {
 		DatabaseTypeUtils.createDatabaseType("jdbc:h2:mem:ormlitetest");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateDbTypeBadDriver() {
-		DatabaseTypeUtils.createDatabaseType("jdbc:unknown-db:");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseTypeUtils.createDatabaseType("jdbc:unknown-db:");
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateDbTypeBadUrl() {
-		DatabaseTypeUtils.createDatabaseType("bad-url");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseTypeUtils.createDatabaseType("bad-url");
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateDbTypeNotEnoughParts() {
-		DatabaseTypeUtils.createDatabaseType("jdbc:");
+		assertThrowsExactly(IllegalArgumentException.class, () -> {
+			DatabaseTypeUtils.createDatabaseType("jdbc:");
+		});
 	}
 
 	@Test

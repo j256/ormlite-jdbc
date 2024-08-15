@@ -7,18 +7,19 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.or;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.sql.DatabaseMetaData;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -55,7 +56,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForLongNoResult() throws Exception {
 		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
@@ -65,13 +66,15 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 			sb.append("select ");
 			databaseType.appendEscapedEntityName(sb, "id");
 			sb.append(" from foo");
-			databaseConnection.queryForLong(sb.toString());
+			assertThrowsExactly(SQLException.class, () -> {
+				databaseConnection.queryForLong(sb.toString());
+			});
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testQueryForLongTooManyResults() throws Exception {
 		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
@@ -87,7 +90,9 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 			sb.append("select ");
 			databaseType.appendEscapedEntityName(sb, "id");
 			sb.append(" from foo");
-			databaseConnection.queryForLong(sb.toString());
+			assertThrowsExactly(SQLException.class, () -> {
+				databaseConnection.queryForLong(sb.toString());
+			});
 		} finally {
 			connectionSource.releaseConnection(databaseConnection);
 		}
@@ -172,7 +177,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	}
 
 	@Test
-	@Ignore("not sure why this isn't working but I'm skipping it for now.  It broke when I upgraded h2.")
+	@Disabled("not sure why this isn't working but I'm skipping it for now.  It broke when I upgraded h2.")
 	public void testQueryKeyHolderNoKeys() throws Exception {
 		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOO_TABLE_NAME);
 		try {
@@ -235,7 +240,7 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 	}
 
 	@Test
-	@Ignore("not sure why this isn't working but I'm skipping it for now.  It broke when I upgraded h2.")
+	@Disabled("not sure why this isn't working but I'm skipping it for now.  It broke when I upgraded h2.")
 	public void testIdColumnChangedFromStringToNumber() throws Exception {
 		// NOTE: trying to get the database to return a string as a result but could not figure it out
 		DatabaseConnection databaseConnection = connectionSource.getReadOnlyConnection(FOOSTRING_TABLE_NAME);
@@ -258,13 +263,15 @@ public class JdbcDatabaseConnectionTest extends BaseJdbcTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testGeneratedIdNoReturn() throws Exception {
 		createDao(FooNotGeneratedId.class, true);
 		Dao<FooInt, Object> genDao = createDao(FooInt.class, false);
 		FooInt foo = new FooInt();
 		foo.stuff = "hello";
-		genDao.create(foo);
+		assertThrowsExactly(SQLException.class, () -> {
+			genDao.create(foo);
+		});
 	}
 
 	/* =================================================================================================== */

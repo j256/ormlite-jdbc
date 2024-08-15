@@ -1,10 +1,10 @@
 package com.j256.ormlite.jdbc.examples.simple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -98,7 +98,7 @@ public class SimpleMain {
 
 		// query for all items in the database
 		List<Account> accounts = accountDao.queryForAll();
-		assertEquals("Should have found 1 account matching our query", 1, accounts.size());
+		assertEquals(1, accounts.size(), "Should have found 1 account matching our query");
 		verifyAccount(account, accounts.get(0));
 
 		// loop through items in the database
@@ -107,25 +107,25 @@ public class SimpleMain {
 			verifyAccount(account, account2);
 			accountC++;
 		}
-		assertEquals("Should have found 1 account in for loop", 1, accountC);
+		assertEquals(1, accountC, "Should have found 1 account in for loop");
 
 		// construct a query using the QueryBuilder
 		QueryBuilder<Account, Integer> statementBuilder = accountDao.queryBuilder();
 		// shouldn't find anything: name LIKE 'hello" does not match our account
 		statementBuilder.where().like(Account.NAME_FIELD_NAME, "hello");
 		accounts = accountDao.query(statementBuilder.prepare());
-		assertEquals("Should not have found any accounts matching our query", 0, accounts.size());
+		assertEquals(0, accounts.size(), "Should not have found any accounts matching our query");
 
 		// should find our account: name LIKE 'Jim%' should match our account
 		statementBuilder.where().like(Account.NAME_FIELD_NAME, name.substring(0, 3) + "%");
 		accounts = accountDao.query(statementBuilder.prepare());
-		assertEquals("Should have found 1 account matching our query", 1, accounts.size());
+		assertEquals(1, accounts.size(), "Should have found 1 account matching our query");
 		verifyAccount(account, accounts.get(0));
 
 		// delete the account since we are done with it
 		accountDao.delete(account);
 		// we shouldn't find it now
-		assertNull("account was deleted, shouldn't find any", accountDao.queryForId(id));
+		assertNull(accountDao.queryForId(id), "account was deleted, shouldn't find any");
 	}
 
 	/**
@@ -144,20 +144,20 @@ public class SimpleMain {
 
 		// query for all items in the database
 		List<Account> all = accountDao.queryForAll();
-		assertEquals("Should have found same number of accounts in map", accounts.size(), all.size());
+		assertEquals(accounts.size(), all.size(), "Should have found same number of accounts in map");
 		for (Account account : all) {
-			assertTrue("Should have found account in map", accounts.containsValue(account));
+			assertTrue(accounts.containsValue(account), "Should have found account in map");
 			verifyAccount(accounts.get(account.getName()), account);
 		}
 
 		// loop through items in the database
 		int accountC = 0;
 		for (Account account : accountDao) {
-			assertTrue("Should have found account in map", accounts.containsValue(account));
+			assertTrue(accounts.containsValue(account), "Should have found account in map");
 			verifyAccount(accounts.get(account.getName()), account);
 			accountC++;
 		}
-		assertEquals("Should have found the right number of accounts in for loop", accounts.size(), accountC);
+		assertEquals(accounts.size(), accountC, "Should have found the right number of accounts in for loop");
 	}
 
 	/**
@@ -182,17 +182,17 @@ public class SimpleMain {
 		// now we can set the select arg (?) and run the query
 		selectArg.setValue(name1);
 		List<Account> results = accountDao.query(preparedQuery);
-		assertEquals("Should have found 1 account matching our query", 1, results.size());
+		assertEquals(1, results.size(), "Should have found 1 account matching our query");
 		assertEquals(name1, results.get(0).getName());
 
 		selectArg.setValue(name2);
 		results = accountDao.query(preparedQuery);
-		assertEquals("Should have found 1 account matching our query", 1, results.size());
+		assertEquals(1, results.size(), "Should have found 1 account matching our query");
 		assertEquals(name2, results.get(0).getName());
 
 		selectArg.setValue(name3);
 		results = accountDao.query(preparedQuery);
-		assertEquals("Should have found 1 account matching our query", 1, results.size());
+		assertEquals(1, results.size(), "Should have found 1 account matching our query");
 		assertEquals(name3, results.get(0).getName());
 	}
 
@@ -242,7 +242,7 @@ public class SimpleMain {
 	 * Verify that the account is the same as expected.
 	 */
 	private static void verifyAccount(Account expected, Account account2) {
-		assertEquals("expected name does not equal account name", expected, account2);
+		assertEquals(expected, account2, "expected name does not equal account name");
 		assertEquals("expected password does not equal account name", expected.getPassword(), account2.getPassword());
 	}
 }

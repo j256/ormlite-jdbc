@@ -1,13 +1,13 @@
 package com.j256.ormlite.jdbc.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.CloseableIterator;
@@ -1008,6 +1008,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		if (databaseTypeClassName.equals("DerbyEmbeddedDatabaseType")
 				|| databaseTypeClassName.equals("MysqlDatabaseType")
 				|| databaseTypeClassName.equals("SqlServerDatabaseType")
+				|| databaseTypeClassName.equals("H2DatabaseType")
 				|| databaseTypeClassName.equals("SqlServerJtdsDatabaseType")
 				|| databaseTypeClassName.equals("SqliteAndroidDatabaseType")) {
 			// some databases have miniscule default precision
@@ -1053,6 +1054,7 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		if (databaseTypeClassName.equals("DerbyEmbeddedDatabaseType")
 				|| databaseTypeClassName.equals("MysqlDatabaseType")
 				|| databaseTypeClassName.equals("SqlServerDatabaseType")
+				|| databaseTypeClassName.equals("H2DatabaseType")
 				|| databaseTypeClassName.equals("SqlServerJtdsDatabaseType")
 				|| databaseTypeClassName.equals("SqliteAndroidDatabaseType")) {
 			// some databases have miniscule default precision
@@ -5247,7 +5249,8 @@ public class JdbcBaseDaoImplTest extends BaseJdbcTest {
 		public static final String BIG_DECIMAL_NUMERIC_FIELD_NAME = "bigDecimalNumeric";
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC)
+		@DatabaseField(columnName = BIG_DECIMAL_NUMERIC_FIELD_NAME, dataType = DataType.BIG_DECIMAL_NUMERIC,
+				columnDefinition = "NUMERIC(10)")
 		BigDecimal bigDecimalNumeric;
 
 		BigDecimalNumeric() {
