@@ -10,7 +10,7 @@ jobs:
           key: j256-ormlite-jdbc-{{ checksum "pom.xml" }}
       - run:
           name: Get maven project dependencies
-          command: mvn -P testing -U dependency:go-offline compile
+          command: mvn -U -DskipTests clean install dependency:resolve-plugins dependency:go-offline
       # save the project dependencies
       - save_cache:
           paths:
@@ -18,7 +18,8 @@ jobs:
           key: j256-ormlite-jdbc-{{ checksum "pom.xml" }}
       - run:
           name: mvn package
-          command: mvn -P testing package
+          command: mvn package
+          # command: mvn -P testing package
       # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
       - store_test_results: 
           path: target/surefire-reports
@@ -30,5 +31,5 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash)
       - run:
           name: Test checks publishing to github
-          command: mvn -X test-check-publisher-maven-plugin:publish
+          command: mvn -X test-check-publisher:publish
           when: always
