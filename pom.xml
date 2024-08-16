@@ -101,7 +101,7 @@
 			ormlite-core SNAPSHOT release -->
 			<id>testing</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<repositories>
 				<repository>
