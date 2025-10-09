@@ -132,7 +132,7 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		try (Statement statement = connection.createStatement(resultFlags, ResultSet.CONCUR_READ_ONLY)) {
 			statement.execute(statementStr);
 			return statement.getUpdateCount();
-		}
+		};
 	}
 
 	@Override
