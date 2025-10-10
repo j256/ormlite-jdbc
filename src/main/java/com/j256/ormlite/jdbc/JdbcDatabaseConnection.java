@@ -129,9 +129,10 @@ public class JdbcDatabaseConnection implements DatabaseConnection {
 		if (resultFlags == DatabaseConnection.DEFAULT_RESULT_FLAGS) {
 			resultFlags = ResultSet.TYPE_FORWARD_ONLY;
 		}
-		Statement statement = connection.createStatement(resultFlags, ResultSet.CONCUR_READ_ONLY);
-		statement.execute(statementStr);
-		return statement.getUpdateCount();
+		try (Statement statement = connection.createStatement(resultFlags, ResultSet.CONCUR_READ_ONLY);) {
+			statement.execute(statementStr);
+			return statement.getUpdateCount();
+		}
 	}
 
 	@Override
