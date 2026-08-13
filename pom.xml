@@ -56,7 +56,7 @@
 		<junit-version>5.10.3</junit-version>
 		<joda-time-version>1.5</joda-time-version>
 		<slf4j-version>1.7.32</slf4j-version>
-		<log4j2-version>2.21.1</log4j2-version>
+		<log4j2-version>2.25.5</log4j2-version>
 	</properties>
 	<profiles>
 		<profile>
